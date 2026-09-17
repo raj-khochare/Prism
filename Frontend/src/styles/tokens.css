@@ -1,0 +1,53 @@
+:root {
+  /* PRISM Neutral Foundations */
+  --bg-primary: #0B0D0E;
+  --bg-secondary: #101314;
+  --bg-panel: #151819;
+  --bg-elevated: #191C1D;
+  --bg-hover: #1E2224;
+
+  /* Borders */
+  --border-subtle: #2A2D2D;
+  --border-active: #3A3E3E;
+  --border-strong: #4A4F50;
+
+  /* PRISM Typography Colors */
+  --text-primary: #E7E5E0;
+  --text-secondary: #AAA9A3;
+  --text-muted: #777873;
+
+  /* PRISM Semantic Accent Palette (Solid colors strictly - NO GRADIENTS, NO PURPLE) */
+  --accent-teal: #7DA3A1;
+  --accent-teal-bg: rgba(125, 163, 161, 0.12);
+  --accent-teal-border: rgba(125, 163, 161, 0.35);
+
+  --accent-sand: #D9B382;
+  --accent-sand-bg: rgba(217, 179, 130, 0.12);
+  --accent-sand-border: rgba(217, 179, 130, 0.35);
+
+  --accent-red: #B95B52;
+  --accent-red-bg: rgba(185, 91, 82, 0.12);
+  --accent-red-border: rgba(185, 91, 82, 0.35);
+
+  --accent-brown: #705446;
+  --accent-brown-bg: rgba(112, 84, 70, 0.15);
+  --accent-brown-border: rgba(112, 84, 70, 0.35);
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+  /* Sizing */
+  --sidebar-width: 240px;
+  --topbar-height: 44px;
+
+  /* Restrained Radii (4px to 8px strictly - NO excessive pills) */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-normal: 180ms ease;
+}
