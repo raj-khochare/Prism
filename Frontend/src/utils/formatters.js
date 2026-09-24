@@ -53,20 +53,22 @@ export function getSeverityStyle(severity) {
     return { className: 'severity-critical', color: 'var(--accent-red)' };
   }
   if (s === 'high') {
-    return { className: 'severity-high', color: '#D66B60' };
+    return { className: 'severity-high', color: 'var(--accent-orange-red)' };
   }
   if (s === 'medium') {
-    return { className: 'severity-medium', color: 'var(--accent-sand)' };
+    return { className: 'severity-medium', color: 'var(--accent-yellow)' };
   }
   if (s === 'low') {
-    return { className: 'severity-low', color: '#A3806E' };
+    return { className: 'severity-low', color: 'var(--accent-green)' };
   }
   return { className: 'severity-info', color: 'var(--accent-teal)' };
 }
 
 export function getRiskLevel(score) {
   if (score >= 80) return { label: 'Critical', color: 'var(--accent-red)' };
-  if (score >= 60) return { label: 'High', color: '#D66B60' };
-  if (score >= 35) return { label: 'Medium', color: 'var(--accent-sand)' };
-  return { label: 'Low', color: 'var(--accent-teal)' };
+  if (score >= 60) return { label: 'High', color: 'var(--accent-orange-red)' };
+  if (score >= 35) return { label: 'Medium', color: 'var(--accent-yellow)' };
+  return { label: 'Low', color: 'var(--accent-green)' };
 }
+
+

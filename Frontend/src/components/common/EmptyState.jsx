@@ -1,5 +1,5 @@
 import React from 'react';
-import { Inbox } from 'lucide-react';
+import { Inbox } from './Icons.jsx';
 
 export default function EmptyState({
   title = 'No records found',
@@ -10,7 +10,7 @@ export default function EmptyState({
   return (
     <div className="state-box">
       <div className="state-icon">
-        <Icon size={24} />
+        <Icon size={26} color="var(--text-muted)" />
       </div>
       <h3 className="state-title">{title}</h3>
       {description && <p className="state-desc">{description}</p>}

@@ -13,10 +13,8 @@ import {
   ArrowRight,
   Activity,
   AlertTriangle,
-  Radio,
-  FileCode,
-  CheckCircle2
-} from 'lucide-react';
+  FileCode
+} from '../components/common/Icons.jsx';
 
 export default function Overview() {
   const { navigate } = useRouter();
@@ -63,8 +61,7 @@ export default function Overview() {
     securityStatus,
     riskDrivers,
     recentEvents,
-    priorityInvestigation,
-    systemStatus
+    priorityInvestigation
   } = data || {};
 
   return (
@@ -84,13 +81,13 @@ export default function Overview() {
             onClick={() => navigate('/scan')}
             id="btn-quick-scan"
           >
-            <FileCode size={13} />
+            <FileCode size={13} color="var(--accent-teal)" />
             <span>Scan Contract</span>
           </button>
         </div>
       </div>
 
-      {/* 2. CONCLUSION: Primary Security Status Banner */}
+      {/* 2. CONCLUSION: Primary Security Status Banner (Visually Dominant) */}
       <SecurityConclusionBanner
         statusLevel={securityStatus?.statusLevel || 'ELEVATED RISK'}
         score={securityStatus?.unifiedScore || 72}
@@ -123,7 +120,7 @@ export default function Overview() {
       </div>
 
       {/* Two Column Section: WHAT HAPPENED? & WHAT SHOULD I INVESTIGATE? */}
-      <div className="grid-2" style={{ marginBottom: '16px' }}>
+      <div className="grid-2" style={{ marginBottom: '20px' }}>
         {/* 4. WHAT HAPPENED?: Concise Recent Event Stream */}
         <div className="prism-panel" style={{ marginBottom: 0 }} id="what-happened">
           <div className="prism-panel-header">
@@ -148,16 +145,18 @@ export default function Overview() {
                   <div
                     key={evt.id}
                     style={{
-                      padding: '11px 16px',
-                      borderBottom: '1px solid var(--border-subtle)',
+                      padding: '12px 18px',
+                      borderBottom: '1px solid var(--border-default)',
                       display: 'flex',
                       alignItems: 'flex-start',
                       justifyContent: 'space-between',
-                      gap: '12px'
+                      gap: '14px',
+                      transition: 'background-color var(--transition-fast)'
                     }}
+                    className="overview-event-item"
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                         <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                           {evt.timestamp}
                         </span>
@@ -166,11 +165,11 @@ export default function Overview() {
                           {evt.title}
                         </strong>
                       </div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
                         {evt.description}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontSize: '10px', color: 'var(--text-muted)' }}>
-                        <span>Target: <strong style={{ color: 'var(--text-secondary)' }}>{evt.contract}</strong></span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px', fontSize: '10px', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
+                        <span>Target: <strong style={{ color: 'var(--text-primary)' }}>{evt.contract}</strong></span>
                         <span>·</span>
                         <span className="mono">Block #{formatNumber(evt.block)}</span>
                         <span>·</span>
@@ -193,6 +192,68 @@ export default function Overview() {
           <PriorityInvestigationCard investigation={priorityInvestigation} />
         </div>
       </div>
+
+      {/* 6. DETAILED EVIDENCE: Secondary Infrastructure Baseline (Subordinate to Security State)
+      {systemStatus && systemStatus.length > 0 && (
+        <div
+          className="prism-panel"
+          id="secondary-infrastructure-baseline"
+          style={{
+            backgroundColor: 'var(--bg-elevated)',
+            border: '1.5px solid var(--border-default)',
+            boxShadow: 'var(--shadow-hard-xs)',
+            marginBottom: '10px'
+          }}
+        >
+          <div
+            style={{
+              padding: '10px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid #DDD9CC',
+              fontSize: '11px',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'var(--text-muted)'
+            }}
+          >
+            <span>Telemetry &amp; Ingestion Subsystem Baseline (Secondary Telemetry)</span>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>NOMINAL BASELINE</span>
+          </div>
+          <div
+            style={{
+              padding: '12px 18px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '12px'
+            }}
+          >
+            {systemStatus.map((sys, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '6px 10px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #111111',
+                  borderRadius: 'var(--radius-xs)'
+                }}
+              >
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>{sys.component}</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#111111' }}>
+                  <span className="status-dot healthy"></span>
+                  <span>{sys.status}</span>
+                </span>
+              </div>
+            ))} */}
+          {/* </div>
+        </div>
+      )} */}
     </div>
   );
 }
+

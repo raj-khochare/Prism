@@ -17,7 +17,7 @@ import {
   ExternalLink,
   ShieldCheck,
   ChevronRight
-} from 'lucide-react';
+} from '../components/common/Icons.jsx';
 import { useRouter } from '../router.jsx';
 
 export default function StaticFindings() {
@@ -96,8 +96,8 @@ export default function StaticFindings() {
           </p>
         </div>
         <div className="page-actions">
-          <span className="mono" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-            Total Findings: <strong style={{ color: 'var(--text-primary)' }}>{findingsData.total}</strong>
+          <span className="mono" style={{ fontSize: '11px', color: 'var(--text-secondary)', padding: '6px 10px', backgroundColor: 'var(--bg-panel)', border: '1.5px solid var(--border-default)', boxShadow: '2px 2px 0px #000' }}>
+            TOTAL FINDINGS: <strong style={{ color: 'var(--text-primary)' }}>{findingsData.total}</strong>
           </span>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function StaticFindings() {
       {/* Filter Bar */}
       <div className="filter-bar">
         <div className="search-input-wrapper">
-          <Search size={13} />
+          <Search size={14} />
           <input
             type="text"
             placeholder="Search finding, detector, contract, or file..."
@@ -122,8 +122,8 @@ export default function StaticFindings() {
         </div>
 
         <div className="filter-group">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Severity:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Severity:</span>
             <select
               className="form-select"
               value={severityFilter}
@@ -134,8 +134,8 @@ export default function StaticFindings() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Category:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Category:</span>
             <select
               className="form-select"
               value={categoryFilter}
@@ -146,8 +146,8 @@ export default function StaticFindings() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Detector:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Detector:</span>
             <select
               className="form-select"
               value={detectorFilter}
@@ -158,8 +158,8 @@ export default function StaticFindings() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Status:</span>
             <select
               className="form-select"
               value={statusFilter}
@@ -173,7 +173,7 @@ export default function StaticFindings() {
       </div>
 
       {/* Main Content Area: Scalable Table & Detailed Investigation Inspector */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* Scalable Findings Table */}
         <div className="table-container">
           <table className="prism-table" aria-label="Static Findings Table">
@@ -223,7 +223,7 @@ export default function StaticFindings() {
                           {f.title}
                         </strong>
                       </td>
-                      <td className="mono" style={{ color: 'var(--accent-teal)' }}>
+                      <td className="mono" style={{ color: 'var(--accent-teal)', fontWeight: 600 }}>
                         {f.detector}
                       </td>
                       <td>
@@ -240,11 +240,12 @@ export default function StaticFindings() {
                           className="mono"
                           style={{
                             fontSize: '10px',
-                            padding: '2px 6px',
+                            fontWeight: 700,
+                            padding: '2px 7px',
                             borderRadius: 'var(--radius-xs)',
-                            backgroundColor: f.status === 'Resolved' ? 'rgba(125, 163, 161, 0.12)' : 'var(--bg-panel)',
+                            backgroundColor: f.status === 'Resolved' ? 'var(--accent-teal-bg)' : 'var(--bg-elevated)',
                             color: f.status === 'Resolved' ? 'var(--accent-teal)' : 'var(--text-secondary)',
-                            border: '1px solid var(--border-subtle)'
+                            border: `1px solid ${f.status === 'Resolved' ? 'var(--accent-teal)' : 'var(--border-default)'}`
                           }}
                         >
                           {f.status || 'Open'}
@@ -270,15 +271,15 @@ export default function StaticFindings() {
           />
         </div>
 
-        {/* Detailed Investigation View (Section 10 Requirement) */}
+        {/* Detailed Investigation View (Clear hierarchy: FINDING -> SEVERITY -> WHY IT MATTERS -> AFFECTED CODE -> REMEDIATION) */}
         {selectedFinding && (
-          <div className="prism-panel" id="finding-investigation-view" style={{ borderLeft: '3px solid var(--accent-teal)' }}>
+          <div className="prism-panel" id="finding-investigation-view" style={{ borderLeft: '4px solid var(--accent-teal)' }}>
             <div className="prism-panel-header">
               <div className="panel-title-group">
-                <ShieldAlert size={14} color="var(--accent-teal)" />
+                <ShieldAlert size={15} color="var(--accent-teal)" />
                 <span>Finding Detail: {selectedFinding.title}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <SeverityBadge severity={selectedFinding.severity} />
                 <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                   ID: {selectedFinding.id}
@@ -288,49 +289,59 @@ export default function StaticFindings() {
 
             <div className="prism-panel-body">
               {/* Meta Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '16px', padding: '10px 14px', backgroundColor: 'var(--bg-panel)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '18px', padding: '12px 16px', backgroundColor: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)', border: '1.5px solid var(--border-default)', boxShadow: '2px 2px 0px #000' }}>
                 <div>
                   <span className="meta-label">Detector</span>
-                  <div className="mono" style={{ fontSize: '12px', color: 'var(--accent-teal)', fontWeight: 600 }}>
+                  <div className="mono" style={{ fontSize: '12px', color: 'var(--accent-teal)', fontWeight: 700, marginTop: '2px' }}>
                     {selectedFinding.detector}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">Affected Contract</span>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
                     {selectedFinding.contract}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">File &amp; Line Range</span>
-                  <div className="mono" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  <div className="mono" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                     {selectedFinding.file}:{selectedFinding.lineStart}{selectedFinding.lineEnd && selectedFinding.lineEnd !== selectedFinding.lineStart ? `–${selectedFinding.lineEnd}` : ''}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">Category</span>
-                  <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
                     {selectedFinding.category || 'Vulnerability'}
                   </div>
                 </div>
               </div>
 
               {/* Description */}
-              <div style={{ marginBottom: '14px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
                   Description
                 </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.45 }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
                   {selectedFinding.description}
                 </div>
               </div>
 
-              {/* Source Code Evidence (Visually Important) */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
+              {/* Why It Matters (Prominent analytical callout) */}
+              <div style={{ marginBottom: '18px', padding: '14px 16px', backgroundColor: 'var(--accent-red-bg)', border: '2px solid var(--accent-red)', boxShadow: '3px 3px 0px #000', borderRadius: 'var(--radius-xs)' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--accent-red)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+                  Why It Matters
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                  {selectedFinding.whyItMatters}
+                </div>
+              </div>
+
+              {/* Affected Source Code Evidence (Visually Dominant) */}
+              <div style={{ marginBottom: '18px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
                   Vulnerable Source Code Evidence
                 </div>
                 <CodeViewer
@@ -338,40 +349,30 @@ export default function StaticFindings() {
                   fileName={selectedFinding.file}
                   highlightStart={selectedFinding.lineStart}
                   highlightEnd={selectedFinding.lineEnd}
-                  maxHeight="280px"
+                  maxHeight="300px"
                 />
               </div>
 
-              {/* Why It Matters */}
-              <div style={{ marginBottom: '14px', padding: '12px 14px', backgroundColor: 'var(--accent-red-bg)', border: '1px solid var(--accent-red-border)', borderRadius: 'var(--radius-sm)' }}>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-red)', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Why It Matters
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.45 }}>
-                  {selectedFinding.whyItMatters}
-                </div>
-              </div>
-
               {/* Suggested Remediation */}
-              <div style={{ marginBottom: '14px', padding: '12px 14px', backgroundColor: 'rgba(125, 163, 161, 0.08)', border: '1px solid var(--accent-teal-border)', borderRadius: 'var(--radius-sm)' }}>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-teal)', textTransform: 'uppercase', marginBottom: '4px' }}>
+              <div style={{ marginBottom: '18px', padding: '14px 16px', backgroundColor: 'var(--accent-teal-bg)', border: '2px solid var(--accent-teal)', boxShadow: '3px 3px 0px #000', borderRadius: 'var(--radius-xs)' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--accent-teal)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
                   Suggested Remediation
                 </div>
-                <div className="mono" style={{ fontSize: '11px', color: 'var(--text-primary)', lineHeight: 1.45 }}>
+                <div className="mono" style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
                   {selectedFinding.remediation}
                 </div>
               </div>
 
               {/* Related Findings & Related Runtime Signals */}
-              <div className="grid-2" style={{ marginTop: '12px' }}>
-                <div>
-                  <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+              <div className="grid-2" style={{ marginTop: '14px' }}>
+                <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
                     Related Findings
                   </div>
                   {selectedFinding.relatedFindings && selectedFinding.relatedFindings.length > 0 ? (
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {selectedFinding.relatedFindings.map((rf, idx) => (
-                        <span key={idx} className="mono" style={{ fontSize: '11px', padding: '2px 8px', backgroundColor: 'var(--bg-panel)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xs)' }}>
+                        <span key={idx} className="mono" style={{ fontSize: '11px', padding: '3px 8px', backgroundColor: 'var(--bg-panel)', border: '1.5px solid var(--border-default)', boxShadow: '1px 1px 0px #000', borderRadius: 'var(--radius-xs)', color: 'var(--text-primary)' }}>
                           {rf}
                         </span>
                       ))}
@@ -381,14 +382,14 @@ export default function StaticFindings() {
                   )}
                 </div>
 
-                <div>
-                  <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
                     Related Runtime Signals
                   </div>
                   {selectedFinding.relatedRuntimeSignals && selectedFinding.relatedRuntimeSignals.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                       {selectedFinding.relatedRuntimeSignals.map((rs, idx) => (
-                        <span key={idx} style={{ fontSize: '11px', color: 'var(--accent-sand)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span key={idx} style={{ fontSize: '11px', color: 'var(--accent-sand)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                           <span className="status-dot warning"></span>
                           <span>{rs}</span>
                         </span>

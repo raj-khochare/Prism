@@ -16,7 +16,7 @@ import {
   X,
   ArrowUpDown,
   ExternalLink
-} from 'lucide-react';
+} from '../components/common/Icons.jsx';
 
 export default function ContractRegistry() {
   const { navigate } = useRouter();
@@ -141,7 +141,7 @@ export default function ContractRegistry() {
             onClick={() => setIsModalOpen(true)}
             id="btn-register-contract"
           >
-            <Plus size={13} />
+            <Plus size={14} />
             <span>Register Contract</span>
           </button>
         </div>
@@ -152,7 +152,7 @@ export default function ContractRegistry() {
       {/* Filter Bar */}
       <div className="filter-bar">
         <div className="search-input-wrapper">
-          <Search size={13} />
+          <Search size={14} />
           <input
             type="text"
             placeholder="Search by contract name, address, or detection..."
@@ -167,8 +167,8 @@ export default function ContractRegistry() {
         </div>
 
         <div className="filter-group">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Network:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Network:</span>
             <select
               className="form-select"
               value={chainFilter}
@@ -181,8 +181,8 @@ export default function ContractRegistry() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Risk:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Risk:</span>
             <select
               className="form-select"
               value={riskFilter}
@@ -196,8 +196,8 @@ export default function ContractRegistry() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Status:</span>
             <select
               className="form-select"
               value={statusFilter}
@@ -212,32 +212,32 @@ export default function ContractRegistry() {
         </div>
       </div>
 
-      {/* Scalable Contract Table (Never horizontally overflowing entire viewport) */}
+      {/* Scalable Contract Table (No horizontal overflow on the page viewport) */}
       <div className="table-container">
         <table className="prism-table" aria-label="Monitored Contract Registry Table">
           <thead>
             <tr>
               <th onClick={() => handleSort('name')} style={{ cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <span>Contract</span>
-                  <ArrowUpDown size={11} />
+                  <ArrowUpDown size={11} color="var(--accent-teal)" />
                 </div>
               </th>
               <th>Address</th>
               <th>Network</th>
               <th onClick={() => handleSort('riskScore')} style={{ cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <span>Risk Score</span>
-                  <ArrowUpDown size={11} />
+                  <ArrowUpDown size={11} color="var(--accent-teal)" />
                 </div>
               </th>
               <th>Severity</th>
               <th>Status</th>
               <th>Last Scan</th>
               <th onClick={() => handleSort('tx24h')} style={{ cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <span>24h Transactions</span>
-                  <ArrowUpDown size={11} />
+                  <ArrowUpDown size={11} color="var(--accent-teal)" />
                 </div>
               </th>
             </tr>
@@ -267,10 +267,10 @@ export default function ContractRegistry() {
                   <tr key={contract.id} id={`contract-row-${contract.id}`}>
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <strong style={{ color: 'var(--text-primary)', fontSize: '12px' }}>
+                        <strong style={{ color: 'var(--text-primary)', fontSize: '13px' }}>
                           {contract.name}
                         </strong>
-                        <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>
                           {contract.latestDetection}
                         </span>
                       </div>
@@ -297,8 +297,8 @@ export default function ContractRegistry() {
                       <span
                         className="mono"
                         style={{
-                          fontWeight: 700,
-                          fontSize: '13px',
+                          fontWeight: 800,
+                          fontSize: '14px',
                           color: riskLevel.color
                         }}
                       >
@@ -309,7 +309,7 @@ export default function ContractRegistry() {
                       <SeverityBadge severity={contract.severity} />
                     </td>
                     <td>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600 }}>
                         <span className={`status-dot ${contract.status === 'Active' ? 'healthy' : contract.status === 'Warning' ? 'warning' : 'danger'}`}></span>
                         <span>{contract.status}</span>
                       </span>
@@ -317,7 +317,7 @@ export default function ContractRegistry() {
                     <td className="mono" style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>
                       {formatTimestamp(contract.lastScan)}
                     </td>
-                    <td className="mono" style={{ color: 'var(--text-primary)' }}>
+                    <td className="mono" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
                       {formatNumber(contract.tx24h)}
                     </td>
                   </tr>
@@ -346,7 +346,7 @@ export default function ContractRegistry() {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             zIndex: 60,
             display: 'flex',
             alignItems: 'center',
@@ -357,7 +357,7 @@ export default function ContractRegistry() {
         >
           <div
             className="prism-panel"
-            style={{ width: '100%', maxWidth: '480px', marginBottom: 0 }}
+            style={{ width: '100%', maxWidth: '500px', marginBottom: 0, border: '2px solid var(--border-strong)', boxShadow: 'var(--shadow-hard-xl)' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="prism-panel-header">
@@ -376,7 +376,7 @@ export default function ContractRegistry() {
 
             <div className="prism-panel-body">
               {registerError && (
-                <div style={{ marginBottom: '12px', padding: '8px 12px', backgroundColor: 'var(--accent-red-bg)', border: '1px solid var(--accent-red-border)', borderRadius: 'var(--radius-xs)', fontSize: '11px', color: 'var(--accent-red)' }}>
+                <div style={{ marginBottom: '14px', padding: '10px 14px', backgroundColor: 'var(--accent-red-bg)', border: '1.5px solid var(--accent-red)', borderRadius: 'var(--radius-xs)', fontSize: '11px', color: 'var(--accent-red)', fontWeight: 600 }}>
                   {registerError}
                 </div>
               )}
@@ -421,7 +421,7 @@ export default function ContractRegistry() {
                   </select>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '18px' }}>
                   <button
                     type="button"
                     className="btn btn-secondary"

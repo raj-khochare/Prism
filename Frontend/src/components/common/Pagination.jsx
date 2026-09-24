@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from './Icons.jsx';
 
 export default function Pagination({
   page = 1,
@@ -15,18 +15,18 @@ export default function Pagination({
 
   return (
     <div className="pagination-bar">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
         <span>
-          Showing <strong style={{ color: 'var(--text-primary)' }}>{startItem}–{endItem}</strong> of{' '}
-          <strong style={{ color: 'var(--text-primary)' }}>{total}</strong> records
+          Showing <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{startItem}–{endItem}</strong> of{' '}
+          <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{total}</strong> records
         </span>
 
         {onPageSizeChange && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Per page:</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase' }}>Per page:</span>
             <select
               className="form-select"
-              style={{ padding: '2px 6px', fontSize: '11px', width: 'auto' }}
+              style={{ padding: '2px 8px', fontSize: '11px', width: 'auto', height: '26px' }}
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               aria-label="Records per page"
@@ -42,7 +42,7 @@ export default function Pagination({
       </div>
 
       <div className="pagination-controls">
-        <span style={{ marginRight: '6px', color: 'var(--text-muted)' }}>
+        <span style={{ marginRight: '6px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
           Page {page} of {totalPages}
         </span>
         <button

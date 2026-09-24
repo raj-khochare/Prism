@@ -13,7 +13,7 @@ import {
   FileText,
   CheckCircle2,
   ChevronRight
-} from 'lucide-react';
+} from '../components/common/Icons.jsx';
 
 export default function ScanContract() {
   const [sourceCode, setSourceCode] = useState(SAMPLE_SOL_VULNERABLE);
@@ -116,16 +116,16 @@ export default function ScanContract() {
         />
       )}
 
-      {/* Input Controls Panel */}
+      {/* 1. INPUT STAGE: Source Submission Panel */}
       <div className="prism-panel" id="scan-input-panel">
         <div className="prism-panel-header">
           <div className="panel-title-group">
             <FileCode size={14} color="var(--accent-teal)" />
-            <span>Solidity Source Submission</span>
+            <span>1. Solidity Source Submission</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Load Sample:</span>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Load Sample:</span>
             <button
               type="button"
               className="btn btn-secondary btn-sm"
@@ -144,7 +144,7 @@ export default function ScanContract() {
         </div>
 
         <div className="prism-panel-body">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="contract-filename">Contract Filename</label>
               <input
@@ -172,7 +172,7 @@ export default function ScanContract() {
             <div className="form-group" style={{ marginBottom: 0, justifyContent: 'flex-end' }}>
               <label className="form-label">Upload .sol File</label>
               <label className="btn btn-secondary" style={{ cursor: 'pointer', textAlign: 'center' }}>
-                <Upload size={13} />
+                <Upload size={13} color="var(--text-secondary)" />
                 <span>Choose .sol File</span>
                 <input
                   type="file"
@@ -210,9 +210,9 @@ export default function ScanContract() {
           </div>
 
           {/* Primary Action Button */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', flexWrap: 'wrap', gap: '10px' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-              Evaluated strictly locally. No source code transmitted to external servers.
+              Evaluated strictly locally in browser sandbox. No source code transmitted externally.
             </span>
             <button
               type="button"
@@ -220,15 +220,16 @@ export default function ScanContract() {
               onClick={handleRunScan}
               disabled={isScanning || !sourceCode.trim()}
               id="btn-run-static-analysis"
+              style={{ padding: '8px 18px', fontSize: '13px' }}
             >
               <Play size={13} />
-              <span>{isScanning ? 'Analyzing AST...' : 'Run Static Analysis'}</span>
+              <span>{isScanning ? 'Analyzing AST Patterns...' : 'Run Static Analysis'}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Static Analysis Results Section */}
+      {/* 2. RESULTS STAGE: Analysis Findings & Source Evidence */}
       {scanResult && (
         <div id="scan-results-section">
           {/* Findings Summary Ribbon */}
@@ -238,52 +239,52 @@ export default function ScanContract() {
                 <CheckCircle2 size={14} color="var(--accent-teal)" />
                 <span>Analysis Complete: {scanResult.fileName}</span>
               </div>
-              <span className="mono" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+              <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                 {scanResult.scanTimestamp}
               </span>
             </div>
 
-            <div className="prism-panel-body" style={{ padding: '14px 18px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px', alignItems: 'center' }}>
+            <div className="prism-panel-body" style={{ padding: '16px 20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px', alignItems: 'center' }}>
                 <div>
                   <span className="meta-label">Scan Status</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                     <span className="status-dot healthy"></span>
-                    <strong style={{ fontSize: '13px', color: 'var(--text-primary)' }}>Analyzed</strong>
+                    <strong style={{ fontSize: '13px', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Analyzed</strong>
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">Critical</span>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-red)' }}>
+                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-red)' }}>
                     {scanResult.stats?.critical || 0}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">High</span>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#D66B60' }}>
+                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-orange-red)' }}>
                     {scanResult.stats?.high || 0}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">Medium</span>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-sand)' }}>
+                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-yellow)' }}>
                     {scanResult.stats?.medium || 0}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">Low</span>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-teal)' }}>
+                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-green)' }}>
                     {scanResult.stats?.low || 0}
                   </div>
                 </div>
 
                 <div>
                   <span className="meta-label">Risk Contribution</span>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: scanResult.stats?.riskScore > 50 ? 'var(--accent-red)' : 'var(--accent-teal)' }}>
+                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: scanResult.stats?.riskScore > 50 ? 'var(--accent-red)' : 'var(--accent-green)' }}>
                     +{scanResult.stats?.riskScore || 0} pts
                   </div>
                 </div>
@@ -300,7 +301,7 @@ export default function ScanContract() {
                   <AlertTriangle size={13} color="var(--accent-sand)" />
                   <span>Detected Vulnerabilities ({scanResult.findings?.length || 0})</span>
                 </div>
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Select to highlight</span>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Select to highlight code</span>
               </div>
 
               <div className="prism-panel-body" style={{ padding: 0 }}>
@@ -313,26 +314,26 @@ export default function ScanContract() {
                           key={f.id}
                           onClick={() => setSelectedFinding(f)}
                           style={{
-                            padding: '12px 14px',
-                            borderBottom: '1px solid var(--border-subtle)',
+                            padding: '14px 16px',
+                            borderBottom: '1px solid var(--border-default)',
                             backgroundColor: isSelected ? 'var(--bg-hover)' : 'transparent',
-                            borderLeft: isSelected ? '3px solid var(--accent-red)' : '3px solid transparent',
+                            borderLeft: isSelected ? '4px solid var(--accent-red)' : '4px solid transparent',
                             cursor: 'pointer',
                             transition: 'background-color var(--transition-fast)'
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                             <SeverityBadge severity={f.severity} />
-                            <span className="mono" style={{ fontSize: '10px', color: 'var(--accent-teal)' }}>
+                            <span className="mono" style={{ fontSize: '10px', color: 'var(--accent-teal)', fontWeight: 700 }}>
                               {f.detector}
                             </span>
                           </div>
 
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '3px' }}>
+                          <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
                             {f.title}
                           </div>
 
-                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.35, marginBottom: '6px' }}>
+                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '8px' }}>
                             {f.description}
                           </div>
 
@@ -340,7 +341,7 @@ export default function ScanContract() {
                             <span className="mono">
                               Lines {f.lineStart}{f.lineEnd && f.lineEnd !== f.lineStart ? `–${f.lineEnd}` : ''}
                             </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: 'var(--accent-sand)' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: 'var(--accent-sand)', fontWeight: 600 }}>
                               <span>Jump to line</span>
                               <ChevronRight size={11} />
                             </span>
@@ -350,9 +351,9 @@ export default function ScanContract() {
                     })}
                   </div>
                 ) : (
-                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--accent-teal)', fontSize: '12px' }}>
-                    <ShieldCheck size={24} style={{ marginBottom: '6px' }} />
-                    <div>No vulnerability patterns matched in analyzed source.</div>
+                  <div style={{ padding: '30px', textAlign: 'center', color: 'var(--accent-teal)', fontSize: '12px' }}>
+                    <ShieldCheck size={28} color="var(--accent-teal)" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontWeight: 600 }}>No vulnerability patterns matched in analyzed source.</div>
                   </div>
                 )}
               </div>

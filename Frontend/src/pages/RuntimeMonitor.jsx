@@ -15,7 +15,7 @@ import {
   AlertTriangle,
   Server,
   Layers
-} from 'lucide-react';
+} from '../components/common/Icons.jsx';
 import { useRouter } from '../router.jsx';
 
 export default function RuntimeMonitor() {
@@ -95,16 +95,16 @@ export default function RuntimeMonitor() {
           </p>
         </div>
         <div className="page-actions">
-          <span className="mono" style={{ fontSize: '11px', color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span className="mono" style={{ fontSize: '11px', color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 10px', backgroundColor: 'var(--bg-panel)', border: '1.5px solid var(--border-default)', boxShadow: '2px 2px 0px #000' }}>
             <span className="status-dot healthy"></span>
-            Streaming Cancun Traces
+            STREAMING EVM TRACES
           </span>
         </div>
       </div>
 
-      {/* 1. CONCISE SUMMARY RIBBON (Section 11 Requirement) */}
+      {/* 1. CONCISE SUMMARY RIBBON */}
       <div className="prism-panel" id="runtime-summary-ribbon">
-        <div className="prism-panel-body" style={{ padding: '12px 18px' }}>
+        <div className="prism-panel-body" style={{ padding: '14px 20px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', alignItems: 'center' }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="select-target-contract">Target Contract</label>
@@ -126,7 +126,7 @@ export default function RuntimeMonitor() {
 
             <div>
               <span className="meta-label">Network</span>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
                 {network}
               </div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
@@ -136,10 +136,10 @@ export default function RuntimeMonitor() {
 
             <div>
               <span className="meta-label">Latest Block</span>
-              <div className="mono" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
+              <div className="mono" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '2px' }}>
                 #{formatNumber(currentBlock)}
               </div>
-              <div style={{ fontSize: '10px', color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ fontSize: '10px', color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
                 <span className="status-dot healthy"></span>
                 Head Synchronized
               </div>
@@ -147,7 +147,7 @@ export default function RuntimeMonitor() {
 
             <div>
               <span className="meta-label">Last Detection</span>
-              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--accent-sand)', marginTop: '2px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-sand)', marginTop: '2px' }}>
                 {telemetry?.latestDetection || 'Nominal execution baseline'}
               </div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
@@ -159,10 +159,10 @@ export default function RuntimeMonitor() {
       </div>
 
       {/* 2. MEANINGFUL ANALYTICAL CHARTS (Answering Specific Questions) */}
-      <div className="grid-2" style={{ marginBottom: '16px' }} id="runtime-charts-grid">
+      <div className="grid-2" style={{ marginBottom: '20px' }} id="runtime-charts-grid">
         {/* Chart 1: Transaction Velocity */}
         <div className="prism-panel" style={{ marginBottom: 0 }}>
-          <div className="prism-panel-body" style={{ padding: '14px 16px' }}>
+          <div className="prism-panel-body" style={{ padding: '16px 18px' }}>
             <RestrainedChart
               data={series}
               dataKey="velocity"
@@ -170,7 +170,7 @@ export default function RuntimeMonitor() {
               title="Transaction Velocity"
               question="Has transaction activity changed significantly?"
               unit="tx/min"
-              color="var(--accent-teal)"
+              color="var(--accent-teal-vibrant)"
               warningThreshold={80}
               criticalThreshold={120}
               height={150}
@@ -180,7 +180,7 @@ export default function RuntimeMonitor() {
 
         {/* Chart 2: Oracle Price Deviation */}
         <div className="prism-panel" style={{ marginBottom: 0 }}>
-          <div className="prism-panel-body" style={{ padding: '14px 16px' }}>
+          <div className="prism-panel-body" style={{ padding: '16px 18px' }}>
             <RestrainedChart
               data={series}
               dataKey="deviation"
@@ -188,7 +188,7 @@ export default function RuntimeMonitor() {
               title="Oracle Price Deviation"
               question="Has oracle behavior deviated from reference TWAP?"
               unit="%"
-              color="var(--accent-sand)"
+              color="var(--accent-amber)"
               warningThreshold={1.5}
               criticalThreshold={2.0}
               height={150}
@@ -198,7 +198,7 @@ export default function RuntimeMonitor() {
 
         {/* Chart 3: Gas Consumption Behavior */}
         <div className="prism-panel" style={{ marginBottom: 0 }}>
-          <div className="prism-panel-body" style={{ padding: '14px 16px' }}>
+          <div className="prism-panel-body" style={{ padding: '16px 18px' }}>
             <RestrainedChart
               data={series}
               dataKey="gas"
@@ -206,7 +206,7 @@ export default function RuntimeMonitor() {
               title="Gas Consumption"
               question="Is execution consuming abnormal computational steps?"
               unit="k gas"
-              color="var(--accent-teal)"
+              color="var(--accent-green)"
               warningThreshold={80}
               criticalThreshold={130}
               height={150}
@@ -216,7 +216,7 @@ export default function RuntimeMonitor() {
 
         {/* Chart 4: Liquidity Movement */}
         <div className="prism-panel" style={{ marginBottom: 0 }}>
-          <div className="prism-panel-body" style={{ padding: '14px 16px' }}>
+          <div className="prism-panel-body" style={{ padding: '16px 18px' }}>
             <RestrainedChart
               data={series}
               dataKey="flow"
@@ -245,9 +245,9 @@ export default function RuntimeMonitor() {
           </span>
         </div>
 
-        <div className="prism-panel-body" style={{ padding: '12px 16px 0 16px' }}>
+        <div className="prism-panel-body" style={{ padding: '14px 18px 0 18px' }}>
           {/* Stream Filter Bar */}
-          <div className="filter-bar" style={{ marginBottom: '12px' }}>
+          <div className="filter-bar" style={{ marginBottom: '14px' }}>
             <div className="search-input-wrapper">
               <Search size={13} />
               <input
@@ -263,8 +263,8 @@ export default function RuntimeMonitor() {
             </div>
 
             <div className="filter-group">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Severity:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Severity:</span>
                 <select
                   className="form-select"
                   value={severityFilter}
@@ -279,8 +279,8 @@ export default function RuntimeMonitor() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Type:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Type:</span>
                 <select
                   className="form-select"
                   value={eventTypeFilter}

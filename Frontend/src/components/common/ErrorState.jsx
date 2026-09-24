@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle } from './Icons.jsx';
 
 export default function ErrorState({
   title = 'System Telemetry Warning',
@@ -11,19 +11,22 @@ export default function ErrorState({
       style={{
         display: 'flex',
         alignItems: 'flex-start',
-        gap: '12px',
-        padding: '14px 16px',
+        gap: '14px',
+        padding: '16px 18px',
         backgroundColor: 'var(--accent-red-bg)',
-        border: '1px solid var(--accent-red-border)',
-        borderRadius: 'var(--radius-md)',
-        marginBottom: '16px'
+        border: '2px solid var(--accent-red)',
+        boxShadow: 'var(--shadow-hard-md)',
+        borderRadius: 'var(--radius-xs)',
+        marginBottom: '20px'
       }}
       role="alert"
     >
-      <AlertCircle size={16} color="var(--accent-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
+      <AlertCircle size={18} color="var(--accent-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent-red)' }}>{title}</div>
-        <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '3px', lineHeight: 1.4 }}>
+        <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--accent-red)', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+          {title}
+        </div>
+        <div style={{ fontSize: '12px', color: 'var(--text-primary)', marginTop: '4px', lineHeight: 1.45 }}>
           {message || 'The requested operation could not complete. Verify parameters and retry.'}
         </div>
         {onRetry && (
@@ -31,7 +34,7 @@ export default function ErrorState({
             type="button"
             className="btn btn-secondary btn-sm"
             onClick={onRetry}
-            style={{ marginTop: '10px' }}
+            style={{ marginTop: '12px' }}
           >
             Retry Request
           </button>

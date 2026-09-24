@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SeverityBadge from './SeverityBadge.jsx';
 import { formatTxHash, formatNumber } from '../../utils/formatters.js';
-import { ChevronDown, ChevronRight, Terminal, Activity } from 'lucide-react';
+import { ChevronDown, ChevronRight, Terminal } from './Icons.jsx';
 
 export default function EventStream({
   events = [],
@@ -15,7 +15,7 @@ export default function EventStream({
 
   if (!displayEvents || displayEvents.length === 0) {
     return (
-      <div style={{ padding: '20px', color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center' }}>
+      <div style={{ padding: '24px', color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center' }}>
         {emptyMessage}
       </div>
     );
@@ -30,7 +30,7 @@ export default function EventStream({
       <table className="prism-table" aria-label="Runtime Event Stream">
         <thead>
           <tr>
-            <th style={{ width: '28px' }}></th>
+            <th style={{ width: '32px', textAlign: 'center' }}></th>
             <th>Timestamp</th>
             {showContract && <th>Target Contract</th>}
             <th>Severity</th>
@@ -50,8 +50,8 @@ export default function EventStream({
                   style={{ cursor: 'pointer' }}
                   className={isExpanded ? 'row-selected' : ''}
                 >
-                  <td style={{ color: 'var(--text-muted)', textAlign: 'center', paddingRight: 0 }}>
-                    {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                  <td style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '10px 4px' }}>
+                    {isExpanded ? <ChevronDown size={13} color="var(--accent-teal)" /> : <ChevronRight size={13} />}
                   </td>
                   <td className="mono" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                     {evt.timestamp}
@@ -64,7 +64,7 @@ export default function EventStream({
                   <td>
                     <SeverityBadge severity={evt.severity} />
                   </td>
-                  <td className="mono" style={{ fontSize: '11px', color: 'var(--accent-teal)' }}>
+                  <td className="mono" style={{ fontSize: '11px', color: 'var(--accent-teal)', fontWeight: 600 }}>
                     {evt.eventType || 'EXECUTION_TRACE'}
                   </td>
                   <td className="mono">
@@ -73,7 +73,7 @@ export default function EventStream({
                   <td className="mono" style={{ color: 'var(--text-secondary)' }}>
                     {formatTxHash(evt.txHash)}
                   </td>
-                  <td style={{ maxWidth: '320px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)' }}>
+                  <td style={{ maxWidth: '340px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)' }}>
                     {evt.description}
                   </td>
                 </tr>
@@ -82,37 +82,38 @@ export default function EventStream({
                   <tr>
                     <td colSpan={showContract ? 8 : 7} style={{ padding: 0 }}>
                       <div className="expanded-row-details">
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '10px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '12px' }}>
                           <div>
                             <span className="meta-label">Full Transaction Hash</span>
-                            <div className="mono" style={{ fontSize: '11px', color: 'var(--text-primary)', wordBreak: 'break-all' }}>
+                            <div className="mono" style={{ fontSize: '11px', color: 'var(--accent-teal)', wordBreak: 'break-all', marginTop: '2px' }}>
                               {evt.txHash}
                             </div>
                           </div>
                           <div>
                             <span className="meta-label">Gas Consumed</span>
-                            <div className="mono" style={{ fontSize: '11px', color: 'var(--text-primary)' }}>
-                              {evt.gasUsed || '—'} gas
+                            <div className="mono" style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>
+                              {evt.gasUsed ? `${evt.gasUsed} gas` : '—'}
                             </div>
                           </div>
                         </div>
 
                         {evt.traceSummary && (
                           <div>
-                            <span className="meta-label" style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                              <Terminal size={11} />
+                            <span className="meta-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                              <Terminal size={11} color="var(--accent-teal)" />
                               <span>Execution Call Trace</span>
                             </span>
                             <div
                               className="mono"
                               style={{
-                                padding: '8px 12px',
+                                padding: '10px 14px',
                                 backgroundColor: '#07090A',
-                                border: '1px solid var(--border-subtle)',
+                                border: '1.5px solid var(--border-default)',
                                 borderRadius: 'var(--radius-xs)',
                                 fontSize: '11px',
                                 color: 'var(--text-primary)',
-                                overflowX: 'auto'
+                                overflowX: 'auto',
+                                lineHeight: 1.5
                               }}
                             >
                               {evt.traceSummary}

@@ -15,7 +15,7 @@ import {
   FileCode,
   Activity,
   Binary
-} from 'lucide-react';
+} from '../components/common/Icons.jsx';
 
 export default function RiskAssessment() {
   const { navigate } = useRouter();
@@ -76,10 +76,10 @@ export default function RiskAssessment() {
         </div>
         <div className="page-actions">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Target:</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Target:</span>
             <select
               className="form-select"
-              style={{ width: 'auto', padding: '3px 8px', fontSize: '11px' }}
+              style={{ width: 'auto', padding: '5px 10px', fontSize: '11px' }}
               value={selectedContract}
               onChange={(e) => setSelectedContract(e.target.value)}
               id="select-risk-target"
@@ -94,24 +94,24 @@ export default function RiskAssessment() {
         </div>
       </div>
 
-      {/* 1. PRIMARY SECTION: CURRENT RISK (Section 12 Requirement) */}
+      {/* 1. PRIMARY SECTION: CURRENT RISK (Visually Dominant) */}
       <div
         className="prism-panel"
         id="current-risk-summary"
-        style={{ borderLeft: '4px solid var(--accent-red)', marginBottom: '20px' }}
+        style={{ border: '3px solid var(--accent-red)', boxShadow: 'var(--shadow-hard-xl)', marginBottom: '24px' }}
       >
-        <div className="prism-panel-body" style={{ padding: '20px 24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div className="prism-panel-body" style={{ padding: '22px 26px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
             <div>
-              <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent-sand)', marginBottom: '6px' }}>
                 Current Risk Assessment
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
-                <span style={{ fontSize: '24px', fontWeight: 700, color: 'var(--accent-red)', letterSpacing: '-0.01em' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '26px', fontWeight: 900, color: 'var(--accent-red)', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                   {riskData?.status || 'ELEVATED RISK'}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-red)', lineHeight: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', backgroundColor: 'var(--bg-elevated)', padding: '4px 10px', border: '1.5px solid var(--border-default)', boxShadow: '2px 2px 0px #000' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '28px', fontWeight: 800, color: 'var(--accent-red)', lineHeight: 1 }}>
                     {score}
                   </span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -119,22 +119,22 @@ export default function RiskAssessment() {
                   </span>
                 </div>
               </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px' }}>
                 Target Contract: <strong style={{ color: 'var(--text-primary)' }}>{riskData?.contract}</strong> · Evaluated at {riskData?.evaluatedAt || 'recent block'}
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ padding: '8px 14px', backgroundColor: 'var(--bg-panel)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <div style={{ padding: '10px 16px', backgroundColor: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)', border: '2px solid var(--border-default)', boxShadow: '2px 2px 0px #000', textAlign: 'center' }}>
                 <div className="meta-label">Static Contribution</div>
-                <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: '#D66B60', marginTop: '2px' }}>
+                <div className="mono" style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-red)', marginTop: '4px' }}>
                   +38 pts
                 </div>
               </div>
 
-              <div style={{ padding: '8px 14px', backgroundColor: 'var(--bg-panel)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+              <div style={{ padding: '10px 16px', backgroundColor: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)', border: '2px solid var(--border-default)', boxShadow: '2px 2px 0px #000', textAlign: 'center' }}>
                 <div className="meta-label">Runtime Contribution</div>
-                <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent-sand)', marginTop: '2px' }}>
+                <div className="mono" style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-sand)', marginTop: '4px' }}>
                   +34 pts
                 </div>
               </div>
@@ -143,16 +143,16 @@ export default function RiskAssessment() {
         </div>
       </div>
 
-      {/* 2. WHY?: Static Signals vs Runtime Signals (Section 12 Requirement) */}
-      <div className="grid-2" style={{ marginBottom: '20px' }}>
+      {/* 2. WHY?: Static Signals vs Runtime Signals */}
+      <div className="grid-2" style={{ marginBottom: '24px' }}>
         {/* Static Signals */}
         <div className="prism-panel" style={{ marginBottom: 0 }}>
           <div className="prism-panel-header">
             <div className="panel-title-group">
-              <FileCode size={14} color="#D66B60" />
-              <span>Static Signals</span>
+              <FileCode size={14} color="var(--accent-red)" />
+              <span>Static Signals Decomposition</span>
             </div>
-            <span className="mono" style={{ fontSize: '11px', color: '#D66B60', fontWeight: 600 }}>
+            <span className="mono" style={{ fontSize: '11px', color: 'var(--accent-red)', fontWeight: 800 }}>
               +38 pts
             </span>
           </div>
@@ -162,32 +162,32 @@ export default function RiskAssessment() {
               <div
                 key={idx}
                 style={{
-                  padding: '12px 16px',
-                  borderBottom: idx === riskData.staticSignals.length - 1 ? 'none' : '1px solid var(--border-subtle)'
+                  padding: '14px 18px',
+                  borderBottom: idx === riskData.staticSignals.length - 1 ? 'none' : '1px solid var(--border-default)'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {sig.factor}
                   </span>
                   <span
                     className="mono"
                     style={{
                       fontSize: '12px',
-                      fontWeight: 700,
-                      color: sig.contribution.startsWith('-') ? 'var(--accent-teal)' : '#D66B60'
+                      fontWeight: 800,
+                      color: sig.contribution.startsWith('-') ? 'var(--accent-teal)' : 'var(--accent-red)'
                     }}
                   >
                     {sig.contribution}
                   </span>
                 </div>
 
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.45, marginBottom: '6px' }}>
                   {sig.explanation}
                 </div>
 
                 <div className="mono" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                  Source: {sig.source}
+                  Source: <strong style={{ color: 'var(--text-secondary)' }}>{sig.source}</strong>
                 </div>
               </div>
             ))}
@@ -198,10 +198,10 @@ export default function RiskAssessment() {
         <div className="prism-panel" style={{ marginBottom: 0 }}>
           <div className="prism-panel-header">
             <div className="panel-title-group">
-              <Activity size={14} color="var(--accent-sand)" />
-              <span>Runtime Signals</span>
+              <Activity size={14} color="var(--accent-amber)" />
+              <span>Runtime Signals Decomposition</span>
             </div>
-            <span className="mono" style={{ fontSize: '11px', color: 'var(--accent-sand)', fontWeight: 600 }}>
+            <span className="mono" style={{ fontSize: '11px', color: 'var(--accent-amber)', fontWeight: 800 }}>
               +34 pts
             </span>
           </div>
@@ -211,32 +211,32 @@ export default function RiskAssessment() {
               <div
                 key={idx}
                 style={{
-                  padding: '12px 16px',
-                  borderBottom: idx === riskData.runtimeSignals.length - 1 ? 'none' : '1px solid var(--border-subtle)'
+                  padding: '14px 18px',
+                  borderBottom: idx === riskData.runtimeSignals.length - 1 ? 'none' : '1px solid var(--border-default)'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {sig.factor}
                   </span>
                   <span
                     className="mono"
                     style={{
                       fontSize: '12px',
-                      fontWeight: 700,
-                      color: 'var(--accent-sand)'
+                      fontWeight: 800,
+                      color: 'var(--accent-amber)'
                     }}
                   >
                     {sig.contribution}
                   </span>
                 </div>
 
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.45, marginBottom: '6px' }}>
                   {sig.explanation}
                 </div>
 
                 <div className="mono" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                  Source: {sig.source}
+                  Source: <strong style={{ color: 'var(--text-secondary)' }}>{sig.source}</strong>
                 </div>
               </div>
             ))}
@@ -244,46 +244,47 @@ export default function RiskAssessment() {
         </div>
       </div>
 
-      {/* 3. CONCLUSION: Human-Readable Analytical Conclusion (Section 12 Requirement) */}
-      <div className="prism-panel" id="risk-analytical-conclusion" style={{ marginBottom: '20px' }}>
+      {/* 3. CONCLUSION: Human-Readable Analytical Conclusion */}
+      <div className="prism-panel" id="risk-analytical-conclusion" style={{ marginBottom: '24px' }}>
         <div className="prism-panel-header">
           <div className="panel-title-group">
             <AlertTriangle size={14} color="var(--accent-sand)" />
             <span>Conclusion: Primary Concern</span>
           </div>
-          <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Analytical Synthesis</span>
+          <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Analytical Synthesis</span>
         </div>
 
-        <div className="prism-panel-body" style={{ padding: '16px 20px' }}>
-          <p style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5, marginBottom: '16px' }}>
+        <div className="prism-panel-body" style={{ padding: '18px 22px' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.55, marginBottom: '18px' }}>
             {riskData?.summaryConclusion?.primaryConcern ||
               'The current risk level is primarily driven by an existing contract vulnerability combined with abnormal oracle behavior observed during runtime.'}
           </p>
 
-          <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px', letterSpacing: '0.06em' }}>
             What to Investigate Next
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
             {riskData?.summaryConclusion?.whatToInvestigate?.map((item, idx) => (
               <div
                 key={idx}
                 style={{
-                  padding: '12px 14px',
-                  backgroundColor: 'var(--bg-panel)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-sm)',
+                  padding: '14px 16px',
+                  backgroundColor: 'var(--bg-elevated)',
+                  border: '1.5px solid var(--border-default)',
+                  boxShadow: '2px 2px 0px #000',
+                  borderRadius: 'var(--radius-xs)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '8px'
+                  gap: '10px'
                 }}
               >
                 <div>
-                  <strong style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
+                  <strong style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
                     {item.target}
                   </strong>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px', lineHeight: 1.35 }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>
                     {item.description}
                   </div>
                 </div>
@@ -294,7 +295,7 @@ export default function RiskAssessment() {
                   onClick={() => navigate(item.link)}
                   style={{ alignSelf: 'flex-start' }}
                 >
-                  <span>Investigate</span>
+                  <span>Investigate Evidence</span>
                   <ArrowRight size={11} />
                 </button>
               </div>
@@ -303,19 +304,19 @@ export default function RiskAssessment() {
         </div>
       </div>
 
-      {/* 4. TECHNICAL MODEL METADATA (Shown strictly as statistical model metadata, not buzzwords) */}
+      {/* 4. TECHNICAL MODEL METADATA (Statistical model metadata, strictly technical) */}
       <div className="prism-panel" id="model-metadata-section" style={{ marginBottom: 0 }}>
         <div className="prism-panel-header">
           <div className="panel-title-group">
-            <Cpu size={13} color="var(--text-muted)" />
-            <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Classifier &amp; Anomaly Model Metadata</span>
+            <Cpu size={14} color="var(--text-muted)" />
+            <span>Statistical Inference Models &amp; Detectors</span>
           </div>
           <span className="mono" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-            Statistical Inference Parameters
+            EVALUATION PARAMETERS
           </span>
         </div>
 
-        <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
+        <div className="table-container" style={{ border: 'none', borderRadius: 0, boxShadow: 'none' }}>
           <table className="prism-table">
             <thead>
               <tr>
@@ -333,11 +334,11 @@ export default function RiskAssessment() {
                     <strong style={{ color: 'var(--text-primary)', fontSize: '12px' }}>{m.modelName}</strong>
                   </td>
                   <td className="mono" style={{ color: 'var(--text-secondary)' }}>{m.version}</td>
-                  <td className="mono" style={{ color: 'var(--accent-sand)' }}>{m.score}</td>
+                  <td className="mono" style={{ color: 'var(--accent-sand)', fontWeight: 700 }}>{m.score}</td>
                   <td className="mono" style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
                     {Array.isArray(m.features) ? m.features.join(', ') : m.features}
                   </td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: '11px', maxWidth: '300px' }}>
+                  <td style={{ color: 'var(--text-secondary)', fontSize: '11px', maxWidth: '320px' }}>
                     {m.description}
                   </td>
                 </tr>

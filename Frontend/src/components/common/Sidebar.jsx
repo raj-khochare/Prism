@@ -12,7 +12,7 @@ import {
   X,
   Shield,
   Server
-} from 'lucide-react';
+} from './Icons.jsx';
 import { formatNumber } from '../../utils/formatters.js';
 import { DEMO_SYSTEM_STATUS } from '../../data/mockSecurityData.js';
 
@@ -42,7 +42,7 @@ export default function Sidebar() {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
             zIndex: 45
           }}
           onClick={() => setMobileMenuOpen(false)}
@@ -53,18 +53,18 @@ export default function Sidebar() {
       <aside className={`app-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-brand" style={{ cursor: 'pointer' }} onClick={() => handleNavClick('/overview')}>
           <div className="brand-glyph">
-            <Shield size={13} />
+            <Shield size={16} />
           </div>
           <div className="brand-text">
             <span className="brand-name">PRISM</span>
-            <span className="brand-sub">SECURITY MONITOR</span>
+            <span className="brand-sub">SECOPS CONSOLE</span>
           </div>
 
           {mobileMenuOpen && (
             <button
               type="button"
               className="btn btn-ghost btn-sm"
-              style={{ marginLeft: 'auto', padding: '2px' }}
+              style={{ marginLeft: 'auto', padding: '4px' }}
               onClick={(e) => {
                 e.stopPropagation();
                 setMobileMenuOpen(false);
@@ -95,11 +95,11 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* Infrastructure Health Section (Shifted to sidebar at the end above node status) */}
+        {/* Infrastructure Health Section (Subordinate, Technical) */}
         <div className="sidebar-infra-health">
           <div className="sidebar-section-title">
-            <Server size={11} color="#7DA3A1" />
-            <span>Infrastructure Health</span>
+            <Server size={11} color="var(--accent-teal)" />
+            <span>Infra Health</span>
           </div>
           <div className="infra-health-list">
             {DEMO_SYSTEM_STATUS.map((sys, idx) => (
@@ -117,15 +117,15 @@ export default function Sidebar() {
         {/* Node Status & Head */}
         <div className="sidebar-footer">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)' }}>
-            <span>NODE STATUS</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#7DA3A1' }}>
+            <span style={{ fontWeight: 700, letterSpacing: '0.04em' }}>NODE STATUS</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--accent-teal)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
               <span className="status-dot healthy"></span>
-              Synchronized
+              SYNCED
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            <span>HEAD</span>
-            <span style={{ color: '#E7E5E0' }}>#{formatNumber(currentBlock)}</span>
+            <span style={{ fontWeight: 700, letterSpacing: '0.04em' }}>HEAD BLOCK</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>#{formatNumber(currentBlock)}</span>
           </div>
         </div>
       </aside>

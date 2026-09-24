@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from '../../router.jsx';
-import { ShieldAlert, ArrowRight } from 'lucide-react';
+import { ShieldAlert, ArrowRight } from './Icons.jsx';
 
 export default function SecurityConclusionBanner({
   statusLevel = 'ELEVATED RISK',
@@ -19,7 +19,8 @@ export default function SecurityConclusionBanner({
     <div className="security-conclusion-card" id="security-conclusion">
       <div className="security-conclusion-left">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="conclusion-eyebrow">Security Status</span>
+          <ShieldAlert size={14} color="var(--accent-red)" />
+          <span className="conclusion-eyebrow">Protocol Security Status Conclusion</span>
           {isDemoData && <span className="demo-pill">DEMO DATA</span>}
         </div>
 
@@ -33,15 +34,15 @@ export default function SecurityConclusionBanner({
 
         <div className="conclusion-subtext">
           <span>
-            <span className="conclusion-stat-pill">{highFindings}</span> High Findings
+            <span className="conclusion-stat-pill" style={{ color: 'var(--accent-red)' }}>{highFindings}</span> High Findings
           </span>
           <span style={{ color: 'var(--border-strong)' }}>·</span>
           <span>
-            <span className="conclusion-stat-pill">{runtimeAnomalies}</span> Runtime Anomalies
+            <span className="conclusion-stat-pill" style={{ color: 'var(--accent-sand)' }}>{runtimeAnomalies}</span> Runtime Anomalies
           </span>
           <span style={{ color: 'var(--border-strong)' }}>·</span>
           <span>
-            <span className="conclusion-stat-pill">{activeAlerts}</span> Active Alert
+            <span className="conclusion-stat-pill" style={{ color: 'var(--accent-sand)' }}>{activeAlerts}</span> Active Alert
           </span>
         </div>
       </div>
@@ -49,12 +50,13 @@ export default function SecurityConclusionBanner({
       <div className="security-conclusion-right">
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-primary"
           onClick={() => navigate(actionRoute)}
           id="btn-investigate-conclusion"
+          style={{ padding: '9px 18px', fontSize: '13px' }}
         >
           <span>{actionText}</span>
-          <ArrowRight size={13} />
+          <ArrowRight size={14} />
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext.jsx';
-import { Menu } from 'lucide-react';
+import { Menu } from './Icons.jsx';
 import { formatNumber } from '../../utils/formatters.js';
 
 export default function TopBar() {
@@ -22,20 +22,22 @@ export default function TopBar() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle navigation menu"
         >
-          <Menu size={14} />
+          <Menu size={16} />
         </button>
 
         <div className="topbar-meta-item">
+          <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700 }}>Network:</span>
           <select
             value={network}
             onChange={(e) => setNetwork(e.target.value)}
             className="form-select"
             style={{
-              padding: '2px 8px',
+              padding: '3px 8px',
               fontSize: '11px',
-              height: '24px',
+              height: '28px',
               width: 'auto',
-              fontFamily: 'var(--font-mono)'
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 600
             }}
             aria-label="Select Blockchain Network"
           >
@@ -46,20 +48,20 @@ export default function TopBar() {
         </div>
 
         <div className="topbar-meta-item mono">
-          <span>Head Block</span>
-          <strong>#{formatNumber(currentBlock)}</strong>
+          <span style={{ color: 'var(--text-muted)' }}>Block</span>
+          <strong style={{ color: 'var(--text-primary)' }}>#{formatNumber(currentBlock)}</strong>
         </div>
       </div>
 
       <div className="topbar-right">
-        <div className="topbar-meta-item">
+        <div className="topbar-meta-item" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
           <span className="status-dot healthy"></span>
-          <span>{connectionStatus}</span>
+          <span style={{ color: 'var(--accent-teal)', fontWeight: 600 }}>{connectionStatus.toUpperCase()}</span>
         </div>
 
         {isDemoMode && (
           <div className="demo-pill" title="Synthetic protocol demonstration records active. No live transactions executed.">
-            <span>DEMO DATA</span>
+            <span>DEMO MODE</span>
           </div>
         )}
       </div>

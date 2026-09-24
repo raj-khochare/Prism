@@ -1,4 +1,8 @@
-/* PRISM Layout Architecture */
+/* ========================================================= */
+/* PRISM TECHNICAL NEO-BRUTALIST LAYOUT ARCHITECTURE         */
+/* Light warm-neutral foundation, bold black 2.5px borders,  */
+/* hard offset shadows, rectangular components, zero ovf     */
+/* ========================================================= */
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -6,14 +10,21 @@
   padding: 0;
 }
 
-html, body {
-  background-color: var(--bg-primary);
+html {
+  background-color: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -22,19 +33,25 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
+/* App Shell */
 .app-shell {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-canvas);
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* Sidebar */
+/* ========================================================= */
+/* SIDEBAR: Technical Neo-Brutalist Navigation Spine         */
+/* ========================================================= */
 .app-sidebar {
   width: var(--sidebar-width);
-  background-color: #000000;
-  border-right: 1px solid var(--border-subtle);
+  background-color: #FFFFFF;
+  border-right: var(--border-width) solid var(--border-default);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -43,28 +60,39 @@ html, body {
   height: 100vh;
   z-index: 50;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
+/* Sidebar Brand Header */
 .sidebar-brand {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 16px 18px;
+  border-bottom: var(--border-width) solid var(--border-default);
+  background-color: var(--accent-teal);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
-  background-color: #000000;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--transition-fast);
+}
+
+.sidebar-brand:hover {
+  background-color: var(--accent-teal-vibrant);
 }
 
 .brand-glyph {
-  width: 20px;
-  height: 20px;
-  color: #7DA3A1;
+  width: 32px;
+  height: 32px;
+  background-color: #111111;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border-active);
-  border-radius: var(--radius-sm);
-  background-color: #101314;
+  border: 2px solid #111111;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
 }
 
 .brand-text {
@@ -73,72 +101,85 @@ html, body {
 }
 
 .brand-name {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #E7E5E0;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #111111;
   line-height: 1.1;
+  font-family: var(--font-sans);
 }
 
 .brand-sub {
   font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #111111;
+  opacity: 0.85;
   text-transform: uppercase;
+  margin-top: 1px;
 }
 
+/* Navigation List */
 .sidebar-nav {
-  padding: 10px 0;
+  padding: 14px 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  background-color: #000000;
+  gap: 6px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 16px;
-  color: #E7E5E0;
+  padding: 10px 14px;
+  color: var(--text-primary);
   text-decoration: none;
   font-size: 12px;
-  font-weight: 500;
-  background-color: transparent;
-  border-left: 2px solid transparent;
-  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  font-weight: 700;
+  background-color: #FFFFFF;
+  border: 2px solid transparent;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  letter-spacing: 0.02em;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .nav-item:hover {
-  background-color: #121516;
-  color: #FFFFFF;
+  background-color: var(--bg-hover);
+  border-color: var(--border-default);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-hard-xs);
 }
 
 .nav-item.active {
-  background-color: #171B1C;
-  color: #FFFFFF;
-  border-left-color: #7DA3A1;
-  font-weight: 600;
+  background-color: var(--accent-teal);
+  color: #111111;
+  border: var(--border-width) solid var(--border-default);
+  box-shadow: var(--shadow-hard-sm);
+  font-weight: 800;
+  transform: none;
 }
 
 .nav-item svg {
   flex-shrink: 0;
-  color: #7DA3A1;
-  transition: color var(--transition-fast);
+  color: #111111;
 }
 
-.nav-item:hover svg,
 .nav-item.active svg {
-  color: #7DA3A1;
+  color: #111111;
 }
 
-/* Sidebar Infrastructure Health Section (Shifted from Overview bottom) */
+/* Sidebar Infrastructure Health Section (Subordinate, Technical) */
 .sidebar-infra-health {
-  padding: 12px 16px 10px 16px;
-  border-top: 1px solid var(--border-subtle);
-  background-color: #000000;
+  margin: 10px 12px;
+  padding: 12px;
+  background-color: var(--bg-elevated);
+  border: 2px solid var(--border-default);
+  box-shadow: 2px 2px 0px #111111;
+  border-radius: var(--radius-xs);
 }
 
 .sidebar-section-title {
@@ -146,17 +187,17 @@ html, body {
   align-items: center;
   gap: 6px;
   font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
 .infra-health-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .infra-health-item {
@@ -167,8 +208,10 @@ html, body {
 }
 
 .infra-label {
-  color: #AAA9A3;
-  font-size: 11px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 .infra-status {
@@ -177,36 +220,41 @@ html, body {
   gap: 5px;
   font-size: 10px;
   font-family: var(--font-mono);
-  color: #7DA3A1;
+  color: #111111;
+  font-weight: 700;
 }
 
+/* Sidebar Node Status Footer */
 .sidebar-footer {
-  padding: 10px 16px 14px 16px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 12px 14px;
+  border-top: var(--border-width) solid var(--border-default);
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  background-color: #000000;
+  gap: 5px;
+  background-color: #FFFFFF;
 }
 
-/* App Main Container */
+/* ========================================================= */
+/* MAIN VIEWPORT ARCHITECTURE                                */
+/* ========================================================= */
 .app-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-canvas);
+  overflow-x: hidden;
 }
 
-/* TopBar */
+/* TopBar: Operational Status & Network Control */
 .app-topbar {
   height: var(--topbar-height);
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-subtle);
+  background-color: #FFFFFF;
+  border-bottom: var(--border-width) solid var(--border-default);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 28px;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -215,60 +263,65 @@ html, body {
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .topbar-meta-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 11px;
   color: var(--text-secondary);
 }
 
 .topbar-meta-item strong {
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 800;
 }
 
+/* Neobrutalist Demo Pill */
 .demo-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: var(--radius-xs);
-  background-color: var(--bg-panel);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--accent-yellow);
+  border: 2px solid var(--border-default);
+  box-shadow: 2px 2px 0px #111111;
   font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--accent-sand);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #111111;
   text-transform: uppercase;
 }
 
 /* Page Container */
 .page-container {
   flex: 1;
-  padding: 24px 28px;
-  max-width: 1440px;
+  padding: 28px 36px;
+  max-width: 1560px;
   width: 100%;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
 /* Page Header */
 .page-header {
-  margin-bottom: 22px;
+  margin-bottom: 26px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  border-bottom: var(--border-width) solid var(--border-default);
+  padding-bottom: 18px;
 }
 
 .page-header-text {
@@ -278,44 +331,49 @@ html, body {
 }
 
 .page-title {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .page-subtitle {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
-  max-width: 720px;
-  line-height: 1.4;
+  max-width: 840px;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .page-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
-/* Panels & Cards (Restrained borders, NO heavy shadows, NO glassmorphism) */
+/* ========================================================= */
+/* NEO-BRUTALIST PANELS                                      */
+/* ========================================================= */
 .prism-panel {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  margin-bottom: 16px;
+  background-color: var(--bg-panel);
+  border: var(--border-width) solid var(--border-default);
+  box-shadow: var(--shadow-hard-md);
+  border-radius: var(--radius-xs);
+  margin-bottom: 22px;
   overflow: hidden;
 }
 
 .prism-panel-header {
-  padding: 10px 16px;
-  background-color: var(--bg-panel);
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 13px 20px;
+  background-color: var(--bg-elevated);
+  border-bottom: var(--border-width) solid var(--border-default);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .panel-title-group {
@@ -323,14 +381,10 @@ html, body {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: 0.02em;
-}
-
-.panel-title-icon {
-  color: var(--text-secondary);
-  display: flex;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .panel-actions {
@@ -340,33 +394,35 @@ html, body {
 }
 
 .prism-panel-body {
-  padding: 16px;
+  padding: 20px 22px;
 }
 
 /* Grid Layout Utilities */
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 22px;
 }
 
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 22px;
 }
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 16px;
 }
 
-/* Footer */
+/* ========================================================= */
+/* FOOTER                                                    */
+/* ========================================================= */
 .app-footer {
-  padding: 14px 28px;
-  border-top: 1px solid var(--border-subtle);
-  background-color: var(--bg-secondary);
+  padding: 16px 36px;
+  border-top: var(--border-width) solid var(--border-default);
+  background-color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -374,36 +430,60 @@ html, body {
   color: var(--text-muted);
 }
 
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-brand strong {
+  color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
 .footer-links {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .footer-link {
-  color: var(--text-secondary);
-  text-decoration: none;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
   transition: color var(--transition-fast);
 }
 
 .footer-link:hover {
-  color: var(--text-primary);
+  color: #000000;
 }
 
-/* Responsive Breakpoints */
+/* Mobile Nav Toggle */
 .mobile-nav-toggle {
   display: none;
-  background: transparent;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
+  background: #FFFFFF;
+  border: 2px solid var(--border-default);
+  color: #111111;
+  border-radius: var(--radius-xs);
+  padding: 6px 9px;
   cursor: pointer;
+  box-shadow: 2px 2px 0px #111111;
 }
 
-@media (max-width: 1024px) {
+/* ========================================================= */
+/* RESPONSIVE DESIGN (Zero page-level horizontal overflow)   */
+/* ========================================================= */
+@media (max-width: 1080px) {
   .page-container {
-    padding: 18px 20px;
+    padding: 20px 24px;
   }
   .grid-2, .grid-3, .grid-4 {
     grid-template-columns: 1fr;
@@ -413,8 +493,9 @@ html, body {
 @media (max-width: 768px) {
   .app-sidebar {
     position: fixed;
-    left: -240px;
+    left: -270px;
     transition: left var(--transition-normal);
+    box-shadow: 5px 0px 0px #111111;
   }
   .app-sidebar.open {
     left: 0;
@@ -425,11 +506,16 @@ html, body {
     justify-content: center;
   }
   .page-container {
-    padding: 14px 16px;
+    padding: 16px 18px;
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
   .app-footer {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     text-align: center;
   }
 }

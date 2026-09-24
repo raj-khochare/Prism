@@ -14,10 +14,8 @@ import {
   Check,
   X,
   Eye,
-  Send,
-  Mail,
   ExternalLink
-} from 'lucide-react';
+} from '../components/common/Icons.jsx';
 
 export default function Alerts() {
   const { navigate } = useRouter();
@@ -114,8 +112,8 @@ export default function Alerts() {
             <span>Alert Pipeline Configuration</span>
           </div>
           {configSaved && (
-            <span style={{ fontSize: '11px', color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <CheckCircle size={12} />
+            <span style={{ fontSize: '11px', color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700 }}>
+              <CheckCircle size={13} color="var(--accent-teal)" />
               Configuration updated
             </span>
           )}
@@ -123,14 +121,14 @@ export default function Alerts() {
 
         <div className="prism-panel-body">
           <form onSubmit={handleSaveConfig}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', alignItems: 'flex-start' }}>
               {/* Risk Threshold */}
               <div className="form-group">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <label className="form-label" htmlFor="input-risk-threshold">
                     Trigger Risk Threshold
                   </label>
-                  <span className="mono" style={{ fontSize: '11px', fontWeight: 700, color: riskThreshold >= 75 ? 'var(--accent-red)' : 'var(--accent-sand)' }}>
+                  <span className="mono" style={{ fontSize: '12px', fontWeight: 800, color: riskThreshold >= 75 ? 'var(--accent-red)' : 'var(--accent-sand)' }}>
                     {riskThreshold} / 100
                   </span>
                 </div>
@@ -151,13 +149,12 @@ export default function Alerts() {
 
               {/* Telegram Channel */}
               <div className="form-group">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     id="chk-telegram"
                     type="checkbox"
                     checked={telegramEnabled}
                     onChange={(e) => setTelegramEnabled(e.target.checked)}
-                    style={{ accentColor: 'var(--accent-teal)' }}
                   />
                   <label className="form-label" htmlFor="chk-telegram" style={{ marginBottom: 0 }}>
                     Telegram Notification Webhook
@@ -170,19 +167,18 @@ export default function Alerts() {
                   onChange={(e) => setTelegramChat(e.target.value)}
                   disabled={!telegramEnabled}
                   placeholder="@secops_alerts_bot"
-                  style={{ marginTop: '4px' }}
+                  style={{ marginTop: '6px' }}
                 />
               </div>
 
               {/* Email Integration */}
               <div className="form-group">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     id="chk-email"
                     type="checkbox"
                     checked={emailEnabled}
                     onChange={(e) => setEmailEnabled(e.target.checked)}
-                    style={{ accentColor: 'var(--accent-teal)' }}
                   />
                   <label className="form-label" htmlFor="chk-email" style={{ marginBottom: 0 }}>
                     Email Notification List
@@ -195,12 +191,12 @@ export default function Alerts() {
                   onChange={(e) => setEmailRecipient(e.target.value)}
                   disabled={!emailEnabled}
                   placeholder="secops@protocol.io"
-                  style={{ marginTop: '4px' }}
+                  style={{ marginTop: '6px' }}
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
               <button type="submit" className="btn btn-secondary btn-sm" id="btn-save-alert-config">
                 Save Channel Configuration
               </button>
@@ -209,7 +205,7 @@ export default function Alerts() {
         </div>
       </div>
 
-      {/* 2. ALERT LOG (Section 13 Requirement) */}
+      {/* 2. ALERT LOG */}
       <div className="prism-panel" id="alert-log-panel">
         <div className="prism-panel-header">
           <div className="panel-title-group">
@@ -218,12 +214,12 @@ export default function Alerts() {
           </div>
 
           {/* Filters */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Status:</span>
               <select
                 className="form-select"
-                style={{ width: 'auto', padding: '2px 6px', fontSize: '11px' }}
+                style={{ width: 'auto', padding: '3px 8px', fontSize: '11px' }}
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
               >
@@ -234,11 +230,11 @@ export default function Alerts() {
               </select>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Severity:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Severity:</span>
               <select
                 className="form-select"
-                style={{ width: 'auto', padding: '2px 6px', fontSize: '11px' }}
+                style={{ width: 'auto', padding: '3px 8px', fontSize: '11px' }}
                 value={severityFilter}
                 onChange={(e) => { setSeverityFilter(e.target.value); setPage(1); }}
               >
@@ -252,7 +248,7 @@ export default function Alerts() {
           </div>
         </div>
 
-        <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
+        <div className="table-container" style={{ border: 'none', borderRadius: 0, boxShadow: 'none' }}>
           <table className="prism-table" aria-label="Alert Incident Log Table">
             <thead>
               <tr>
@@ -298,8 +294,8 @@ export default function Alerts() {
                       <span
                         className="mono"
                         style={{
-                          fontWeight: 700,
-                          fontSize: '12px',
+                          fontWeight: 800,
+                          fontSize: '13px',
                           color: alert.riskScore >= 75 ? 'var(--accent-red)' : 'var(--accent-sand)'
                         }}
                       >
@@ -319,10 +315,11 @@ export default function Alerts() {
                         className="mono"
                         style={{
                           fontSize: '10px',
-                          padding: '2px 6px',
+                          fontWeight: 700,
+                          padding: '2px 7px',
                           borderRadius: 'var(--radius-xs)',
-                          border: '1px solid var(--border-subtle)',
-                          backgroundColor: alert.status === 'Active' ? 'var(--accent-red-bg)' : 'var(--bg-panel)',
+                          border: '1px solid var(--border-default)',
+                          backgroundColor: alert.status === 'Active' ? 'var(--accent-red-bg)' : 'var(--bg-elevated)',
                           color: alert.status === 'Active' ? 'var(--accent-red)' : 'var(--text-secondary)'
                         }}
                       >
@@ -330,7 +327,7 @@ export default function Alerts() {
                       </span>
                     </td>
                     <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                         {/* View Details */}
                         <button
                           type="button"
@@ -338,7 +335,7 @@ export default function Alerts() {
                           onClick={() => setViewingAlert(alert)}
                           title="View Alert Evidence"
                         >
-                          <Eye size={13} />
+                          <Eye size={13} color="var(--text-secondary)" />
                         </button>
 
                         {/* Acknowledge */}
@@ -347,10 +344,10 @@ export default function Alerts() {
                             type="button"
                             className="btn btn-secondary btn-sm"
                             onClick={() => handleAcknowledge(alert.id)}
-                            style={{ fontSize: '10px', padding: '2px 6px' }}
+                            style={{ fontSize: '10px', padding: '3px 8px' }}
                             title="Acknowledge Alert"
                           >
-                            <Check size={11} />
+                            <Check size={11} color="var(--accent-teal)" />
                             <span>Ack</span>
                           </button>
                         )}
@@ -388,13 +385,13 @@ export default function Alerts() {
         </div>
       </div>
 
-      {/* Compact Alert Detail Inspection Modal / Panel */}
+      {/* Alert Detail Inspection Modal */}
       {viewingAlert && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             zIndex: 60,
             display: 'flex',
             alignItems: 'center',
@@ -405,7 +402,7 @@ export default function Alerts() {
         >
           <div
             className="prism-panel"
-            style={{ width: '100%', maxWidth: '580px', marginBottom: 0 }}
+            style={{ width: '100%', maxWidth: '600px', marginBottom: 0, border: '2px solid var(--border-strong)', boxShadow: 'var(--shadow-hard-xl)' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="prism-panel-header">
@@ -423,17 +420,17 @@ export default function Alerts() {
             </div>
 
             <div className="prism-panel-body">
-              <div style={{ marginBottom: '14px' }}>
+              <div style={{ marginBottom: '16px' }}>
                 <span className="meta-label">Trigger Condition</span>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px', lineHeight: 1.4 }}>
                   {viewingAlert.trigger}
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px', marginBottom: '16px', padding: '12px 16px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
                 <div>
                   <span className="meta-label">Unified Risk Score</span>
-                  <div className="mono" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent-red)', marginTop: '2px' }}>
+                  <div className="mono" style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-red)', marginTop: '2px' }}>
                     {viewingAlert.riskScore} / 100
                   </div>
                 </div>
@@ -454,14 +451,14 @@ export default function Alerts() {
 
                 <div>
                   <span className="meta-label">Current Status</span>
-                  <div className="mono" style={{ fontSize: '12px', color: 'var(--text-primary)', marginTop: '2px' }}>
+                  <div className="mono" style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 700, marginTop: '2px' }}>
                     {viewingAlert.status}
                   </div>
                 </div>
               </div>
 
               {viewingAlert.txHash && (
-                <div style={{ marginBottom: '16px' }}>
+                <div style={{ marginBottom: '18px' }}>
                   <span className="meta-label">Related Transaction Hash</span>
                   <div
                     className="mono"
@@ -469,10 +466,10 @@ export default function Alerts() {
                       fontSize: '11px',
                       color: 'var(--accent-teal)',
                       wordBreak: 'break-all',
-                      padding: '6px 10px',
-                      backgroundColor: 'var(--bg-panel)',
+                      padding: '8px 12px',
+                      backgroundColor: 'var(--bg-elevated)',
                       borderRadius: 'var(--radius-xs)',
-                      border: '1px solid var(--border-subtle)',
+                      border: '1.5px solid var(--border-default)',
                       marginTop: '4px'
                     }}
                   >
@@ -481,7 +478,7 @@ export default function Alerts() {
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                 <button
                   type="button"
                   className="btn btn-secondary btn-sm"
@@ -491,14 +488,14 @@ export default function Alerts() {
                   }}
                 >
                   <span>Open Runtime Evidence</span>
-                  <ExternalLink size={11} />
+                  <ExternalLink size={12} />
                 </button>
 
-                <div style={{ display: 'flex', gap: '6px' }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
                   {viewingAlert.status !== 'Acknowledged' && (
                     <button
                       type="button"
-                      className="btn btn-secondary btn-sm"
+                      className="btn btn-primary btn-sm"
                       onClick={() => handleAcknowledge(viewingAlert.id)}
                     >
                       Acknowledge

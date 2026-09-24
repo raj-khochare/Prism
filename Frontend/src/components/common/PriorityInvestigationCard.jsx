@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from '../../router.jsx';
 import { formatAddress, formatTxHash } from '../../utils/formatters.js';
-import { Search, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Search, ArrowRight, ShieldCheck, AlertCircle } from './Icons.jsx';
 
 export default function PriorityInvestigationCard({ investigation }) {
   const { navigate } = useRouter();
@@ -12,7 +12,7 @@ export default function PriorityInvestigationCard({ investigation }) {
     <div className="priority-investigation-box" id="priority-investigation">
       <div className="investigation-header">
         <div className="investigation-title">
-          <AlertCircle size={15} color="var(--accent-sand)" />
+          <AlertCircle size={16} color="var(--accent-sand)" />
           <span>Priority Investigation: {investigation.title}</span>
         </div>
         <span className="badge-severity medium">Action Recommended</span>
@@ -40,7 +40,7 @@ export default function PriorityInvestigationCard({ investigation }) {
 
         <div className="investigation-meta-item">
           <span className="meta-label">Related Transactions</span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
             {investigation.relatedTransactions?.map((tx, idx) => (
               <span key={idx} className="meta-value">
                 {formatTxHash(tx)}
@@ -51,13 +51,13 @@ export default function PriorityInvestigationCard({ investigation }) {
       </div>
 
       {investigation.investigationSteps && (
-        <div style={{ marginBottom: '14px' }}>
-          <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', letterSpacing: '0.04em' }}>
             Recommended Protocol Triage Steps
           </div>
-          <ul style={{ paddingLeft: '16px', fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+          <ul style={{ paddingLeft: '18px', fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
             {investigation.investigationSteps.map((step, idx) => (
-              <li key={idx}>{step}</li>
+              <li key={idx} style={{ marginBottom: '2px' }}>{step}</li>
             ))}
           </ul>
         </div>
@@ -70,7 +70,7 @@ export default function PriorityInvestigationCard({ investigation }) {
           onClick={() => navigate(investigation.actionRoute || '/runtime')}
           id="btn-view-investigation"
         >
-          <span>View Investigation</span>
+          <span>View Investigation Traces</span>
           <ArrowRight size={13} />
         </button>
       </div>

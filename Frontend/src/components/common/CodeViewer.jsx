@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Copy, Check, AlertCircle } from 'lucide-react';
+import { Copy, Check, AlertCircle } from './Icons.jsx';
 
 export default function CodeViewer({
   code,
@@ -52,8 +52,8 @@ export default function CodeViewer({
   return (
     <div className="code-viewer-container">
       <div className="code-viewer-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text-primary)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)', fontSize: '12px' }}>
             {fileName}
           </span>
           {highlightStart && (
@@ -72,7 +72,7 @@ export default function CodeViewer({
           type="button"
           onClick={handleCopy}
           className="btn btn-secondary btn-sm"
-          style={{ padding: '2px 8px', fontSize: '10px' }}
+          style={{ padding: '3px 8px', fontSize: '10px' }}
           title="Copy source code"
         >
           {copied ? <Check size={12} color="var(--accent-teal)" /> : <Copy size={12} />}
@@ -103,8 +103,8 @@ export default function CodeViewer({
                 {formatSyntax(line)}
                 {isPrimaryFlag && (
                   <span className="finding-pill-tag">
-                    <AlertCircle size={10} />
-                    <span>Trigger</span>
+                    <AlertCircle size={10} color="#FFFFFF" />
+                    <span>TRIGGER</span>
                   </span>
                 )}
               </span>
@@ -144,28 +144,28 @@ function formatSyntax(line) {
   return tokens.map((token, i) => {
     if (keywords.includes(token)) {
       return (
-        <span key={i} style={{ color: '#7DA3A1', fontWeight: 500 }}>
+        <span key={i} style={{ color: 'var(--accent-teal)', fontWeight: 600 }}>
           {token}
         </span>
       );
     }
     if (/^"(.*)"$/.test(token) || /^'(.*)'$/.test(token)) {
       return (
-        <span key={i} style={{ color: '#D9B382' }}>
+        <span key={i} style={{ color: 'var(--accent-sand)' }}>
           {token}
         </span>
       );
     }
     if (/^0x[a-fA-F0-9]+$/.test(token) || /^[0-9]+$/.test(token)) {
       return (
-        <span key={i} style={{ color: '#D9B382', fontFamily: 'var(--font-mono)' }}>
+        <span key={i} style={{ color: 'var(--accent-sand)', fontFamily: 'var(--font-mono)' }}>
           {token}
         </span>
       );
     }
     if (token === 'msg' || token === 'block' || token === 'tx' || token === 'abi') {
       return (
-        <span key={i} style={{ color: '#705446', fontWeight: 600 }}>
+        <span key={i} style={{ color: 'var(--accent-brown)', fontWeight: 700 }}>
           {token}
         </span>
       );
