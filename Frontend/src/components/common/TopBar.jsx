@@ -1,9 +1,11 @@
 import React from 'react';
+import { useRouter } from '../../router.jsx';
 import { useApp } from '../../context/AppContext.jsx';
 import { Menu } from './Icons.jsx';
 import { formatNumber } from '../../utils/formatters.js';
 
 export default function TopBar() {
+  const { navigate } = useRouter();
   const {
     network,
     setNetwork,
@@ -64,6 +66,15 @@ export default function TopBar() {
             <span>DEMO MODE</span>
           </div>
         )}
+
+        <button
+          type="button"
+          onClick={() => navigate('/login')}
+          className="topbar-login-btn"
+          aria-label="Sign in"
+        >
+          LOGIN
+        </button>
       </div>
     </header>
   );

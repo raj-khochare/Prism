@@ -13,13 +13,23 @@ import Alerts from './pages/Alerts.jsx';
 import ContractRegistry from './pages/ContractRegistry.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsConditions from './pages/TermsConditions.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 
 export default function App() {
   const { currentPath } = useRouter();
+  const basePath = currentPath.split('?')[0];
+
+  // Dedicated focused authentication views
+  if (basePath === '/login') {
+    return <Login />;
+  }
+
+  if (basePath === '/register') {
+    return <Register />;
+  }
 
   const renderCurrentPage = () => {
-    const basePath = currentPath.split('?')[0];
-
     switch (basePath) {
       case '/':
       case '/overview':
