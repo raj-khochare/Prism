@@ -18,7 +18,7 @@ import {
   DEMO_TELEMETRY_SERIES,
   DEMO_RISK_DECOMPOSITION
 } from '../data/mockSecurityData.js';
-import { analyzeSoliditySource } from '../api/analysisEngine.js';
+// import { analyzeSoliditySource } from '../api/analysisEngine.js';
 
 // Realistic simulated response delay
 const delay = (ms = 120) => new Promise(resolve => setTimeout(resolve, ms));
@@ -201,33 +201,89 @@ class SecurityApiClient {
   }
 
   // 4. Static Scan Submission
-  async scanSoliditySource(sourceCode, fileName = 'Contract.sol', contractAddress = '') {
-    await delay(250);
+  async scanSoliditySource(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
     try {
-      const result = analyzeSoliditySource(sourceCode, fileName);
-      if (result.findings && result.findings.length > 0) {
-        // Prepend new findings to local collection
-        const formatted = result.findings.map(f => ({
-          ...f,
+      const response = await fetch('http://127.0.0.1:8000/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Static analysis failed.',
+        };
+      }
+
+      // Convert backend response into the shape the existing UI expects.
+      const findings = (result.findings || []).map((item, index) => {
+        const finding = item.finding || {};
+
+        return {
+          id: `${finding.detector_id || 'finding'}-${index}`,
+          detector: finding.detector_id || 'unknown',
+          title: finding.title || 'Security Finding',
+          severity: item.severity || finding.impact || 'Informational',
+          description:
+            item.analysis?.explanation ||
+            finding.description ||
+            'No description available.',
+          lineStart: finding.line_start || 1,
+          lineEnd: finding.line_end || finding.line_start || 1,
+          contract: finding.contract || 'Unknown',
+          function: finding.function || 'Unknown',
+          file: finding.source_file || file.name,
+          sourceSnippet: finding.source_snippet || '',
+          analysis: item.analysis || null,
           status: 'Open',
           relatedFindings: [],
-          relatedRuntimeSignals: []
-        }));
-        this.findings = [...formatted, ...this.findings];
-      }
+          relatedRuntimeSignals: [],
+        };
+      });
+
+      const stats = findings.reduce(
+        (acc, finding) => {
+          const severity = finding.severity.toLowerCase();
+
+          if (severity === 'critical') acc.critical++;
+          else if (severity === 'high') acc.high++;
+          else if (severity === 'medium') acc.medium++;
+          else if (severity === 'low') acc.low++;
+
+          return acc;
+        },
+        {
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+        }
+      );
+
+      stats.riskScore = result.risk_score || 0;
+
+      this.findings = [...findings, ...this.findings];
+
       return {
         success: true,
         data: {
-          ...result,
-          fileName,
-          contractAddress: contractAddress || 'Local Analysis File',
-          scanTimestamp: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
-        }
+          fileName: file.name,
+          contractAddress: 'Local Analysis File',
+          scanTimestamp: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
+          findings,
+          stats,
+          riskScore: result.risk_score || 0,
+        },
       };
-    } catch (e) {
+    } catch (error) {
       return {
         success: false,
-        error: 'Static analysis parser encountered an unhandled syntax structure.'
+        error: 'Unable to connect to the PRISM analysis backend.',
       };
     }
   }

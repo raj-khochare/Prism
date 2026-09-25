@@ -19,6 +19,7 @@ export default function ScanContract() {
   const [sourceCode, setSourceCode] = useState(SAMPLE_SOL_VULNERABLE);
   const [fileName, setFileName] = useState('VulnerableVault.sol');
   const [contractAddress, setContractAddress] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [scanError, setScanError] = useState(null);
@@ -33,33 +34,47 @@ export default function ScanContract() {
       return;
     }
 
+    setSelectedFile(file);
     setFileName(file.name);
+
     const reader = new FileReader();
+
     reader.onload = (event) => {
       setSourceCode(event.target.result);
       setScanResult(null);
       setSelectedFinding(null);
       setScanError(null);
     };
+
     reader.readAsText(file);
   };
 
   const loadSample = (type) => {
-    if (type === 'reentrancy') {
-      setSourceCode(SAMPLE_SOL_VULNERABLE);
-      setFileName('VulnerableVault.sol');
-    } else {
-      setSourceCode(SAMPLE_SOL_ORACLE);
-      setFileName('OraclePriceConsumer.sol');
-    }
+    const source =
+      type === 'reentrancy'
+        ? SAMPLE_SOL_VULNERABLE
+        : SAMPLE_SOL_ORACLE;
+
+    const name =
+      type === 'reentrancy'
+        ? 'VulnerableVault.sol'
+        : 'OraclePriceConsumer.sol';
+
+    const file = new File([source], name, {
+      type: 'text/plain',
+    });
+
+    setSelectedFile(file);
+    setSourceCode(source);
+    setFileName(name);
     setScanResult(null);
     setSelectedFinding(null);
     setScanError(null);
   };
 
   const handleRunScan = async () => {
-    if (!sourceCode.trim()) {
-      setScanError('Solidity source code is required to execute static analysis.');
+    if (!selectedFile) {
+      setScanError('Please upload a Solidity .sol file before running the scan.');
       return;
     }
 
@@ -67,9 +82,11 @@ export default function ScanContract() {
     setScanError(null);
 
     try {
-      const res = await securityApi.scanSoliditySource(sourceCode, fileName, contractAddress);
+      const res = await securityApi.scanSoliditySource(selectedFile);
+
       if (res.success) {
         setScanResult(res.data);
+
         if (res.data.findings && res.data.findings.length > 0) {
           setSelectedFinding(res.data.findings[0]);
         }
@@ -77,7 +94,7 @@ export default function ScanContract() {
         setScanError(res.error || 'Static analysis could not be completed.');
       }
     } catch {
-      setScanError('An unexpected client error occurred during AST vulnerability parsing.');
+      setScanError('An unexpected error occurred during static analysis.');
     } finally {
       setIsScanning(false);
     }
@@ -212,168 +229,170 @@ export default function ScanContract() {
           {/* Primary Action Button */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', flexWrap: 'wrap', gap: '10px' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-              Evaluated strictly locally in browser sandbox. No source code transmitted externally.
+              Analysis runs through the PRISM FastAPI static analyzer with Slither and Gemini.
+          </span>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleRunScan}
+            disabled={isScanning || !sourceCode.trim()}
+            id="btn-run-static-analysis"
+            style={{ padding: '8px 18px', fontSize: '13px' }}
+          >
+            <Play size={13} />
+            <span>{isScanning ? 'Analyzing Contract...' : 'Run Static Analysis'}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+      {/* 2. RESULTS STAGE: Analysis Findings & Source Evidence */ }
+  {
+    scanResult && (
+      <div id="scan-results-section">
+        {/* Findings Summary Ribbon */}
+        <div className="prism-panel">
+          <div className="prism-panel-header">
+            <div className="panel-title-group">
+              <CheckCircle2 size={14} color="var(--accent-teal)" />
+              <span>Analysis Complete: {scanResult.fileName}</span>
+            </div>
+            <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              {scanResult.scanTimestamp}
             </span>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleRunScan}
-              disabled={isScanning || !sourceCode.trim()}
-              id="btn-run-static-analysis"
-              style={{ padding: '8px 18px', fontSize: '13px' }}
-            >
-              <Play size={13} />
-              <span>{isScanning ? 'Analyzing AST Patterns...' : 'Run Static Analysis'}</span>
-            </button>
+          </div>
+
+          <div className="prism-panel-body" style={{ padding: '16px 20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px', alignItems: 'center' }}>
+              <div>
+                <span className="meta-label">Scan Status</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <span className="status-dot healthy"></span>
+                  <strong style={{ fontSize: '13px', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Analyzed</strong>
+                </div>
+              </div>
+
+              <div>
+                <span className="meta-label">Critical</span>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-red)' }}>
+                  {scanResult.stats?.critical || 0}
+                </div>
+              </div>
+
+              <div>
+                <span className="meta-label">High</span>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-orange-red)' }}>
+                  {scanResult.stats?.high || 0}
+                </div>
+              </div>
+
+              <div>
+                <span className="meta-label">Medium</span>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-yellow)' }}>
+                  {scanResult.stats?.medium || 0}
+                </div>
+              </div>
+
+              <div>
+                <span className="meta-label">Low</span>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-green)' }}>
+                  {scanResult.stats?.low || 0}
+                </div>
+              </div>
+
+              <div>
+                <span className="meta-label">Risk Contribution</span>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: scanResult.stats?.riskScore > 50 ? 'var(--accent-red)' : 'var(--accent-green)' }}>
+                  +{scanResult.stats?.riskScore || 0} pts
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Two-Column Inspection: Findings List on Left, Source Viewer on Right */}
+        <div className="grid-2">
+          {/* Finding Navigation Panel */}
+          <div className="prism-panel" style={{ marginBottom: 0 }}>
+            <div className="prism-panel-header">
+              <div className="panel-title-group">
+                <AlertTriangle size={13} color="var(--accent-sand)" />
+                <span>Detected Vulnerabilities ({scanResult.findings?.length || 0})</span>
+              </div>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Select to highlight code</span>
+            </div>
+
+            <div className="prism-panel-body" style={{ padding: 0 }}>
+              {scanResult.findings && scanResult.findings.length > 0 ? (
+                <div>
+                  {scanResult.findings.map((f) => {
+                    const isSelected = selectedFinding?.id === f.id;
+                    return (
+                      <div
+                        key={f.id}
+                        onClick={() => setSelectedFinding(f)}
+                        style={{
+                          padding: '14px 16px',
+                          borderBottom: '1px solid var(--border-default)',
+                          backgroundColor: isSelected ? 'var(--bg-hover)' : 'transparent',
+                          borderLeft: isSelected ? '4px solid var(--accent-red)' : '4px solid transparent',
+                          cursor: 'pointer',
+                          transition: 'background-color var(--transition-fast)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                          <SeverityBadge severity={f.severity} />
+                          <span className="mono" style={{ fontSize: '10px', color: 'var(--accent-teal)', fontWeight: 700 }}>
+                            {f.detector}
+                          </span>
+                        </div>
+
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                          {f.title}
+                        </div>
+
+                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '8px' }}>
+                          {f.description}
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)' }}>
+                          <span className="mono">
+                            Lines {f.lineStart}{f.lineEnd && f.lineEnd !== f.lineStart ? `–${f.lineEnd}` : ''}
+                          </span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: 'var(--accent-sand)', fontWeight: 600 }}>
+                            <span>Jump to line</span>
+                            <ChevronRight size={11} />
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ padding: '30px', textAlign: 'center', color: 'var(--accent-teal)', fontSize: '12px' }}>
+                  <ShieldCheck size={28} color="var(--accent-teal)" style={{ marginBottom: '8px' }} />
+                  <div style={{ fontWeight: 600 }}>No vulnerability patterns matched in analyzed source.</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Source Code Viewer */}
+          <div>
+            <CodeViewer
+              code={sourceCode}
+              fileName={fileName}
+              vulnerableLines={allVulnerableLines}
+              highlightStart={selectedFinding?.lineStart}
+              highlightEnd={selectedFinding?.lineEnd}
+              activeFindingTitle={selectedFinding?.title}
+              maxHeight="520px"
+            />
           </div>
         </div>
       </div>
-
-      {/* 2. RESULTS STAGE: Analysis Findings & Source Evidence */}
-      {scanResult && (
-        <div id="scan-results-section">
-          {/* Findings Summary Ribbon */}
-          <div className="prism-panel">
-            <div className="prism-panel-header">
-              <div className="panel-title-group">
-                <CheckCircle2 size={14} color="var(--accent-teal)" />
-                <span>Analysis Complete: {scanResult.fileName}</span>
-              </div>
-              <span className="mono" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                {scanResult.scanTimestamp}
-              </span>
-            </div>
-
-            <div className="prism-panel-body" style={{ padding: '16px 20px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px', alignItems: 'center' }}>
-                <div>
-                  <span className="meta-label">Scan Status</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                    <span className="status-dot healthy"></span>
-                    <strong style={{ fontSize: '13px', color: 'var(--text-primary)', textTransform: 'uppercase' }}>Analyzed</strong>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="meta-label">Critical</span>
-                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-red)' }}>
-                    {scanResult.stats?.critical || 0}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="meta-label">High</span>
-                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-orange-red)' }}>
-                    {scanResult.stats?.high || 0}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="meta-label">Medium</span>
-                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-yellow)' }}>
-                    {scanResult.stats?.medium || 0}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="meta-label">Low</span>
-                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-green)' }}>
-                    {scanResult.stats?.low || 0}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="meta-label">Risk Contribution</span>
-                  <div style={{ fontSize: '20px', fontFamily: 'var(--font-mono)', fontWeight: 800, color: scanResult.stats?.riskScore > 50 ? 'var(--accent-red)' : 'var(--accent-green)' }}>
-                    +{scanResult.stats?.riskScore || 0} pts
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Two-Column Inspection: Findings List on Left, Source Viewer on Right */}
-          <div className="grid-2">
-            {/* Finding Navigation Panel */}
-            <div className="prism-panel" style={{ marginBottom: 0 }}>
-              <div className="prism-panel-header">
-                <div className="panel-title-group">
-                  <AlertTriangle size={13} color="var(--accent-sand)" />
-                  <span>Detected Vulnerabilities ({scanResult.findings?.length || 0})</span>
-                </div>
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Select to highlight code</span>
-              </div>
-
-              <div className="prism-panel-body" style={{ padding: 0 }}>
-                {scanResult.findings && scanResult.findings.length > 0 ? (
-                  <div>
-                    {scanResult.findings.map((f) => {
-                      const isSelected = selectedFinding?.id === f.id;
-                      return (
-                        <div
-                          key={f.id}
-                          onClick={() => setSelectedFinding(f)}
-                          style={{
-                            padding: '14px 16px',
-                            borderBottom: '1px solid var(--border-default)',
-                            backgroundColor: isSelected ? 'var(--bg-hover)' : 'transparent',
-                            borderLeft: isSelected ? '4px solid var(--accent-red)' : '4px solid transparent',
-                            cursor: 'pointer',
-                            transition: 'background-color var(--transition-fast)'
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                            <SeverityBadge severity={f.severity} />
-                            <span className="mono" style={{ fontSize: '10px', color: 'var(--accent-teal)', fontWeight: 700 }}>
-                              {f.detector}
-                            </span>
-                          </div>
-
-                          <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-                            {f.title}
-                          </div>
-
-                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '8px' }}>
-                            {f.description}
-                          </div>
-
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)' }}>
-                            <span className="mono">
-                              Lines {f.lineStart}{f.lineEnd && f.lineEnd !== f.lineStart ? `–${f.lineEnd}` : ''}
-                            </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: 'var(--accent-sand)', fontWeight: 600 }}>
-                              <span>Jump to line</span>
-                              <ChevronRight size={11} />
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div style={{ padding: '30px', textAlign: 'center', color: 'var(--accent-teal)', fontSize: '12px' }}>
-                    <ShieldCheck size={28} color="var(--accent-teal)" style={{ marginBottom: '8px' }} />
-                    <div style={{ fontWeight: 600 }}>No vulnerability patterns matched in analyzed source.</div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Source Code Viewer */}
-            <div>
-              <CodeViewer
-                code={sourceCode}
-                fileName={fileName}
-                vulnerableLines={allVulnerableLines}
-                highlightStart={selectedFinding?.lineStart}
-                highlightEnd={selectedFinding?.lineEnd}
-                activeFindingTitle={selectedFinding?.title}
-                maxHeight="520px"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    )
+  }
+    </div >
   );
 }
