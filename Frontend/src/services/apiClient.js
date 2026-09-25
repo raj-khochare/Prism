@@ -229,10 +229,24 @@ class SecurityApiClient {
           detector: finding.detector_id || 'unknown',
           title: finding.title || 'Security Finding',
           severity: item.severity || finding.impact || 'Informational',
+          category: 'Vulnerability',
           description:
             item.analysis?.explanation ||
             finding.description ||
             'No description available.',
+
+          whyItMatters:
+            item.analysis?.impact ||
+            'No impact analysis available.',
+
+          remediation:
+            item.analysis?.recommendation ||
+            'No remediation recommendation available.',
+          attackScenario: item.analysis?.attack_scenario || '',
+          fixedCode: item.analysis?.fixed_code || '',
+
+          codeSnippet: finding.source_snippet || '',
+
           lineStart: finding.line_start || 1,
           lineEnd: finding.line_end || finding.line_start || 1,
           contract: finding.contract || 'Unknown',

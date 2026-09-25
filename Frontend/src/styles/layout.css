@@ -341,10 +341,12 @@ body {
 /* Page Container */
 .page-container {
   flex: 1;
+  min-height: 0;
   padding: 28px 36px;
   max-width: 1560px;
   width: 100%;
   margin: 0 auto;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 

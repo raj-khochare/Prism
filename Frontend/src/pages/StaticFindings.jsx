@@ -363,6 +363,60 @@ export default function StaticFindings() {
                 </div>
               </div>
 
+              {/* AI Attack Scenario */}
+              {selectedFinding.attackScenario && (
+                <div style={{
+                  marginBottom: '18px',
+                  padding: '14px 16px',
+                  backgroundColor: 'var(--bg-elevated)',
+                  border: '2px solid var(--border-default)',
+                  boxShadow: '3px 3px 0px #000',
+                  borderRadius: 'var(--radius-xs)'
+                }}>
+                  <div style={{
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    color: 'var(--text-muted)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    marginBottom: '6px'
+                  }}>
+                    Attack Scenario
+                  </div>
+
+                  <div style={{
+                    fontSize: '12px',
+                    color: 'var(--text-primary)',
+                    lineHeight: 1.6,
+                    whiteSpace: 'pre-line'
+                  }}>
+                    {selectedFinding.attackScenario}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Suggested Fixed Code */}
+              {selectedFinding.fixedCode && (
+                <div style={{ marginBottom: '18px' }}>
+                  <div style={{
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    color: 'var(--text-muted)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    marginBottom: '8px'
+                  }}>
+                    Suggested Fixed Code
+                  </div>
+
+                  <CodeViewer
+                    code={selectedFinding.fixedCode}
+                    fileName="Suggested remediation"
+                    maxHeight="320px"
+                  />
+                </div>
+              )}
+
               {/* Related Findings & Related Runtime Signals */}
               <div className="grid-2" style={{ marginTop: '14px' }}>
                 <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
