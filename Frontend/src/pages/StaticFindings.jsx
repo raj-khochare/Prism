@@ -28,6 +28,8 @@ export default function StaticFindings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFinding, setSelectedFinding] = useState(null);
+  const [isProvingExploit, setIsProvingExploit] = useState(false);
+  const [exploitResult, setExploitResult] = useState(null);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -79,6 +81,33 @@ export default function StaticFindings() {
   useEffect(() => {
     fetchFindings();
   }, [search, severityFilter, categoryFilter, contractFilter, detectorFilter, statusFilter, page, pageSize]);
+
+  const handleProveExploit = async () => {
+    setIsProvingExploit(true);
+    setExploitResult(null);
+
+    try {
+      const result = await securityApi.proveExploit();
+
+      if (result.success) {
+        setExploitResult(result.data);
+      } else {
+        setExploitResult({
+          success: false,
+          exploit_confirmed: false,
+          output: result.error || 'Exploit execution failed.',
+        });
+      }
+    } catch (error) {
+      setExploitResult({
+        success: false,
+        exploit_confirmed: false,
+        output: error.message || 'Exploit execution failed.',
+      });
+    } finally {
+      setIsProvingExploit(false);
+    }
+  };
 
   const categories = ['All', 'Reentrancy', 'Unchecked Calls', 'Oracle Dependency', 'Access Control', 'Integer / Precision'];
   const severities = ['All', 'Critical', 'High', 'Medium', 'Low'];
@@ -319,6 +348,21 @@ export default function StaticFindings() {
                 </div>
               </div>
 
+              {selectedFinding?.detector === 'reentrancy-eth' && (
+                <button
+                  type="button"
+                  onClick={handleProveExploit}
+                  disabled={isProvingExploit}
+                  className="prism-button prism-button-primary"
+                  style={{
+                    marginTop: '12px',
+                    marginBottom: '18px',
+                    minWidth: '170px',
+                  }}
+                >
+                  {isProvingExploit ? 'PROVING EXPLOIT...' : 'PROVE EXPLOIT'}
+                </button>
+              )}
               {/* Description */}
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
