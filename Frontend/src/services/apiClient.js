@@ -322,6 +322,34 @@ class SecurityApiClient {
     };
   }
 
+  async proveExploit() {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/prove-exploit', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data?.detail || 'Exploit execution failed.',
+        };
+      }
+
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Unable to connect to exploit engine.',
+      };
+    }
+  }
+
+
   async getRuntimeEvents({
     search = '',
     contract = 'All',
@@ -437,6 +465,8 @@ class SecurityApiClient {
     }
     return { success: true, data: item };
   }
+
+
 }
 
 export const securityApi = new SecurityApiClient();
