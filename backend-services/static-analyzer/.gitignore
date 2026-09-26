@@ -1,7 +1,71 @@
-.env
-venv/
+# =========================
+# Python
+# =========================
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# =========================
+# Python tooling
+# =========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Node / React
+# =========================
 node_modules/
 dist/
-*.pyc
-slither-output.json
+build/
+.vite/
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# Foundry
+# =========================
+**/exploit-engine/cache/
+**/exploit-engine/out/
+**/exploit-engine/broadcast/
+**/exploit-engine/lib/
+
+# Foundry logs
+**/exploit-engine/*.log
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# PRISM local files
+# =========================
+*.local
+
+
+backend-services/**/venv/
+backend-services/**/.env
+backend-services/**/__pycache__/
+backend-services/**/exploit-engine/cache/
+backend-services/**/exploit-engine/out/
+backend-services/**/exploit-engine/broadcast/
+backend-services/**/exploit-engine/lib/

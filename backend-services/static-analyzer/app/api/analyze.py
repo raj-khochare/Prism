@@ -6,6 +6,7 @@ from app.services.slither_service import run_slither
 from app.services.finding_processor import process_findings
 from app.services.gemini_service import analyze_finding
 from app.services.risk_scorer import calculate_risk_score
+from app.services.exploit_service import run_reentrancy_exploit
 
 router = APIRouter()
 
@@ -74,3 +75,7 @@ async def analyze_contract(file: UploadFile = File(...)):
 
     finally:
         Path(contract_path).unlink(missing_ok=True)
+
+@router.post("/prove-exploit")
+def prove_exploit():
+    return run_reentrancy_exploit()
