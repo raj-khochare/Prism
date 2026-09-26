@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from '../router.jsx';
 import { securityApi } from '../services/apiClient.js';
 import { SAMPLE_SOL_VULNERABLE, SAMPLE_SOL_ORACLE } from '../data/mockSecurityData.js';
 import CodeViewer from '../components/common/CodeViewer.jsx';
@@ -16,12 +17,20 @@ import {
 } from '../components/common/Icons.jsx';
 
 export default function ScanContract() {
+  const { navigate } = useRouter();
   const [sourceCode, setSourceCode] = useState(SAMPLE_SOL_VULNERABLE);
   const [fileName, setFileName] = useState('VulnerableVault.sol');
   const [contractAddress, setContractAddress] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
-  const [scanResult, setScanResult] = useState(null);
+  const [scanResult, setScanResult] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('prism_last_scan');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [scanError, setScanError] = useState(null);
   const [selectedFinding, setSelectedFinding] = useState(null);
 
@@ -44,6 +53,7 @@ export default function ScanContract() {
       setScanResult(null);
       setSelectedFinding(null);
       setScanError(null);
+      sessionStorage.removeItem('prism_last_scan');
     };
 
     reader.readAsText(file);
@@ -73,19 +83,34 @@ export default function ScanContract() {
   };
 
   const handleRunScan = async () => {
-    if (!selectedFile) {
-      setScanError('Please upload a Solidity .sol file before running the scan.');
+    if (!sourceCode.trim()) {
+      setScanError('Please enter or upload a Solidity contract before running the scan.');
       return;
     }
 
     setIsScanning(true);
     setScanError(null);
+    setScanResult(null);
+    setSelectedFinding(null);
 
     try {
-      const res = await securityApi.scanSoliditySource(selectedFile);
+      // Always build the file from the current editor content.
+      // This makes both upload and manual paste use exactly the same scan path.
+      const scanFile = new File(
+        [sourceCode],
+        fileName?.trim() || 'Contract.sol',
+        { type: 'text/plain' }
+      );
+
+      const res = await securityApi.scanSoliditySource(scanFile);
 
       if (res.success) {
         setScanResult(res.data);
+
+        sessionStorage.setItem(
+          'prism_last_scan',
+          JSON.stringify(res.data)
+        );
 
         if (res.data.findings && res.data.findings.length > 0) {
           setSelectedFinding(res.data.findings[0]);
@@ -93,8 +118,10 @@ export default function ScanContract() {
       } else {
         setScanError(res.error || 'Static analysis could not be completed.');
       }
-    } catch {
-      setScanError('An unexpected error occurred during static analysis.');
+    } catch (error) {
+      setScanError(
+        error.message || 'An unexpected error occurred during static analysis.'
+      );
     } finally {
       setIsScanning(false);
     }
@@ -330,7 +357,9 @@ export default function ScanContract() {
                         return (
                           <div
                             key={f.id}
-                            onClick={() => setSelectedFinding(f)}
+                            onClick={() => {
+                              navigate(`/findings?id=${encodeURIComponent(f.id)}`);
+                            }}
                             style={{
                               padding: '14px 16px',
                               borderBottom: '1px solid var(--border-default)',

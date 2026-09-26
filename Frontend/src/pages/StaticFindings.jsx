@@ -318,37 +318,87 @@ export default function StaticFindings() {
 
             <div className="prism-panel-body">
               {/* Meta Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '18px', padding: '12px 16px', backgroundColor: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)', border: '1.5px solid var(--border-default)', boxShadow: '2px 2px 0px #000' }}>
-                <div>
+              {/* Meta Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                  gap: '12px',
+                  marginBottom: '18px',
+                  padding: '12px 16px',
+                  backgroundColor: 'var(--bg-elevated)',
+                  borderRadius: 'var(--radius-xs)',
+                  border: '1.5px solid var(--border-default)',
+                  boxShadow: '2px 2px 0px #000',
+                }}
+              >
+                <div style={{ minWidth: 0 }}>
                   <span className="meta-label">Detector</span>
-                  <div className="mono" style={{ fontSize: '12px', color: 'var(--accent-teal)', fontWeight: 700, marginTop: '2px' }}>
+                  <div
+                    className="mono"
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--accent-teal)',
+                      fontWeight: 700,
+                      marginTop: '2px',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
                     {selectedFinding.detector}
                   </div>
                 </div>
 
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <span className="meta-label">Affected Contract</span>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      marginTop: '2px',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
                     {selectedFinding.contract}
                   </div>
                 </div>
 
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <span className="meta-label">File &amp; Line Range</span>
-                  <div className="mono" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                    {selectedFinding.file}:{selectedFinding.lineStart}{selectedFinding.lineEnd && selectedFinding.lineEnd !== selectedFinding.lineStart ? `–${selectedFinding.lineEnd}` : ''}
+                  <div
+                    className="mono"
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--text-secondary)',
+                      marginTop: '2px',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
+                    {selectedFinding.file}:{selectedFinding.lineStart}
+                    {selectedFinding.lineEnd &&
+                      selectedFinding.lineEnd !== selectedFinding.lineStart
+                      ? `–${selectedFinding.lineEnd}`
+                      : ''}
                   </div>
                 </div>
 
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <span className="meta-label">Category</span>
-                  <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--text-primary)',
+                      fontWeight: 600,
+                      marginTop: '2px',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
                     {selectedFinding.category || 'Vulnerability'}
                   </div>
                 </div>
               </div>
 
-              
+
               {/* Description */}
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
@@ -379,7 +429,7 @@ export default function StaticFindings() {
                   fileName={selectedFinding.file}
                   highlightStart={selectedFinding.lineStart}
                   highlightEnd={selectedFinding.lineEnd}
-                  maxHeight="300px"
+                  maxHeight="420px"
                 />
               </div>
 
@@ -426,240 +476,240 @@ export default function StaticFindings() {
               )}
 
               {selectedFinding?.detector === 'reentrancy-eth' && (
-  <div
-    style={{
-      marginBottom: '22px',
-      border: '2px solid var(--border-default)',
-      backgroundColor: 'var(--bg-panel)',
-      boxShadow: '4px 4px 0 #000',
-      padding: '16px',
-    }}
-  >
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        gap: '16px',
-        marginBottom: '12px',
-      }}
-    >
-      <div>
-        <div
-          className="mono"
-          style={{
-            fontSize: '10px',
-            fontWeight: 800,
-            color: 'var(--accent-teal)',
-            letterSpacing: '0.08em',
-            marginBottom: '5px',
-          }}
-        >
-          EXPLOIT VERIFICATION
-        </div>
-
-        <div
-          style={{
-            fontSize: '13px',
-            fontWeight: 800,
-            color: 'var(--text-primary)',
-            marginBottom: '4px',
-          }}
-        >
-          Verify whether this finding is exploitable
-        </div>
-
-        <div
-          style={{
-            fontSize: '11px',
-            lineHeight: 1.5,
-            color: 'var(--text-secondary)',
-            maxWidth: '620px',
-          }}
-        >
-          Execute the local Foundry proof-of-concept against the vulnerable
-          contract and inspect the resulting balance change.
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={handleProveExploit}
-        disabled={isProvingExploit}
-        style={{
-          flexShrink: 0,
-          padding: '10px 14px',
-          border: '2px solid #000',
-          backgroundColor: isProvingExploit
-            ? 'var(--bg-muted)'
-            : 'var(--accent-teal)',
-          color: '#000',
-          fontSize: '10px',
-          fontWeight: 900,
-          letterSpacing: '0.05em',
-          cursor: isProvingExploit ? 'wait' : 'pointer',
-          boxShadow: isProvingExploit ? 'none' : '3px 3px 0 #000',
-          transform: isProvingExploit ? 'translate(2px, 2px)' : 'none',
-        }}
-      >
-        {isProvingExploit ? 'EXECUTING...' : 'EXECUTE PROOF'}
-      </button>
-    </div>
-
-    {exploitResult && (
-      <div
-        style={{
-          borderTop: '2px solid var(--border-default)',
-          paddingTop: '14px',
-          marginTop: '14px',
-        }}
-      >
-        {exploitResult.exploit_confirmed ? (
-          <>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '14px',
-              }}
-            >
-              <span
-                style={{
-                  width: '9px',
-                  height: '9px',
-                  backgroundColor: 'var(--accent-red)',
-                  display: 'inline-block',
-                }}
-              />
-
-              <span
-                className="mono"
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 900,
-                  color: 'var(--accent-red)',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                EXPLOIT CONFIRMED
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '10px',
-              }}
-            >
-              <div
-                style={{
-                  padding: '12px',
-                  border: '1.5px solid var(--border-default)',
-                  backgroundColor: 'var(--bg-canvas)',
-                }}
-              >
                 <div
-                  className="mono"
                   style={{
-                    fontSize: '9px',
-                    color: 'var(--text-muted)',
-                    marginBottom: '5px',
+                    marginBottom: '22px',
+                    border: '2px solid var(--border-default)',
+                    backgroundColor: 'var(--bg-panel)',
+                    boxShadow: '4px 4px 0 #000',
+                    padding: '16px',
                   }}
                 >
-                  VICTIM BALANCE BEFORE
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      gap: '16px',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div>
+                      <div
+                        className="mono"
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 800,
+                          color: 'var(--accent-teal)',
+                          letterSpacing: '0.08em',
+                          marginBottom: '5px',
+                        }}
+                      >
+                        EXPLOIT VERIFICATION
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: 800,
+                          color: 'var(--text-primary)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Verify whether this finding is exploitable
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: '11px',
+                          lineHeight: 1.5,
+                          color: 'var(--text-secondary)',
+                          maxWidth: '620px',
+                        }}
+                      >
+                        Execute the local Foundry proof-of-concept against the vulnerable
+                        contract and inspect the resulting balance change.
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleProveExploit}
+                      disabled={isProvingExploit}
+                      style={{
+                        flexShrink: 0,
+                        padding: '10px 14px',
+                        border: '2px solid #000',
+                        backgroundColor: isProvingExploit
+                          ? 'var(--bg-muted)'
+                          : 'var(--accent-teal)',
+                        color: '#000',
+                        fontSize: '10px',
+                        fontWeight: 900,
+                        letterSpacing: '0.05em',
+                        cursor: isProvingExploit ? 'wait' : 'pointer',
+                        boxShadow: isProvingExploit ? 'none' : '3px 3px 0 #000',
+                        transform: isProvingExploit ? 'translate(2px, 2px)' : 'none',
+                      }}
+                    >
+                      {isProvingExploit ? 'EXECUTING...' : 'EXECUTE PROOF'}
+                    </button>
+                  </div>
+
+                  {exploitResult && (
+                    <div
+                      style={{
+                        borderTop: '2px solid var(--border-default)',
+                        paddingTop: '14px',
+                        marginTop: '14px',
+                      }}
+                    >
+                      {exploitResult.exploit_confirmed ? (
+                        <>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              marginBottom: '14px',
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: '9px',
+                                height: '9px',
+                                backgroundColor: 'var(--accent-red)',
+                                display: 'inline-block',
+                              }}
+                            />
+
+                            <span
+                              className="mono"
+                              style={{
+                                fontSize: '11px',
+                                fontWeight: 900,
+                                color: 'var(--accent-red)',
+                                letterSpacing: '0.06em',
+                              }}
+                            >
+                              EXPLOIT CONFIRMED
+                            </span>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                padding: '12px',
+                                border: '1.5px solid var(--border-default)',
+                                backgroundColor: 'var(--bg-canvas)',
+                              }}
+                            >
+                              <div
+                                className="mono"
+                                style={{
+                                  fontSize: '9px',
+                                  color: 'var(--text-muted)',
+                                  marginBottom: '5px',
+                                }}
+                              >
+                                VICTIM BALANCE BEFORE
+                              </div>
+
+                              <div
+                                className="mono"
+                                style={{
+                                  fontSize: '20px',
+                                  fontWeight: 900,
+                                  color: 'var(--text-primary)',
+                                }}
+                              >
+                                {exploitResult.victim_balance_before_eth} ETH
+                              </div>
+                            </div>
+
+                            <div
+                              style={{
+                                padding: '12px',
+                                border: '1.5px solid var(--accent-red)',
+                                backgroundColor: 'var(--accent-red-bg)',
+                              }}
+                            >
+                              <div
+                                className="mono"
+                                style={{
+                                  fontSize: '9px',
+                                  color: 'var(--accent-red)',
+                                  marginBottom: '5px',
+                                }}
+                              >
+                                VICTIM BALANCE AFTER
+                              </div>
+
+                              <div
+                                className="mono"
+                                style={{
+                                  fontSize: '20px',
+                                  fontWeight: 900,
+                                  color: 'var(--accent-red)',
+                                }}
+                              >
+                                {exploitResult.victim_balance_after_eth} ETH
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            className="mono"
+                            style={{
+                              marginTop: '12px',
+                              fontSize: '9px',
+                              color: 'var(--text-muted)',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            LOCAL FOUNDRY EXECUTION · REENTRANCY PROOF
+                          </div>
+                        </>
+                      ) : (
+                        <div
+                          style={{
+                            padding: '12px',
+                            border: '1.5px solid var(--border-default)',
+                            backgroundColor: 'var(--bg-canvas)',
+                          }}
+                        >
+                          <div
+                            className="mono"
+                            style={{
+                              fontSize: '10px',
+                              fontWeight: 900,
+                              color: 'var(--accent-red)',
+                              marginBottom: '6px',
+                            }}
+                          >
+                            EXPLOIT EXECUTION FAILED
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              color: 'var(--text-secondary)',
+                            }}
+                          >
+                            {exploitResult.output || 'The exploit could not be executed.'}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-
-                <div
-                  className="mono"
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: 900,
-                    color: 'var(--text-primary)',
-                  }}
-                >
-                  10 ETH
-                </div>
-              </div>
-
-              <div
-                style={{
-                  padding: '12px',
-                  border: '1.5px solid var(--accent-red)',
-                  backgroundColor: 'var(--accent-red-bg)',
-                }}
-              >
-                <div
-                  className="mono"
-                  style={{
-                    fontSize: '9px',
-                    color: 'var(--accent-red)',
-                    marginBottom: '5px',
-                  }}
-                >
-                  VICTIM BALANCE AFTER
-                </div>
-
-                <div
-                  className="mono"
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: 900,
-                    color: 'var(--accent-red)',
-                  }}
-                >
-                  0 ETH
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="mono"
-              style={{
-                marginTop: '12px',
-                fontSize: '9px',
-                color: 'var(--text-muted)',
-                textTransform: 'uppercase',
-              }}
-            >
-              LOCAL FOUNDRY EXECUTION · REENTRANCY PROOF
-            </div>
-          </>
-        ) : (
-          <div
-            style={{
-              padding: '12px',
-              border: '1.5px solid var(--border-default)',
-              backgroundColor: 'var(--bg-canvas)',
-            }}
-          >
-            <div
-              className="mono"
-              style={{
-                fontSize: '10px',
-                fontWeight: 900,
-                color: 'var(--accent-red)',
-                marginBottom: '6px',
-              }}
-            >
-              EXPLOIT EXECUTION FAILED
-            </div>
-
-            <div
-              style={{
-                fontSize: '11px',
-                color: 'var(--text-secondary)',
-              }}
-            >
-              {exploitResult.output || 'The exploit could not be executed.'}
-            </div>
-          </div>
-        )}
-      </div>
-    )}
-  </div>
-)}
+              )}
 
               {/* AI Suggested Fixed Code */}
               {selectedFinding.fixedCode && (
