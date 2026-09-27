@@ -83,31 +83,46 @@ export default function StaticFindings() {
   }, [search, severityFilter, categoryFilter, contractFilter, detectorFilter, statusFilter, page, pageSize]);
 
   const handleProveExploit = async () => {
-    setIsProvingExploit(true);
-    setExploitResult(null);
+  if (!selectedFinding || isProvingExploit) return;
 
-    try {
-      const result = await securityApi.proveExploit();
+  setIsProvingExploit(true);
+  setExploitResult(null);
 
-      if (result.success) {
-        setExploitResult(result.data);
-      } else {
-        setExploitResult({
-          success: false,
-          exploit_confirmed: false,
-          output: result.error || 'Exploit execution failed.',
-        });
-      }
-    } catch (error) {
+  try {
+    const result = await securityApi.proveExploit(selectedFinding);
+
+    console.log('EXPLOIT VERIFICATION RESPONSE:', result);
+
+    if (result?.success && result?.data) {
+      setExploitResult(result.data);
+    } else {
       setExploitResult({
         success: false,
+        status: 'error',
         exploit_confirmed: false,
-        output: error.message || 'Exploit execution failed.',
+        message:
+          result?.error ||
+          'Exploit verification failed.',
       });
-    } finally {
-      setIsProvingExploit(false);
     }
-  };
+  } catch (error) {
+    console.error(
+      'EXPLOIT VERIFICATION ERROR:',
+      error
+    );
+
+    setExploitResult({
+      success: false,
+      status: 'error',
+      exploit_confirmed: false,
+      message:
+        error?.message ||
+        'Exploit verification failed.',
+    });
+  } finally {
+    setIsProvingExploit(false);
+  }
+};
 
   const categories = ['All', 'Reentrancy', 'Unchecked Calls', 'Oracle Dependency', 'Access Control', 'Integer / Precision'];
   const severities = ['All', 'Critical', 'High', 'Medium', 'Low'];
@@ -475,7 +490,7 @@ export default function StaticFindings() {
                 </div>
               )}
 
-              {selectedFinding?.detector === 'reentrancy-eth' && (
+              {selectedFinding?.detector && (
                 <div
                   style={{
                     marginBottom: '22px',
@@ -535,7 +550,7 @@ export default function StaticFindings() {
                     <button
                       type="button"
                       onClick={handleProveExploit}
-                      disabled={isProvingExploit}
+                      disabled={isProvingExploit || !selectedFinding}
                       style={{
                         flexShrink: 0,
                         padding: '10px 14px',

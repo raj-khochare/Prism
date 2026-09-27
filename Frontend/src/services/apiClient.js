@@ -322,32 +322,98 @@ class SecurityApiClient {
     };
   }
 
-  async proveExploit() {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/prove-exploit', {
-        method: 'POST',
-      });
+async proveExploit(finding) {
+  try {
+    const storedScan = sessionStorage.getItem('prism_last_scan');
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return {
-          success: false,
-          error: data?.detail || 'Exploit execution failed.',
-        };
-      }
-
-      return {
-        success: true,
-        data,
-      };
-    } catch (error) {
+    if (!storedScan) {
       return {
         success: false,
-        error: error.message || 'Unable to connect to exploit engine.',
+        error: 'No scanned contract is available for exploit verification.',
       };
     }
+
+    const scan = JSON.parse(storedScan);
+
+    if (!scan.contractSource) {
+      return {
+        success: false,
+        error: 'Contract source is missing from the current scan.',
+      };
+    }
+
+    if (!finding) {
+      return {
+        success: false,
+        error: 'No finding selected.',
+      };
+    }
+
+    const requestBody = {
+      contract_source: scan.contractSource,
+      finding: {
+        ...finding,
+        detector_id: finding.detector_id || finding.detector,
+        contract: finding.contract,
+        function: finding.function,
+        description: finding.description,
+        source_snippet:
+          finding.sourceSnippet ||
+          finding.source_snippet ||
+          finding.codeSnippet ||
+          '',
+      },
+    };
+
+    console.log(
+      'PROVE EXPLOIT REQUEST:',
+      JSON.stringify(requestBody, null, 2)
+    );
+
+    const response = await fetch(
+      'http://127.0.0.1:8000/prove-exploit',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log('PROVE EXPLOIT STATUS:', response.status);
+    console.log(
+      'PROVE EXPLOIT RESPONSE:',
+      JSON.stringify(data, null, 2)
+    );
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error:
+          data?.detail ||
+          data?.message ||
+          'Exploit verification failed.',
+      };
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    console.error('PROVE EXPLOIT ERROR:', error);
+
+    return {
+      success: false,
+      error:
+        error?.message ||
+        'Unable to connect to exploit engine.',
+    };
   }
+}
 
 
   async getRuntimeEvents({

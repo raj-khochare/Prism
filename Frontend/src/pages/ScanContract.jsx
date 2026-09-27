@@ -109,7 +109,10 @@ export default function ScanContract() {
 
         sessionStorage.setItem(
           'prism_last_scan',
-          JSON.stringify(res.data)
+          JSON.stringify({
+            ...res.data,
+            contractSource: sourceCode,
+          })
         );
 
         if (res.data.findings && res.data.findings.length > 0) {

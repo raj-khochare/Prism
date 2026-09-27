@@ -6,7 +6,8 @@ from app.services.slither_service import run_slither
 from app.services.finding_processor import process_findings
 from app.services.gemini_service import analyze_finding
 from app.services.risk_scorer import calculate_risk_score
-from app.services.exploit_service import run_reentrancy_exploit
+from app.services.exploit_service import run_exploit_verification
+from app.schemas.exploit import ExploitRequest
 
 router = APIRouter()
 
@@ -77,5 +78,47 @@ async def analyze_contract(file: UploadFile = File(...)):
         Path(contract_path).unlink(missing_ok=True)
 
 @router.post("/prove-exploit")
-def prove_exploit():
-    return run_reentrancy_exploit()
+async def prove_exploit(request: ExploitRequest):
+    """
+    Attempt to prove a specific Slither finding against
+    the uploaded Solidity contract.
+    """
+
+    try:
+        contract_source = request.contract_source
+        finding = request.finding
+
+        if not contract_source.strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Contract source is required"
+            )
+
+        if not finding:
+            raise HTTPException(
+                status_code=400,
+                detail="Finding context is required"
+            )
+
+        detector_id = finding.get("detector_id") or finding.get("detector")
+        contract_name = finding.get("contract")
+        function_name = finding.get("function")
+
+        return run_exploit_verification(
+            contract_source=contract_source,
+            finding={
+                **finding,
+                "detector_id": detector_id,
+                "contract": contract_name,
+                "function": function_name,
+            },
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Exploit verification failed: {str(e)}"
+        )
