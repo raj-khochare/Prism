@@ -69,3 +69,7 @@ backend-services/**/exploit-engine/cache/
 backend-services/**/exploit-engine/out/
 backend-services/**/exploit-engine/broadcast/
 backend-services/**/exploit-engine/lib/
+exploit-engine/src/Counter.sol
+exploit-engine/test/Counter.t.sol
+exploit-engine/script/Counter.s.sol
+slither-output.json
