@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+import os
+from dotenv import load_dotenv
 
-DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/prism_static_analyzer"
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 class Base(DeclarativeBase):

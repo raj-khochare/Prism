@@ -1,3 +1,5 @@
+import hashlib
+import json
 from pathlib import Path
 
 from app.schemas.finding import Finding
@@ -24,6 +26,97 @@ def _get_source_snippet(
     return "\n".join(lines[start:end])
 
 
+def _get_vulnerability_family(detector_id: str) -> str:
+    detector = detector_id.lower()
+
+    if "reentrancy" in detector:
+        return "reentrancy"
+
+    if "tx-origin" in detector or "txorigin" in detector:
+        return "tx_origin"
+
+    if "delegatecall" in detector:
+        return "delegatecall"
+
+    if "unchecked" in detector:
+        return "unchecked_call"
+
+    if "arbitrary-send" in detector or "arbitrary_send" in detector:
+        return "arbitrary_send"
+
+    if "weak-prng" in detector or "randomness" in detector:
+        return "weak_randomness"
+
+    if "overflow" in detector or "underflow" in detector:
+        return "integer_overflow"
+
+    return "unknown"
+
+
+def _get_vulnerability_features(
+    detector_id: str,
+    source_snippet: str | None,
+) -> dict:
+    detector = detector_id.lower()
+    source = (source_snippet or "").lower()
+
+    return {
+        "external_call": (
+            "reentrancy" in detector
+            or "unchecked" in detector
+            or "delegatecall" in detector
+            or ".call(" in source
+            or ".delegatecall(" in source
+            or ".send(" in source
+            or ".transfer(" in source
+        ),
+        "state_update_after_call": (
+            "reentrancy" in detector
+        ),
+        "value_transfer": (
+            "reentrancy-eth" in detector
+            or ".call{" in source
+            or ".transfer(" in source
+            or ".send(" in source
+        ),
+        "uses_msg_sender": "msg.sender" in source,
+        "uses_tx_origin": (
+            "tx-origin" in detector
+            or "tx.origin" in source
+        ),
+        "delegatecall": (
+            "delegatecall" in detector
+            or ".delegatecall(" in source
+        ),
+        "unchecked_external_call": (
+            "unchecked" in detector
+        ),
+    }
+
+
+def _generate_finding_id(
+    detector_id: str,
+    source_file: str | None,
+    line_start: int | None,
+    line_end: int | None,
+    function: str | None,
+) -> str:
+    identity = {
+        "detector_id": detector_id,
+        "source_file": source_file,
+        "line_start": line_start,
+        "line_end": line_end,
+        "function": function,
+    }
+
+    raw = json.dumps(
+        identity,
+        sort_keys=True,
+    ).encode()
+
+    return hashlib.sha256(raw).hexdigest()[:16]
+
+
 def process_findings(
     slither_data: dict,
     contract_path: str,
@@ -34,6 +127,8 @@ def process_findings(
     detectors = slither_data.get("results", {}).get("detectors", [])
 
     for detector in detectors:
+        detector_id = detector.get("check", "unknown")
+
         elements = detector.get("elements", [])
 
         function = None
@@ -51,11 +146,15 @@ def process_findings(
 
             source_file = source_mapping.get("filename_short")
 
+            if source_file:
+                source_file = Path(source_file).name
+
             if element.get("type") == "function":
                 function = element.get("name")
 
                 parent = element.get(
-                    "type_specific_fields", {}
+                    "type_specific_fields",
+                    {},
                 ).get("parent", {})
 
                 if parent.get("type") == "contract":
@@ -92,10 +191,29 @@ def process_findings(
             line_end,
         )
 
+        vulnerability_family = _get_vulnerability_family(
+            detector_id
+        )
+
+        vulnerability_features = _get_vulnerability_features(
+            detector_id,
+            snippet,
+        )
+
+        finding_id = _generate_finding_id(
+            detector_id=detector_id,
+            source_file=source_file,
+            line_start=line_start,
+            line_end=line_end,
+            function=function,
+        )
+
         findings.append(
             Finding(
-                detector_id=detector.get("check", "unknown"),
-                title=detector.get("check", "unknown"),
+                finding_id=finding_id,
+                detector_id=detector_id,
+                vulnerability_family=vulnerability_family,
+                title=detector_id,
                 impact=detector.get("impact", "Unknown"),
                 confidence=detector.get("confidence", "Unknown"),
                 contract=contract,
@@ -104,6 +222,7 @@ def process_findings(
                 line_start=line_start,
                 line_end=line_end,
                 source_snippet=snippet,
+                vulnerability_features=vulnerability_features,
                 description=detector.get("description", ""),
             )
         )

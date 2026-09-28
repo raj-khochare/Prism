@@ -1,20 +1,37 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from pathlib import Path
 import tempfile
+import hashlib
+
+from sqlalchemy.orm import Session
+
+from app.dependencies import get_db
 
 from app.services.slither_service import run_slither
 from app.services.finding_processor import process_findings
 from app.services.gemini_service import analyze_finding
 from app.services.risk_scorer import calculate_risk_score
 from app.services.exploit_service import run_exploit_verification
+
+from app.services.static_analysis_service import (
+    create_static_analysis,
+    create_static_finding,
+    create_finding_analysis,
+)
+
 from app.schemas.exploit import ExploitRequest
+from app.schemas.finding import Finding
+
 
 router = APIRouter()
 
 
 @router.post("/analyze")
-async def analyze_contract(file: UploadFile = File(...)):
-
+async def analyze_contract(
+    contract_id: str,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
     if not file.filename or not file.filename.endswith(".sol"):
         raise HTTPException(
             status_code=400,
@@ -27,7 +44,6 @@ async def analyze_contract(file: UploadFile = File(...)):
         suffix=".sol",
         delete=False,
     ) as temp_file:
-
         temp_file.write(content)
         contract_path = temp_file.name
 
@@ -48,15 +64,36 @@ async def analyze_contract(file: UploadFile = File(...)):
             if finding.impact == "Informational":
                 gemini_analysis = {
                     "available": False,
+                    "is_valid": False,
+                    "confidence": "Unknown",
+                    "severity": finding.impact,
+                    "explanation": (
+                        "Gemini analysis skipped for informational finding."
+                    ),
+                    "attack_scenario": "",
+                    "impact": finding.impact,
+                    "recommendation": "",
+                    "fixed_code": "",
                     "skipped": True,
-                    "reason": "Informational finding",
                 }
+
             else:
                 try:
                     gemini_analysis = analyze_finding(finding)
+
                 except Exception as exc:
                     gemini_analysis = {
                         "available": False,
+                        "is_valid": False,
+                        "confidence": "Unknown",
+                        "severity": finding.impact,
+                        "explanation": (
+                            "Gemini analysis is temporarily unavailable."
+                        ),
+                        "attack_scenario": "",
+                        "impact": finding.impact,
+                        "recommendation": "",
+                        "fixed_code": "",
                         "error": str(exc),
                     }
 
@@ -68,14 +105,50 @@ async def analyze_contract(file: UploadFile = File(...)):
                 }
             )
 
+        analysis = create_static_analysis(
+            db=db,
+            contract_id=contract_id,
+            source_hash=hashlib.sha256(content).hexdigest(),
+            source_file=file.filename,
+            analyzer_version="1.0.0",
+            analysis_status="completed",
+            overall_risk_score=risk_score,
+        )
+
+        for result in results:
+            finding = result["finding"]
+
+            static_finding = create_static_finding(
+                db=db,
+                analysis_id=analysis.analysis_id,
+                contract_id=contract_id,
+                finding=Finding(**finding),
+                severity=result["severity"],
+                risk_score=risk_score,
+            )
+
+            create_finding_analysis(
+                db=db,
+                finding_id=static_finding.finding_id,
+                gemini_analysis=result["analysis"],
+            )
+
+        db.commit()
+
         return {
             "success": True,
+            "analysis_id": str(analysis.analysis_id),
             "risk_score": risk_score,
             "findings": results,
         }
 
+    except Exception:
+        db.rollback()
+        raise
+
     finally:
         Path(contract_path).unlink(missing_ok=True)
+
 
 @router.post("/prove-exploit")
 async def prove_exploit(request: ExploitRequest):
@@ -91,13 +164,13 @@ async def prove_exploit(request: ExploitRequest):
         if not contract_source.strip():
             raise HTTPException(
                 status_code=400,
-                detail="Contract source is required"
+                detail="Contract source is required",
             )
 
         if not finding:
             raise HTTPException(
                 status_code=400,
-                detail="Finding context is required"
+                detail="Finding context is required",
             )
 
         detector_id = finding.get("detector_id") or finding.get("detector")
@@ -117,8 +190,8 @@ async def prove_exploit(request: ExploitRequest):
     except HTTPException:
         raise
 
-    except Exception as e:
+    except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Exploit verification failed: {str(e)}"
+            detail=f"Exploit verification failed: {str(exc)}",
         )

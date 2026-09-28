@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import DateTime, Integer, String, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from database import Base
+from app.database import Base
 
 
 class StaticAnalysis(Base):
