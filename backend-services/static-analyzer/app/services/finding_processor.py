@@ -120,6 +120,7 @@ def _generate_finding_id(
 def process_findings(
     slither_data: dict,
     contract_path: str,
+    source_filename: str,
 ) -> list[Finding]:
 
     findings = []
@@ -144,10 +145,7 @@ def process_findings(
             if not lines:
                 continue
 
-            source_file = source_mapping.get("filename_short")
-
-            if source_file:
-                source_file = Path(source_file).name
+            source_file = source_filename
 
             if element.get("type") == "function":
                 function = element.get("name")

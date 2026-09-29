@@ -12,7 +12,7 @@ class StaticFindingBase(BaseModel):
     vulnerability_family: str
 
     severity: str
-    risk_score: int
+    risk_score: int | None = None,
     confidence: float
 
     source_file: str

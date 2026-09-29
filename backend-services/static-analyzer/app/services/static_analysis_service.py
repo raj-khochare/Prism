@@ -4,6 +4,8 @@ from app.models.static_analysis import StaticAnalysis
 from app.models.static_finding import StaticFinding
 from app.models.finding_analysis import FindingAnalysis
 
+from app.models.exploit_verification import ExploitVerification
+
 
 def create_static_analysis(
     db: Session,
@@ -29,6 +31,17 @@ def create_static_analysis(
     return analysis
 
 
+def calculate_finding_risk_score(severity: str) -> int:
+    scores = {
+        "Critical": 40,
+        "High": 25,
+        "Medium": 15,
+        "Low": 5,
+        "Informational": 0,
+    }
+
+    return scores.get(severity, 0)
+
 def create_static_finding(
     db: Session,
     analysis_id,
@@ -43,7 +56,7 @@ def create_static_finding(
         detector_id=finding.detector_id,
         vulnerability_family=finding.vulnerability_family,
         severity=severity,
-        risk_score=risk_score,
+        risk_score=calculate_finding_risk_score(severity),
         confidence=_confidence_to_float(finding.confidence),
         source_file=finding.source_file or "",
         function_name=finding.function,
@@ -108,3 +121,53 @@ def _confidence_to_float(confidence: str) -> float:
     }
 
     return mapping.get(confidence, 0.0)
+
+def create_exploit_verification(
+    db: Session,
+    finding_id,
+    result: dict,
+):
+    evidence_keys = (
+        "victim_balance_before_eth",
+        "victim_balance_after_eth",
+        "attacker_balance_before_eth",
+        "attacker_balance_after_eth",
+    )
+
+    evidence = {
+        key: result[key]
+        for key in evidence_keys
+        if key in result
+    }
+
+    verification = ExploitVerification(
+        finding_id=finding_id,
+        vulnerability_family=result.get(
+            "vulnerability_family",
+            "unknown",
+        ),
+        detector_id=result.get(
+            "detector_id",
+            "unknown",
+        ),
+        status=result.get(
+            "status",
+            "error",
+        ),
+        exploit_confirmed=bool(
+            result.get("exploit_confirmed", False)
+        ),
+        generated_poc=result.get("generated_poc"),
+        execution_output=result.get("output"),
+        execution_error=(
+            result.get("message")
+            if result.get("status") == "error"
+            else None
+        ),
+        evidence=evidence or None,
+    )
+
+    db.add(verification)
+    db.flush()
+
+    return verification

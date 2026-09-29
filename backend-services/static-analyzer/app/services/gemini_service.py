@@ -273,11 +273,35 @@ balances whenever both are observable.
 
 Use descriptive labels that identify whose balance is being measured.
 
+For any ETH exploit where the attacker must send ETH to initiate
+the attack, define the exact ETH amount sent by the attacker as
+a variable named attackValue.
+
+The test MUST emit:
+
 emit log_named_decimal_uint(
-    "PRISM_BALANCE_BEFORE",
-    balanceBefore,
+    "PRISM_ATTACK_VALUE",
+    attackValue,
     18
 );
+
+The attack transaction MUST use that exact value.
+
+For example:
+
+uint256 attackValue = 1 ether;
+attacker.attack{{value: attackValue}}();
+Do NOT hardcode the attack value only in the transaction.
+PRISM must be able to observe and report it.
+
+The attacker's net gain is:
+
+attackerBalanceAfter
+- attackerBalanceBefore
+- attackValue
+
+For an ETH theft exploit, the net attacker gain must correspond
+to the victim's ETH loss.
 
 emit log_named_decimal_uint(
     "PRISM_BALANCE_AFTER",
@@ -294,11 +318,64 @@ REENTRANCY
 Create a real attacker/receiver helper contract outside
 GeneratedExploitTest.
 
-Trigger the actual vulnerable function.
+Trigger the actual vulnerable function using the actual
+contract ABI and required parameters.
 
 Re-enter through the actual callback path.
 
-Demonstrate an actual unauthorized state or balance change.
+Before the attack, ensure the vulnerable victim contract
+has a meaningful ETH balance using vm.deal ONLY when the
+contract is actually capable of holding ETH.
+
+For example, if the vulnerable contract is expected to hold
+ETH, fund the deployed victim contract with a deterministic
+test balance such as:
+
+vm.deal(address(vulnerableContract), 10 ether);
+
+The attacker may be funded only with the minimum ETH required
+to execute the attack.
+
+Record:
+
+- victim balance before
+- attacker balance before
+- victim balance after
+- attacker balance after
+
+The PoC must demonstrate that the reentrant call causes an
+actual unauthorized transfer or state change.
+
+For an ETH reentrancy exploit, the confirmation condition
+must require:
+
+victimBalanceAfter < victimBalanceBefore
+
+AND
+
+attackerBalanceAfter > attackerBalanceBefore
+
+AND
+
+the attacker gain must correspond to the victim's loss
+within the actual transaction accounting.
+
+Do NOT merely require that both balances changed.
+
+Do NOT use arbitrary balance changes as proof of reentrancy.
+
+Do NOT transfer ETH to the attacker outside the vulnerable
+attack path.
+
+Do NOT use vm.deal to increase the attacker's balance after
+the exploit.
+
+Only emit:
+
+emit log_string("PRISM_EXPLOIT_CONFIRMED");
+
+after the actual reentrant attack has produced the
+observable security impact.
 
 TX-ORIGIN
 

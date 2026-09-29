@@ -18,7 +18,7 @@ class StaticAnalysis(Base):
 
     contract_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        nullable=False,
+        nullable=True,
         index=True,
     )
 

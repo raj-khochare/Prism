@@ -21,6 +21,12 @@ from app.services.static_analysis_service import (
 
 from app.schemas.exploit import ExploitRequest
 from app.schemas.finding import Finding
+from app.services.static_analysis_service import (
+    create_static_analysis,
+    create_static_finding,
+    create_finding_analysis,
+    create_exploit_verification,
+)
 
 
 router = APIRouter()
@@ -28,7 +34,6 @@ router = APIRouter()
 
 @router.post("/analyze")
 async def analyze_contract(
-    contract_id: str,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
@@ -53,6 +58,7 @@ async def analyze_contract(
         findings = process_findings(
             slither_data,
             contract_path,
+            file.filename,
         )
 
         risk_score = calculate_risk_score(findings)
@@ -107,7 +113,7 @@ async def analyze_contract(
 
         analysis = create_static_analysis(
             db=db,
-            contract_id=contract_id,
+            contract_id=None,
             source_hash=hashlib.sha256(content).hexdigest(),
             source_file=file.filename,
             analyzer_version="1.0.0",
@@ -121,11 +127,15 @@ async def analyze_contract(
             static_finding = create_static_finding(
                 db=db,
                 analysis_id=analysis.analysis_id,
-                contract_id=contract_id,
+                contract_id=None,
                 finding=Finding(**finding),
                 severity=result["severity"],
                 risk_score=risk_score,
             )
+
+            result["finding"]["database_finding_id"] = str(
+                    static_finding.finding_id
+                    )
 
             create_finding_analysis(
                 db=db,
@@ -151,7 +161,10 @@ async def analyze_contract(
 
 
 @router.post("/prove-exploit")
-async def prove_exploit(request: ExploitRequest):
+async def prove_exploit(
+    request: ExploitRequest,
+    db: Session = Depends(get_db),
+):
     """
     Attempt to prove a specific Slither finding against
     the uploaded Solidity contract.
@@ -177,7 +190,7 @@ async def prove_exploit(request: ExploitRequest):
         contract_name = finding.get("contract")
         function_name = finding.get("function")
 
-        return run_exploit_verification(
+        result = run_exploit_verification(
             contract_source=contract_source,
             finding={
                 **finding,
@@ -187,10 +200,23 @@ async def prove_exploit(request: ExploitRequest):
             },
         )
 
+        if request.finding_id:
+            create_exploit_verification(
+                db=db,
+                finding_id=request.finding_id,
+                result=result,
+            )
+
+            db.commit()
+
+        return result
+
     except HTTPException:
         raise
 
     except Exception as exc:
+        db.rollback()
+
         raise HTTPException(
             status_code=500,
             detail=f"Exploit verification failed: {str(exc)}",

@@ -83,46 +83,46 @@ export default function StaticFindings() {
   }, [search, severityFilter, categoryFilter, contractFilter, detectorFilter, statusFilter, page, pageSize]);
 
   const handleProveExploit = async () => {
-  if (!selectedFinding || isProvingExploit) return;
+    if (!selectedFinding || isProvingExploit) return;
 
-  setIsProvingExploit(true);
-  setExploitResult(null);
+    setIsProvingExploit(true);
+    setExploitResult(null);
 
-  try {
-    const result = await securityApi.proveExploit(selectedFinding);
+    try {
+      const result = await securityApi.proveExploit(selectedFinding);
 
-    console.log('EXPLOIT VERIFICATION RESPONSE:', result);
+      console.log('EXPLOIT VERIFICATION RESPONSE:', result);
 
-    if (result?.success && result?.data) {
-      setExploitResult(result.data);
-    } else {
+      if (result?.success && result?.data) {
+        setExploitResult(result.data);
+      } else {
+        setExploitResult({
+          success: false,
+          status: 'error',
+          exploit_confirmed: false,
+          output:
+            result?.error ||
+            'Exploit verification failed.',
+        });
+      }
+    } catch (error) {
+      console.error(
+        'EXPLOIT VERIFICATION ERROR:',
+        error
+      );
+
       setExploitResult({
         success: false,
         status: 'error',
         exploit_confirmed: false,
-        message:
-          result?.error ||
+        output:
+          error?.message ||
           'Exploit verification failed.',
       });
+    } finally {
+      setIsProvingExploit(false);
     }
-  } catch (error) {
-    console.error(
-      'EXPLOIT VERIFICATION ERROR:',
-      error
-    );
-
-    setExploitResult({
-      success: false,
-      status: 'error',
-      exploit_confirmed: false,
-      message:
-        error?.message ||
-        'Exploit verification failed.',
-    });
-  } finally {
-    setIsProvingExploit(false);
-  }
-};
+  };
 
   const categories = ['All', 'Reentrancy', 'Unchecked Calls', 'Oracle Dependency', 'Access Control', 'Integer / Precision'];
   const severities = ['All', 'Critical', 'High', 'Medium', 'Low'];
@@ -571,6 +571,7 @@ export default function StaticFindings() {
                     </button>
                   </div>
 
+
                   {exploitResult && (
                     <div
                       style={{
@@ -607,75 +608,296 @@ export default function StaticFindings() {
                                 letterSpacing: '0.06em',
                               }}
                             >
-                              EXPLOIT CONFIRMED
+                              EXPLOIT VERIFIED
                             </span>
                           </div>
 
+                          {/* VICTIM */}
                           <div
                             style={{
-                              display: 'grid',
-                              gridTemplateColumns: '1fr 1fr',
-                              gap: '10px',
+                              marginBottom: '10px',
+                              padding: '12px',
+                              border: '1.5px solid var(--border-default)',
+                              backgroundColor: 'var(--bg-canvas)',
                             }}
                           >
                             <div
+                              className="mono"
                               style={{
-                                padding: '12px',
-                                border: '1.5px solid var(--border-default)',
-                                backgroundColor: 'var(--bg-canvas)',
+                                fontSize: '9px',
+                                fontWeight: 900,
+                                color: 'var(--text-muted)',
+                                marginBottom: '8px',
+                                letterSpacing: '0.06em',
                               }}
                             >
-                              <div
-                                className="mono"
-                                style={{
-                                  fontSize: '9px',
-                                  color: 'var(--text-muted)',
-                                  marginBottom: '5px',
-                                }}
-                              >
-                                VICTIM BALANCE BEFORE
-                              </div>
-
-                              <div
-                                className="mono"
-                                style={{
-                                  fontSize: '20px',
-                                  fontWeight: 900,
-                                  color: 'var(--text-primary)',
-                                }}
-                              >
-                                {exploitResult.victim_balance_before_eth} ETH
-                              </div>
+                              VICTIM BALANCE
                             </div>
 
                             <div
                               style={{
-                                padding: '12px',
-                                border: '1.5px solid var(--accent-red)',
-                                backgroundColor: 'var(--accent-red-bg)',
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr 1fr',
+                                gap: '10px',
                               }}
                             >
-                              <div
+                              <div>
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '8px',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  BEFORE
+                                </div>
+
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {exploitResult.victim_balance_before_eth} ETH
+                                </div>
+                              </div>
+
+                              <div>
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '8px',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  AFTER
+                                </div>
+
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                    color: 'var(--accent-red)',
+                                  }}
+                                >
+                                  {exploitResult.victim_balance_after_eth} ETH
+                                </div>
+                              </div>
+
+                              <div>
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '8px',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  LOSS
+                                </div>
+
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                    color: 'var(--accent-red)',
+                                  }}
+                                >
+                                  {exploitResult.victim_loss_eth} ETH
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* ATTACKER */}
+                          <div
+                            style={{
+                              marginBottom: '10px',
+                              padding: '12px',
+                              border: '1.5px solid var(--border-default)',
+                              backgroundColor: 'var(--bg-canvas)',
+                            }}
+                          >
+                            <div
+                              className="mono"
+                              style={{
+                                fontSize: '9px',
+                                fontWeight: 900,
+                                color: 'var(--text-muted)',
+                                marginBottom: '8px',
+                                letterSpacing: '0.06em',
+                              }}
+                            >
+                              ATTACKER BALANCE
+                            </div>
+
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr 1fr',
+                                gap: '10px',
+                              }}
+                            >
+                              <div>
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '8px',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  BEFORE
+                                </div>
+
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {exploitResult.attacker_balance_before_eth} ETH
+                                </div>
+                              </div>
+
+                              <div>
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '8px',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  AFTER
+                                </div>
+
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  {exploitResult.attacker_balance_after_eth} ETH
+                                </div>
+                              </div>
+
+                              <div>
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '8px',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  GAIN
+                                </div>
+
+                                <div
+                                  className="mono"
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                    color: 'var(--accent-red)',
+                                  }}
+                                >
+                                  +{exploitResult.attacker_gain_eth} ETH
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* ATTACK FUNDING */}
+                          <div
+                            style={{
+                              padding: '10px 12px',
+                              border: '1.5px solid var(--border-default)',
+                              backgroundColor: 'var(--bg-canvas)',
+                              marginBottom: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <span
                                 className="mono"
                                 style={{
                                   fontSize: '9px',
-                                  color: 'var(--accent-red)',
-                                  marginBottom: '5px',
+                                  fontWeight: 900,
+                                  color: 'var(--text-muted)',
                                 }}
                               >
-                                VICTIM BALANCE AFTER
-                              </div>
+                                ATTACK FUNDING
+                              </span>
 
-                              <div
+                              <span
                                 className="mono"
                                 style={{
-                                  fontSize: '20px',
+                                  fontSize: '14px',
                                   fontWeight: 900,
-                                  color: 'var(--accent-red)',
                                 }}
                               >
-                                {exploitResult.victim_balance_after_eth} ETH
-                              </div>
+                                {exploitResult.attack_value_eth} ETH
+                              </span>
+                            </div>
+
+                            <div
+                              className="mono"
+                              style={{
+                                marginTop: '5px',
+                                fontSize: '9px',
+                                color: 'var(--text-muted)',
+                              }}
+                            >
+                              NET ATTACKER GAIN: {exploitResult.attacker_net_gain_eth} ETH
+                            </div>
+                          </div>
+
+                          {/* CONFIRMATION */}
+                          <div
+                            style={{
+                              padding: '12px',
+                              border: '1.5px solid var(--accent-red)',
+                              backgroundColor: 'var(--accent-red-bg)',
+                            }}
+                          >
+                            <div
+                              className="mono"
+                              style={{
+                                fontSize: '10px',
+                                fontWeight: 900,
+                                color: 'var(--accent-red)',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              ✓ EXPLOIT SUCCESSFULLY DEMONSTRATED
+                            </div>
+
+                            <div
+                              style={{
+                                fontSize: '11px',
+                                lineHeight: 1.6,
+                                color: 'var(--text-secondary)',
+                              }}
+                            >
+                              The attacker deposited{' '}
+                              <strong>{exploitResult.attack_value_eth} ETH</strong>,
+                              triggered the vulnerable withdrawal, and re-entered before
+                              the victim balance was updated. The victim lost{' '}
+                              <strong>{exploitResult.victim_loss_eth} ETH</strong> and the
+                              attacker gained the corresponding amount.
                             </div>
                           </div>
 
@@ -714,77 +936,80 @@ export default function StaticFindings() {
                           <div
                             style={{
                               fontSize: '11px',
+                              lineHeight: 1.5,
                               color: 'var(--text-secondary)',
                             }}
                           >
-                            {exploitResult.output || 'The exploit could not be executed.'}
+                            {exploitResult.output ||
+                              exploitResult.message ||
+                              'The exploit could not be executed.'}
                           </div>
                         </div>
                       )}
                     </div>
                   )}
+
+                  {/* AI Suggested Fixed Code */}
+                  {selectedFinding.fixedCode && (
+                    <div style={{ marginBottom: '18px' }}>
+                      <div style={{
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        marginBottom: '8px'
+                      }}>
+                        Suggested Fixed Code
+                      </div>
+
+                      <CodeViewer
+                        code={selectedFinding.fixedCode}
+                        fileName="Suggested remediation"
+                        maxHeight="320px"
+                      />
+                    </div>
+                  )}
+
+                  {/* Related Findings & Related Runtime Signals */}
+                  <div className="grid-2" style={{ marginTop: '14px' }}>
+                    <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
+                      <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
+                        Related Findings
+                      </div>
+                      {selectedFinding.relatedFindings && selectedFinding.relatedFindings.length > 0 ? (
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {selectedFinding.relatedFindings.map((rf, idx) => (
+                            <span key={idx} className="mono" style={{ fontSize: '11px', padding: '3px 8px', backgroundColor: 'var(--bg-panel)', border: '1.5px solid var(--border-default)', boxShadow: '1px 1px 0px #000', borderRadius: 'var(--radius-xs)', color: 'var(--text-primary)' }}>
+                              {rf}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>No co-occurring findings recorded.</span>
+                      )}
+                    </div>
+
+                    <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
+                      <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
+                        Related Runtime Signals
+                      </div>
+                      {selectedFinding.relatedRuntimeSignals && selectedFinding.relatedRuntimeSignals.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                          {selectedFinding.relatedRuntimeSignals.map((rs, idx) => (
+                            <span key={idx} style={{ fontSize: '11px', color: 'var(--accent-sand)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                              <span className="status-dot warning"></span>
+                              <span>{rs}</span>
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>No live anomalous runtime traces detected.</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
-
-              {/* AI Suggested Fixed Code */}
-              {selectedFinding.fixedCode && (
-                <div style={{ marginBottom: '18px' }}>
-                  <div style={{
-                    fontSize: '11px',
-                    fontWeight: 800,
-                    color: 'var(--text-muted)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                    marginBottom: '8px'
-                  }}>
-                    Suggested Fixed Code
-                  </div>
-
-                  <CodeViewer
-                    code={selectedFinding.fixedCode}
-                    fileName="Suggested remediation"
-                    maxHeight="320px"
-                  />
-                </div>
-              )}
-
-              {/* Related Findings & Related Runtime Signals */}
-              <div className="grid-2" style={{ marginTop: '14px' }}>
-                <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
-                  <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
-                    Related Findings
-                  </div>
-                  {selectedFinding.relatedFindings && selectedFinding.relatedFindings.length > 0 ? (
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      {selectedFinding.relatedFindings.map((rf, idx) => (
-                        <span key={idx} className="mono" style={{ fontSize: '11px', padding: '3px 8px', backgroundColor: 'var(--bg-panel)', border: '1.5px solid var(--border-default)', boxShadow: '1px 1px 0px #000', borderRadius: 'var(--radius-xs)', color: 'var(--text-primary)' }}>
-                          {rf}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>No co-occurring findings recorded.</span>
-                  )}
-                </div>
-
-                <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', borderRadius: 'var(--radius-xs)' }}>
-                  <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
-                    Related Runtime Signals
-                  </div>
-                  {selectedFinding.relatedRuntimeSignals && selectedFinding.relatedRuntimeSignals.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                      {selectedFinding.relatedRuntimeSignals.map((rs, idx) => (
-                        <span key={idx} style={{ fontSize: '11px', color: 'var(--accent-sand)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                          <span className="status-dot warning"></span>
-                          <span>{rs}</span>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>No live anomalous runtime traces detected.</span>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         )}
