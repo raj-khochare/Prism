@@ -1,0 +1,663 @@
+/* ========================================================= */
+/* PRISM TECHNICAL NEO-BRUTALIST LAYOUT ARCHITECTURE         */
+/* Light warm-neutral foundation, bold black 2.5px borders,  */
+/* hard offset shadows, rectangular components, zero ovf     */
+/* ========================================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* App Shell */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-canvas);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ========================================================= */
+/* SIDEBAR: Technical Neo-Brutalist Navigation Spine         */
+/* ========================================================= */
+.app-sidebar {
+  width: var(--sidebar-width);
+  background-color: #FFFFFF;
+  border-right: var(--border-width) solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Sidebar Brand Header */
+.sidebar-brand {
+  padding: 16px 18px;
+  border-bottom: var(--border-width) solid var(--border-default);
+  background-color: var(--accent-teal);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--transition-fast);
+}
+
+.sidebar-brand:hover {
+  background-color: var(--accent-teal-vibrant);
+}
+
+.brand-glyph {
+  width: 32px;
+  height: 32px;
+  background-color: #111111;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #111111;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #111111;
+  line-height: 1.1;
+  font-family: var(--font-sans);
+}
+
+.brand-sub {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #111111;
+  opacity: 0.85;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+/* Navigation List */
+.sidebar-nav {
+  padding: 14px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: #FFFFFF;
+  border: 2px solid transparent;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  letter-spacing: 0.02em;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.nav-item:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-default);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-hard-xs);
+}
+
+.nav-item.active {
+  background-color: var(--accent-teal);
+  color: #111111;
+  border: var(--border-width) solid var(--border-default);
+  box-shadow: var(--shadow-hard-sm);
+  font-weight: 800;
+  transform: none;
+}
+
+.nav-item svg {
+  flex-shrink: 0;
+  color: #111111;
+}
+
+.nav-item.active svg {
+  color: #111111;
+}
+
+/* Sidebar Infrastructure Health Section (Subordinate, Technical) */
+.sidebar-infra-health {
+  margin: 10px 12px;
+  padding: 12px;
+  background-color: var(--bg-elevated);
+  border: 2px solid var(--border-default);
+  box-shadow: 2px 2px 0px #111111;
+  border-radius: var(--radius-xs);
+}
+
+.sidebar-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.infra-health-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.infra-health-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.infra-label {
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.infra-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #111111;
+  font-weight: 700;
+}
+
+/* Sidebar Node Status Footer */
+.sidebar-footer {
+  padding: 12px 14px;
+  border-top: var(--border-width) solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background-color: #FFFFFF;
+}
+
+/* ========================================================= */
+/* MAIN VIEWPORT ARCHITECTURE                                */
+/* ========================================================= */
+.app-main {
+  margin-left: var(--sidebar-width);
+  min-width: 0;
+  min-height: 100vh;
+  background-color: var(--bg-canvas);
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* TopBar: Operational Status & Network Control */
+.app-topbar {
+  height: var(--topbar-height);
+  background-color: #FFFFFF;
+  border-bottom: var(--border-width) solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.topbar-meta-item strong {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+/* Neobrutalist Demo Pill */
+.demo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background-color: var(--accent-yellow);
+  border: 2px solid var(--border-default);
+  box-shadow: 2px 2px 0px #111111;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #111111;
+  text-transform: uppercase;
+}
+
+/* Neobrutalist Small Login Button Beside Demo Pill */
+.topbar-login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--radius-xs);
+  background-color: #FFFFFF;
+  border: 2px solid var(--border-default);
+  box-shadow: 2px 2px 0px #111111;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #111111;
+  text-transform: uppercase;
+  cursor: pointer;
+  line-height: 1.2;
+  white-space: nowrap;
+  user-select: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.topbar-login-btn:hover {
+  background-color: var(--accent-teal-light);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #111111;
+}
+
+.topbar-login-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #111111;
+}
+
+/* Page Container */
+.page-container {
+  flex: 1;
+  min-height: 0;
+  padding: 28px 36px;
+  max-width: 1560px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 26px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: var(--border-width) solid var(--border-default);
+  padding-bottom: 18px;
+}
+
+.page-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 840px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ========================================================= */
+/* NEO-BRUTALIST PANELS                                      */
+/* ========================================================= */
+.prism-panel {
+  background-color: var(--bg-panel);
+  border: var(--border-width) solid var(--border-default);
+  box-shadow: var(--shadow-hard-md);
+  border-radius: var(--radius-xs);
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+
+.prism-panel-header {
+  padding: 13px 20px;
+  background-color: var(--bg-elevated);
+  border-bottom: var(--border-width) solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prism-panel-body {
+  padding: 20px 22px;
+}
+
+/* Grid Layout Utilities */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ========================================================= */
+/* FOOTER                                                    */
+/* ========================================================= */
+.app-footer {
+  padding: 16px 36px;
+  border-top: var(--border-width) solid var(--border-default);
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-brand strong {
+  color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.footer-link {
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: #000000;
+}
+
+/* Mobile Nav Toggle */
+.mobile-nav-toggle {
+  display: none;
+  background: #FFFFFF;
+  border: 2px solid var(--border-default);
+  color: #111111;
+  border-radius: var(--radius-xs);
+  padding: 6px 9px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #111111;
+}
+
+/* ========================================================= */
+/* RESPONSIVE DESIGN (Zero page-level horizontal overflow)   */
+/* ========================================================= */
+@media (max-width: 1080px) {
+  .page-container {
+    padding: 20px 24px;
+  }
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    left: -270px;
+    transition: left var(--transition-normal);
+    box-shadow: 5px 0px 0px #111111;
+  }
+  .app-sidebar.open {
+    left: 0;
+  }
+  .mobile-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .page-container {
+    padding: 16px 18px;
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .app-footer {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+/* ========================================================= */
+/* AUTHENTICATION PAGES LAYOUT (Focused Technical Neobrutalist) */
+/* ========================================================= */
+.auth-page-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-canvas);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  box-sizing: border-box;
+}
+
+.auth-brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.auth-brand-glyph {
+  width: 44px;
+  height: 44px;
+  background-color: #111111;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid #111111;
+  box-shadow: 3px 3px 0px #111111;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.auth-brand-glyph:hover {
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 4px 4px 0px #111111;
+  background-color: #222222;
+}
+
+.auth-brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-brand-title {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.auth-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 20px;
+}
+
+.auth-card .prism-panel-body {
+  padding: 24px 26px;
+}
+
+.auth-back-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+  .auth-page-container {
+    padding: 32px 14px 24px;
+    justify-content: flex-start;
+  }
+  .auth-card {
+    max-width: 100%;
+  }
+  .auth-card .prism-panel-body {
+    padding: 20px 16px;
+  }
+}
+

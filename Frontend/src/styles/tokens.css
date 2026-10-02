@@ -1,0 +1,91 @@
+:root {
+  /* ========================================================= */
+  /* PRISM TECHNICAL NEO-BRUTALISM DESIGN TOKENS              */
+  /* Approved Palette:                                         */
+  /* Normal/Healthy: #DAF5F0, #A7DBD8, #69D2E7                 */
+  /* Low/Info:       #B5D2AD, #7FBC8C                          */
+  /* Warning/Mod:    #F8D6B3, #FFD858, #F4D738, #E3A018        */
+  /* High/Critical:  #FFA07A, #FF7A5C, #FF6B6B                 */
+  /* Pure neutrals:  #111111 (border/text), #F5F3EC (canvas)   */
+  /* ABSOLUTELY ZERO PURPLE, PINK, MAGENTA, VIOLET, INDIGO     */
+  /* ZERO GRADIENTS, ZERO BLURS, ZERO GLASSMORPHISM            */
+  /* ========================================================= */
+
+  /* Neutral Background Canvas (Restrained subtle warm neutral, NOT pure white) */
+  --bg-canvas: #F5F3EC;
+  --bg-primary: #F5F3EC;
+  --bg-panel: #FFFFFF;
+  --bg-panel-muted: #F8F6F0;
+  --bg-elevated: #EDEAE1;
+  --bg-hover: #E8E5DC;
+  --bg-active: #DFDBCF;
+
+  /* Neobrutalist High-Contrast Dark Borders */
+  --border-color: #111111;
+  --border-subtle: #2B2E30;
+  --border-default: #111111;
+  --border-strong: #000000;
+  --border-width-sm: 1.5px;
+  --border-width: 2.5px;
+  --border-width-lg: 3px;
+
+  /* Typography Colors */
+  --text-primary: #111111;
+  --text-secondary: #353839;
+  --text-muted: #6B7072;
+  --text-inverse: #FFFFFF;
+
+  /* Semantic Accent Palette (Direct from Approved Reference) */
+  /* Normal / Healthy / Connected / Active */
+  --accent-teal-light: #DAF5F0;
+  --accent-teal: #A7DBD8;
+  --accent-teal-vibrant: #69D2E7;
+
+  /* Low / Informational */
+  --accent-green-light: #B5D2AD;
+  --accent-green: #7FBC8C;
+  --accent-green-bright: #BAFCA2;
+
+  /* Warning / Moderate Risk / Caution */
+  --accent-sand: #F8D6B3;
+  --accent-yellow-light: #FDFD96;
+  --accent-yellow: #FFD858;
+  --accent-yellow-vibrant: #F4D738;
+  --accent-amber: #E3A018;
+
+  /* High / Critical / Dangerous */
+  --accent-coral: #FFA07A;
+  --accent-orange-red: #FF7A5C;
+  --accent-red: #FF6B6B;
+
+  /* Hard Offset Shadows (Strictly hard - NO BLUR) */
+  --shadow-hard-xs: 1.5px 1.5px 0px #111111;
+  --shadow-hard-sm: 3px 3px 0px #111111;
+  --shadow-hard-md: 4px 4px 0px #111111;
+  --shadow-hard-lg: 5px 5px 0px #111111;
+  --shadow-hard-xl: 7px 7px 0px #111111;
+
+  /* Colored Hard Shadows for Special Action Blocks */
+  --shadow-accent-teal: 4px 4px 0px #69D2E7;
+  --shadow-accent-red: 4px 4px 0px #FF6B6B;
+  --shadow-accent-yellow: 4px 4px 0px #FFD858;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+
+  /* Layout Sizing */
+  --sidebar-width: 256px;
+  --topbar-height: 52px;
+
+  /* Rectangular Geometry (0px to 4px maximum) */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+
+  /* Snappy Transitions */
+  --transition-fast: 80ms ease-out;
+  --transition-normal: 120ms ease-out;
+}

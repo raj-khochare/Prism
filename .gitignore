@@ -1,42 +1,31 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Environment variables and secrets
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
-
-# Environment variables / secrets
 .env
 .env.*
 !.env.example
+**/.env
+**/.env.*
+
+# Node.js
+
+**/node_modules/
+
+# Java / Gradle build outputs
+
+**/build/
+**/.gradle/
+
+# IDE files
+
+.idea/
+**/.idea/
+*.iml
+
+# Operating system files
+
+.DS_Store
+Thumbs.db
+
+# Temporary backup
+
+*.bundle
