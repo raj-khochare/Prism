@@ -1,31 +1,46 @@
+```gitignore
 # Environment variables and secrets
-
 .env
 .env.*
 !.env.example
 **/.env
 **/.env.*
+**/!.env.example
 
 # Node.js
-
 **/node_modules/
 
-# Java / Gradle build outputs
-
+# Java / Gradle
 **/build/
 **/.gradle/
+*.class
+*.jar
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/venv/
+**/env/
+**/.pytest_cache/
+**/.mypy_cache/
 
 # IDE files
-
 .idea/
 **/.idea/
 *.iml
+.vscode/
 
 # Operating system files
-
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# Temporary backup
+# Logs
+*.log
 
+# Temporary backup files
 *.bundle
+*.bak
+```
