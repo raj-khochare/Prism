@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from './router.jsx';
+import { useAuth } from './context/AuthContext.jsx';
 import Sidebar from './components/common/Sidebar.jsx';
 import TopBar from './components/common/TopBar.jsx';
 import Footer from './components/common/Footer.jsx';
@@ -16,9 +17,32 @@ import TermsConditions from './pages/TermsConditions.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 
+
+const PUBLIC_PATHS = ['/login', '/register', '/privacy', '/terms'];
+
 export default function App() {
-  const { currentPath } = useRouter();
+  const { currentPath, navigate } = useRouter();
+  const { token, authLoading } = useAuth();
   const basePath = currentPath.split('?')[0];
+  const isPublicPath = PUBLIC_PATHS.includes(basePath);
+  // Wait for the /api/auth/me check (on refresh) before deciding anything,
+  // so a valid session doesn't flash the login page for a moment.
+  if (authLoading) return null;
+
+  // Not logged in and trying to reach a gated page -> force to /login.
+  if (!token && !isPublicPath) {
+    navigate('/login');
+    return null;
+  }
+
+  // Already logged in and sitting on /login or /register -> send into the app.
+  // Everything past this point (Overview and the rest of the dashboard) is
+  // still running on mock/demo data exactly as before — only the login gate
+  // itself is real, since that's the only backend module built so far.
+  if (token && (basePath === '/login' || basePath === '/register')) {
+    navigate('/overview');
+    return null;
+  }
 
   // Dedicated focused authentication views
   if (basePath === '/login') {

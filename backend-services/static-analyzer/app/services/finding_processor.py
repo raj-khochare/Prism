@@ -18,7 +18,7 @@ def _get_source_snippet(
     if not path.exists():
         return None
 
-    lines = path.read_text().splitlines()
+    lines = path.read_text(errors="ignore").splitlines()
 
     start = max(line_start - 1, 0)
     end = min(line_end, len(lines))
@@ -27,6 +27,11 @@ def _get_source_snippet(
 
 
 def _get_vulnerability_family(detector_id: str) -> str:
+    """Map a Slither detector id to the PRISM vulnerability family.
+
+    Order matters: arithmetic is checked before "unchecked" so that
+    `unchecked-arithmetic` is not mistaken for `unchecked-lowlevel`.
+    """
     detector = detector_id.lower()
 
     if "reentrancy" in detector:
@@ -38,6 +43,9 @@ def _get_vulnerability_family(detector_id: str) -> str:
     if "delegatecall" in detector:
         return "delegatecall"
 
+    if "overflow" in detector or "underflow" in detector or "arithmetic" in detector:
+        return "integer_overflow"
+
     if "unchecked" in detector:
         return "unchecked_call"
 
@@ -47,8 +55,12 @@ def _get_vulnerability_family(detector_id: str) -> str:
     if "weak-prng" in detector or "randomness" in detector:
         return "weak_randomness"
 
-    if "overflow" in detector or "underflow" in detector:
-        return "integer_overflow"
+    if (
+        "access-control" in detector
+        or "suicidal" in detector
+        or "unprotected" in detector
+    ):
+        return "access_control"
 
     return "unknown"
 

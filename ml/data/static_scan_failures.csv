@@ -1,0 +1,6 @@
+path,error
+data/static/smartbugs/sb_arithmetic_overflow_simple_add.sol,502 Server Error:  for url: http://localhost:8080/api/scan
+data/static/smartbugs/sb_unchecked_low_level_calls_unchecked_return_value.sol,502 Server Error:  for url: http://localhost:8080/api/scan
+data/static/negatives/neg_uniswap_UniswapV2ERC20.sol,502 Server Error:  for url: http://localhost:8080/api/scan
+data/static/negatives/neg_uniswap_UniswapV2Pair.sol,502 Server Error:  for url: http://localhost:8080/api/scan
+data/static/negatives/neg_uniswap_UniswapV2Factory.sol,502 Server Error:  for url: http://localhost:8080/api/scan

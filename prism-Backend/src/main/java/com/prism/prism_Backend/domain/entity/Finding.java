@@ -23,8 +23,28 @@ public class Finding {
     @Enumerated(EnumType.STRING)
     private Severity severity;
     private int line;
-    @Lob
+    private String function;
+    @Column(columnDefinition = "TEXT")
     private String description;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String remediation;
+
+
+    private String detectorId;
+
+    private String functionName;
+
+    private String solidityContractName;
+
+    private String vulnerabilityFamily;
+
+    // Was VARCHAR(255): real code snippets overflow that and the INSERT failed.
+    @Column(columnDefinition = "TEXT")
+    private String sourceSnippet;
+
+    private Integer lineStart;
+
+    private Integer lineEnd;
+
+    private UUID analyzerFindingId;
 }

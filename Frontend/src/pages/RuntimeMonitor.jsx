@@ -23,7 +23,7 @@ export default function RuntimeMonitor() {
   const { getQueryParam } = useRouter();
   const queryContract = getQueryParam('contract');
 
-  const [selectedContract, setSelectedContract] = useState(queryContract || 'LendingPoolCore');
+  const [selectedContract, setSelectedContract] = useState(queryContract || 'All');
   const [contracts, setContracts] = useState([]);
   const [telemetry, setTelemetry] = useState(null);
   const [eventsData, setEventsData] = useState({ items: [], total: 0, page: 1, pageSize: 10, totalPages: 1 });
@@ -151,7 +151,7 @@ export default function RuntimeMonitor() {
                 {telemetry?.latestDetection || 'Nominal execution baseline'}
               </div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                Observed in block #18,492,815
+                {telemetry?.currentBlock ? `Current head: block #${telemetry.currentBlock}` : 'Waiting for blocks'}
               </div>
             </div>
           </div>
@@ -288,12 +288,13 @@ export default function RuntimeMonitor() {
                   aria-label="Filter events by type"
                 >
                   <option value="All">All Types</option>
-                  <option value="REENTRANCY_INVOCATION">Reentrancy Invocation</option>
-                  <option value="UNEXPECTED_BALANCE_DRAIN">Balance Drain</option>
-                  <option value="RAPID_SWAP_SEQUENCE">Rapid Swap Sequence</option>
-                  <option value="ORACLE_PRICE_DEVIATION">Oracle Deviation</option>
-                  <option value="GAS_BURST_ANOMALY">Gas Burst Anomaly</option>
-                  <option value="NORMAL_TELEMETRY">Normal Telemetry</option>
+                  <option value="FLASH_LOAN">Flash Loan</option>
+                  <option value="ORACLE_DEVIATION">Oracle Deviation</option>
+                  <option value="LARGE_FUND_MOVEMENT">Large Fund Movement</option>
+                  <option value="LIQUIDITY_CHANGE">Liquidity Change</option>
+                  <option value="GAS_ANOMALY">Gas Anomaly</option>
+                  <option value="TX_BURST">Transaction Burst</option>
+                  <option value="TRANSACTION">Normal Transaction</option>
                 </select>
               </div>
             </div>

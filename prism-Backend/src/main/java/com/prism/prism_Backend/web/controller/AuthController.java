@@ -1,12 +1,13 @@
 package com.prism.prism_Backend.web.controller;
 
 import com.prism.prism_Backend.domain.entity.AppUser;
+import com.prism.prism_Backend.domain.enums.Role;
 import com.prism.prism_Backend.dto.AuthDtos.AuthResponse;
 import com.prism.prism_Backend.dto.AuthDtos.LoginRequest;
 import com.prism.prism_Backend.dto.AuthDtos.MeResponse;
 import com.prism.prism_Backend.dto.AuthDtos.RegisterRequest;
 import com.prism.prism_Backend.exception.ResourceConflictException;
-import com.prism.prism_Backend.repository.spec.AppUserRepository;
+import com.prism.prism_Backend.repository.AppUserRepository;
 import com.prism.prism_Backend.security.JwtService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -53,6 +54,9 @@ public class AuthController {
         user.setEmail(req.email());
         user.setPasswordHash(encoder.encode(req.password()));
         user.setDisplayName(req.displayName());
+        // FIX: parseRole() existed but was never called, so every account became DEVELOPER and the
+        // REVIEWER role (and every 403 path) could not be reached.
+        user.setRole(parseRole(req.role()));
 
         userRepository.save(user);
 
@@ -100,8 +104,26 @@ public class AuthController {
         return new MeResponse(
                 user.getUsername(),
                 user.getEmail(),
-                user.getDisplayName()
+                user.getDisplayName(),
+                roleOf(user).name()
         );
+    }
+
+    private static Role roleOf(AppUser user) {
+        return user.getRole() == null ? Role.DEVELOPER : user.getRole();
+    }
+
+    /**
+     * DEMO NOTE: self-selecting a role at sign-up is fine for a capstone demo (it lets a
+     * panel try both roles). For anything real, remove this and assign roles by an admin.
+     */
+    private static Role parseRole(String raw) {
+        if (raw == null || raw.isBlank()) return Role.DEVELOPER;
+        try {
+            return Role.valueOf(raw.trim().toUpperCase(java.util.Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Role must be DEVELOPER or REVIEWER.");
+        }
     }
 
 }

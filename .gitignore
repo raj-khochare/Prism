@@ -1,17 +1,18 @@
-```gitignore
-# Environment variables and secrets
+# Environment variables and secrets (the *.example templates ARE committed)
 .env
 .env.*
 !.env.example
 **/.env
 **/.env.*
-**/!.env.example
+!**/.env.example
 
-# Node.js
+# Node.js / frontend build output
 **/node_modules/
+Frontend/dist/
 
-# Java / Gradle
+# Java / Gradle (bin/ is Eclipse's output folder)
 **/build/
+**/bin/
 **/.gradle/
 *.class
 *.jar
@@ -22,25 +23,35 @@
 **/*.py[cod]
 **/.venv/
 **/venv/
-**/env/
 **/.pytest_cache/
 **/.mypy_cache/
 
-# IDE files
+# ML artefacts: keep code and small metadata in git, not raw data or big binaries
+ml/data/raw/
+ml/data/*.parquet
+ml/runs/
+
+# Hardhat
+blockchain-env/artifacts/
+blockchain-env/cache/
+blockchain-env/deployments/
+
+# IDE / OS
 .idea/
 **/.idea/
 *.iml
 .vscode/
-
-# Operating system files
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# Logs
+# Logs and backups (a 14 MB git bundle used to live in the project root)
 *.log
-
-# Temporary backup files
 *.bundle
 *.bak
-```
+
+# Load testing artifacts
+load-tests/results/*
+!load-tests/results/.gitkeep
+load-tests/reports/*
+!load-tests/reports/.gitkeep

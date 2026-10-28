@@ -31,6 +31,36 @@ export default function StaticFindings() {
   const [isProvingExploit, setIsProvingExploit] = useState(false);
   const [exploitResult, setExploitResult] = useState(null);
 
+ 
+  
+const proofPayload =
+  exploitResult?.data?.evidence
+    ? exploitResult.data
+    : exploitResult?.evidence
+      ? exploitResult
+      : exploitResult?.data?.data?.evidence
+        ? exploitResult.data.data
+        : {};
+
+const proofEvidence = proofPayload.evidence ?? {};
+
+const formatEth = (value) => {
+  if (value === null || value === undefined || value === '') {
+    return '—';
+  }
+
+  const number = Number(value);
+
+  return Number.isFinite(number)
+    ? number.toLocaleString('en-IN', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 6,
+      })
+    : '—';
+};
+
+
+
   // Filters
   const [search, setSearch] = useState('');
   const [severityFilter, setSeverityFilter] = useState('All');
@@ -124,10 +154,11 @@ export default function StaticFindings() {
     }
   };
 
-  const categories = ['All', 'Reentrancy', 'Unchecked Calls', 'Oracle Dependency', 'Access Control', 'Integer / Precision'];
+  const categories = ['All', 'Reentrancy', 'Unchecked Calls', 'Access Control', 'Integer / Precision', 'Delegatecall', 'Weak Randomness', 'General'];
   const severities = ['All', 'Critical', 'High', 'Medium', 'Low'];
   const statuses = ['All', 'Open', 'Under Review', 'Resolved'];
-  const detectors = ['All', 'PRISM-DET-01', 'PRISM-DET-02', 'PRISM-DET-03', 'PRISM-DET-04', 'PRISM-DET-05'];
+  const KNOWN_DETECTORS = ['reentrancy-eth', 'reentrancy-no-eth', 'tx-origin', 'arbitrary-send-eth', 'unchecked-lowlevel', 'controlled-delegatecall', 'weak-prng', 'suicidal', 'prism-missing-access-control', 'prism-unchecked-arithmetic', 'prism-integer-overflow-legacy'];
+  const detectors = ['All', ...Array.from(new Set([...KNOWN_DETECTORS, ...((findingsData?.items || []).map((f) => f.detector))])).filter(Boolean)];
 
   return (
     <div>
@@ -659,8 +690,8 @@ export default function StaticFindings() {
                                     fontSize: '18px',
                                     fontWeight: 900,
                                   }}
-                                >
-                                  {exploitResult.victim_balance_before_eth} ETH
+                                >{formatEth(proofEvidence.victim_balance_before_eth)} ETH
+                                  
                                 </div>
                               </div>
 
@@ -684,7 +715,7 @@ export default function StaticFindings() {
                                     color: 'var(--accent-red)',
                                   }}
                                 >
-                                  {exploitResult.victim_balance_after_eth} ETH
+                                  {formatEth(proofEvidence.victim_balance_after_eth)} ETH
                                 </div>
                               </div>
 
@@ -708,7 +739,7 @@ export default function StaticFindings() {
                                     color: 'var(--accent-red)',
                                   }}
                                 >
-                                  {exploitResult.victim_loss_eth} ETH
+                                  {formatEth(proofEvidence.victim_loss_eth)} ETH
                                 </div>
                               </div>
                             </div>
@@ -762,7 +793,7 @@ export default function StaticFindings() {
                                     fontWeight: 900,
                                   }}
                                 >
-                                  {exploitResult.attacker_balance_before_eth} ETH
+                                  {formatEth(proofEvidence.attacker_balance_before_eth)} ETH
                                 </div>
                               </div>
 
@@ -785,7 +816,7 @@ export default function StaticFindings() {
                                     fontWeight: 900,
                                   }}
                                 >
-                                  {exploitResult.attacker_balance_after_eth} ETH
+                                  {formatEth(proofEvidence.attacker_balance_after_eth)} ETH
                                 </div>
                               </div>
 
@@ -809,7 +840,7 @@ export default function StaticFindings() {
                                     color: 'var(--accent-red)',
                                   }}
                                 >
-                                  +{exploitResult.attacker_gain_eth} ETH
+                                  +{formatEth(proofEvidence.attacker_gain_eth)} ETH
                                 </div>
                               </div>
                             </div>
@@ -849,7 +880,7 @@ export default function StaticFindings() {
                                   fontWeight: 900,
                                 }}
                               >
-                                {exploitResult.attack_value_eth} ETH
+                                {formatEth(proofEvidence.attack_value_eth)} ETH
                               </span>
                             </div>
 
@@ -861,7 +892,7 @@ export default function StaticFindings() {
                                 color: 'var(--text-muted)',
                               }}
                             >
-                              NET ATTACKER GAIN: {exploitResult.attacker_net_gain_eth} ETH
+                              NET ATTACKER GAIN: {formatEth(proofEvidence.attacker_net_gain_eth)} ETH
                             </div>
                           </div>
 
@@ -885,20 +916,26 @@ export default function StaticFindings() {
                               ✓ EXPLOIT SUCCESSFULLY DEMONSTRATED
                             </div>
 
-                            <div
-                              style={{
-                                fontSize: '11px',
-                                lineHeight: 1.6,
-                                color: 'var(--text-secondary)',
-                              }}
-                            >
-                              The attacker deposited{' '}
-                              <strong>{exploitResult.attack_value_eth} ETH</strong>,
-                              triggered the vulnerable withdrawal, and re-entered before
-                              the victim balance was updated. The victim lost{' '}
-                              <strong>{exploitResult.victim_loss_eth} ETH</strong> and the
-                              attacker gained the corresponding amount.
-                            </div>
+
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              lineHeight: 1.6,
+                              color: 'var(--text-secondary)',
+                            }}
+                          >
+                            The proof was executed against the uploaded contract.
+                            Victim balance decreased by{' '}
+                            <strong>
+                              {formatEth(proofEvidence.victim_loss_eth)} ETH
+                            </strong>
+                            {' '}and attacker gain was{' '}
+                            <strong>
+                              {formatEth(proofEvidence.attacker_gain_eth)} ETH
+                            </strong>.
+                            Detector: <strong>{proofPayload.detector_id || selectedFinding.detector}</strong>.
+                          </div>
+
                           </div>
 
                           <div
@@ -910,7 +947,7 @@ export default function StaticFindings() {
                               textTransform: 'uppercase',
                             }}
                           >
-                            LOCAL FOUNDRY EXECUTION · REENTRANCY PROOF
+                            LOCAL FOUNDRY EXECUTION · {proofPayload.detector_id || selectedFinding.detector}
                           </div>
                         </>
                       ) : (

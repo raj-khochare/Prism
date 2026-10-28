@@ -1,5 +1,6 @@
 package com.prism.prism_Backend.domain.entity;
 
+import com.prism.prism_Backend.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,4 +20,11 @@ public class AppUser {
     @Column(nullable = false)
     private String passwordHash;
     private String displayName;
+
+    /**
+     * Needed to enforce the DEVELOPER/REVIEWER split in the spec. Nullable in the DB so
+     * rows created before this column existed still load (treated as DEVELOPER).
+     */
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.DEVELOPER;
 }

@@ -1,10 +1,9 @@
 package com.prism.prism_Backend.service;
 
 import com.prism.prism_Backend.domain.entity.AppUser;
-import com.prism.prism_Backend.repository.spec.AppUserRepository;
+import com.prism.prism_Backend.repository.AppUserRepository;
 
 import com.prism.prism_Backend.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

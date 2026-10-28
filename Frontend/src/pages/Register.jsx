@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import { useRouter } from '../router.jsx';
-import { Shield, Eye, EyeOff, ArrowLeft } from '../components/common/Icons.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { Shield, Eye, EyeOff } from '../components/common/Icons.jsx';
 
 export default function Register() {
   const { navigate } = useRouter();
+  const { register } = useAuth();
 
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState('DEVELOPER');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const validate = () => {
     const newErrors = {};
@@ -20,6 +25,13 @@ export default function Register() {
     const trimmedName = name.trim();
     if (!trimmedName) {
       newErrors.name = 'Full name is required.';
+    }
+
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
+      newErrors.username = 'Username is required.';
+    } else if (!/^[a-zA-Z0-9_.-]{3,32}$/.test(trimmedUsername)) {
+      newErrors.username = 'Username must be 3-32 characters (letters, numbers, _ . -).';
     }
 
     const trimmedEmail = email.trim();
@@ -45,44 +57,41 @@ export default function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      // Frontend-only confirmation state.
-      // Do not store, transmit, or process credentials.
-      setSubmitted(true);
+    setServerError('');
+    if (!validate()) return;
+    setSubmitting(true);
+    try {
+      await register({
+        username: username.trim(),
+        email: email.trim(),
+        password,
+        displayName: name.trim(),
+        role
+      });
+      navigate('/overview');
+    } catch (err) {
+      setServerError(err.message);
+    } finally {
+      setSubmitting(false);
     }
-  };
-
-  const handleReset = () => {
-    setName('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
-    setErrors({});
-    setSubmitted(false);
   };
 
   return (
     <div className="auth-page-container">
       {/* Brand Header */}
       <div className="auth-brand-header">
-        <button
-          type="button"
-          className="auth-brand-glyph"
-          onClick={() => navigate('/overview')}
-          title="Return to PRISM Dashboard"
-          aria-label="Return to PRISM Dashboard"
-        >
+        <div className="auth-brand-glyph" aria-hidden="true">
           <Shield size={22} />
-        </button>
+        </div>
         <div className="auth-brand-text">
           <h1 className="auth-brand-title">PRISM</h1>
           <span className="auth-brand-sub">SECURITY MONITOR</span>
         </div>
       </div>
 
-      {/* Main Register Panel */}
+      {/* Main Auth Panel */}
       <div className="auth-card prism-panel">
         <div className="prism-panel-header">
           <div className="panel-title-group">
@@ -94,197 +103,174 @@ export default function Register() {
               fontSize: '10px',
               fontWeight: 700,
               padding: '2px 6px',
-              backgroundColor: 'var(--accent-teal-light)',
+              backgroundColor: 'var(--accent-sand)',
               border: '1.5px solid var(--border-default)',
               boxShadow: '1px 1px 0px #111111',
               borderRadius: 'var(--radius-xs)',
               letterSpacing: '0.05em'
             }}
           >
-            WORKSPACE REGISTRATION
+            WORKSPACE ACCESS
           </span>
         </div>
 
         <div className="prism-panel-body">
           <p className="auth-description">
-            Create your PRISM security workspace.
+            Set up your PRISM security workspace account.
           </p>
 
-          {submitted ? (
-            <div className="auth-demo-notice" role="status">
-              <div className="auth-demo-notice-header">
-                <span className="status-dot healthy"></span>
-                <span>REGISTRATION PREVIEW STATE</span>
-              </div>
-              <p className="auth-demo-notice-body">
-                Account creation inputs validated for <code>{email}</code>. PRISM is currently running in frontend-only mode — authentication backend is not yet connected. No credentials were stored or transmitted.
-              </p>
-              <div className="auth-demo-notice-actions">
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={() => navigate('/login')}
-                >
-                  Proceed to Sign In &rarr;
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => navigate('/overview')}
-                >
-                  Return to Demo Dashboard
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={handleReset}
-                >
-                  Reset Form
-                </button>
-              </div>
+          <form onSubmit={handleSubmit} noValidate>
+            {/* Full Name */}
+            <div className="form-group">
+              <label htmlFor="register-name" className="form-label">
+                Full Name
+              </label>
+              <input
+                id="register-name"
+                type="text"
+                autoComplete="name"
+                className={`form-input ${errors.name ? 'form-input-error' : ''}`}
+                placeholder="Jane Analyst"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
+                }}
+                aria-invalid={Boolean(errors.name)}
+              />
+              {errors.name && <span className="form-field-error" role="alert">{errors.name}</span>}
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
-              {/* Name Field */}
-              <div className="form-group">
-                <label htmlFor="register-name" className="form-label">
-                  Name
-                </label>
+
+            {/* Username */}
+            <div className="form-group">
+              <label htmlFor="register-username" className="form-label">
+                Username
+              </label>
+              <input
+                id="register-username"
+                type="text"
+                autoComplete="username"
+                className={`form-input ${errors.username ? 'form-input-error' : ''}`}
+                placeholder="analyst"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (errors.username) setErrors((prev) => ({ ...prev, username: '' }));
+                }}
+                aria-invalid={Boolean(errors.username)}
+              />
+              {errors.username && <span className="form-field-error" role="alert">{errors.username}</span>}
+            </div>
+
+            {/* Email */}
+            <div className="form-group">
+              <label htmlFor="register-email" className="form-label">
+                Email
+              </label>
+              <input
+                id="register-email"
+                type="email"
+                autoComplete="email"
+                className={`form-input ${errors.email ? 'form-input-error' : ''}`}
+                placeholder="analyst@prism.sec"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                }}
+                aria-invalid={Boolean(errors.email)}
+              />
+              {errors.email && <span className="form-field-error" role="alert">{errors.email}</span>}
+            </div>
+
+            {/* Password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="register-role">Role</label>
+              <select
+                id="register-role"
+                className="form-select"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="DEVELOPER">Developer / Admin (scan, register, configure alerts)</option>
+                <option value="REVIEWER">Reviewer (read-only auditor)</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="register-password" className="form-label">
+                Password
+              </label>
+              <div className="password-input-wrapper">
                 <input
-                  id="register-name"
-                  type="text"
-                  autoComplete="name"
-                  className={`form-input ${errors.name ? 'form-input-error' : ''}`}
-                  placeholder="Alex Rivera"
-                  value={name}
+                  id="register-password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  className={`form-input ${errors.password ? 'form-input-error' : ''}`}
+                  placeholder="••••••••••••"
+                  value={password}
                   onChange={(e) => {
-                    setName(e.target.value);
-                    if (errors.name) {
-                      setErrors((prev) => ({ ...prev, name: '' }));
-                    }
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
                   }}
-                  aria-invalid={Boolean(errors.name)}
-                  aria-describedby={errors.name ? 'register-name-error' : undefined}
+                  aria-invalid={Boolean(errors.password)}
                 />
-                {errors.name && (
-                  <span id="register-name-error" className="form-field-error" role="alert">
-                    {errors.name}
-                  </span>
-                )}
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
               </div>
+              {errors.password && <span className="form-field-error" role="alert">{errors.password}</span>}
+            </div>
 
-              {/* Email Field */}
-              <div className="form-group">
-                <label htmlFor="register-email" className="form-label">
-                  Email
-                </label>
+            {/* Confirm Password */}
+            <div className="form-group">
+              <label htmlFor="register-confirm-password" className="form-label">
+                Confirm Password
+              </label>
+              <div className="password-input-wrapper">
                 <input
-                  id="register-email"
-                  type="email"
-                  autoComplete="email"
-                  className={`form-input ${errors.email ? 'form-input-error' : ''}`}
-                  placeholder="analyst@prism.sec"
-                  value={email}
+                  id="register-confirm-password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  className={`form-input ${errors.confirmPassword ? 'form-input-error' : ''}`}
+                  placeholder="••••••••••••"
+                  value={confirmPassword}
                   onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) {
-                      setErrors((prev) => ({ ...prev, email: '' }));
-                    }
+                    setConfirmPassword(e.target.value);
+                    if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
                   }}
-                  aria-invalid={Boolean(errors.email)}
-                  aria-describedby={errors.email ? 'register-email-error' : undefined}
+                  aria-invalid={Boolean(errors.confirmPassword)}
                 />
-                {errors.email && (
-                  <span id="register-email-error" className="form-field-error" role="alert">
-                    {errors.email}
-                  </span>
-                )}
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
               </div>
+              {errors.confirmPassword && (
+                <span className="form-field-error" role="alert">{errors.confirmPassword}</span>
+              )}
+            </div>
 
-              {/* Password Field */}
-              <div className="form-group">
-                <label htmlFor="register-password" className="form-label">
-                  Password
-                </label>
-                <div className="password-input-wrapper">
-                  <input
-                    id="register-password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    className={`form-input ${errors.password ? 'form-input-error' : ''}`}
-                    placeholder="Minimum 8 characters"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      if (errors.password) {
-                        setErrors((prev) => ({ ...prev, password: '' }));
-                      }
-                    }}
-                    aria-invalid={Boolean(errors.password)}
-                    aria-describedby={errors.password ? 'register-password-error' : undefined}
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    title={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <span id="register-password-error" className="form-field-error" role="alert">
-                    {errors.password}
-                  </span>
-                )}
+            {serverError && (
+              <div className="form-field-error" role="alert" style={{ marginBottom: '12px' }}>
+                {serverError}
               </div>
+            )}
 
-              {/* Confirm Password Field */}
-              <div className="form-group">
-                <label htmlFor="register-confirm-password" className="form-label">
-                  Confirm Password
-                </label>
-                <div className="password-input-wrapper">
-                  <input
-                    id="register-confirm-password"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    className={`form-input ${errors.confirmPassword ? 'form-input-error' : ''}`}
-                    placeholder="Re-enter password"
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      if (errors.confirmPassword) {
-                        setErrors((prev) => ({ ...prev, confirmPassword: '' }));
-                      }
-                    }}
-                    aria-invalid={Boolean(errors.confirmPassword)}
-                    aria-describedby={errors.confirmPassword ? 'register-confirm-error' : undefined}
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                    title={showConfirmPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <span id="register-confirm-error" className="form-field-error" role="alert">
-                    {errors.confirmPassword}
-                  </span>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <button type="submit" className="btn btn-primary auth-submit-btn">
-                CREATE ACCOUNT
-              </button>
-            </form>
-          )}
+            {/* Submit Button */}
+            <button type="submit" className="btn btn-primary auth-submit-btn" disabled={submitting}>
+              {submitting ? 'CREATING ACCOUNT…' : 'CREATE ACCOUNT'}
+            </button>
+          </form>
 
           {/* Switch to Login */}
           <hr className="auth-divider" />
@@ -299,19 +285,6 @@ export default function Register() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Back to Demo Control */}
-      <div className="auth-back-container">
-        <button
-          type="button"
-          className="btn btn-ghost btn-sm"
-          onClick={() => navigate('/overview')}
-          aria-label="Back to PRISM Demo Mode"
-        >
-          <ArrowLeft size={13} />
-          <span>Back to Demo</span>
-        </button>
       </div>
     </div>
   );

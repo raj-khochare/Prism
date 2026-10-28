@@ -66,3 +66,5 @@ wcwidth==0.8.5
 web3==7.16.0
 websockets==15.0.1
 yarl==1.25.1
+SQLAlchemy==2.1.4
+psycopg[binary]==3.2.9

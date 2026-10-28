@@ -1,538 +1,195 @@
 /**
- * PRISM Centralized API Service Layer
- * Simulates server-ready pagination, multi-attribute filtering, sorting,
- * and debounced queries. Designed so demoData can be seamlessly swapped
- * with production API endpoints without modifying UI components.
+ * PRISM API client - talks to the Spring Boot backend.
+ *
+ * It keeps the `{ success, data | error }` shape the pages were written against, so the
+ * pages did not need to change when the mock data was replaced. Nothing in here is mocked.
+ *
+ * Fixes vs the old file:
+ *  - scan used a hard-coded URL, the wrong token key ('token' instead of 'prism_token') and a
+ *    non-existent endpoint (/api/scan); it also read `staticRiskContribution`, which the
+ *    backend never returns (the field is `riskScore`), so the score was always 0
+ *  - prove-exploit sent `finding.function`/`finding.contract`, which the finding cards do not
+ *    have (they have functionName / solidityContractName), so the backend always answered 400
+ *  - every other call returned mock data
  */
 
-import {
-  DEMO_SECURITY_STATUS,
-  DEMO_RISK_DRIVERS,
-  DEMO_RECENT_EVENTS,
-  DEMO_PRIORITY_INVESTIGATION,
-  DEMO_SYSTEM_STATUS,
-  DEMO_CONTRACTS,
-  DEMO_STATIC_FINDINGS,
-  DEMO_ALERTS,
-  DEMO_RUNTIME_EVENTS,
-  DEMO_TELEMETRY_SERIES,
-  DEMO_RISK_DECOMPOSITION
-} from '../data/mockSecurityData.js';
-// import { analyzeSoliditySource } from '../api/analysisEngine.js';
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+export const TOKEN_KEY = 'prism_token';
 
-// Realistic simulated response delay
-const delay = (ms = 120) => new Promise(resolve => setTimeout(resolve, ms));
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-class SecurityApiClient {
-  constructor() {
-    this.isDemoMode = true;
-    this.contracts = [...DEMO_CONTRACTS];
-    this.findings = [...DEMO_STATIC_FINDINGS];
-    this.alerts = [...DEMO_ALERTS];
-    this.runtimeEvents = [...DEMO_RUNTIME_EVENTS];
-  }
+function qs(params = {}) {
+  const sp = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') sp.set(k, String(v));
+  });
+  const s = sp.toString();
+  return s ? `?${s}` : '';
+}
 
-  // 1. Overview Page Data
-  async getOverviewData() {
-    await delay(100);
-    return {
-      success: true,
-      data: {
-        securityStatus: {
-          ...DEMO_SECURITY_STATUS,
-          highFindingsCount: this.findings.filter(f => f.severity === 'High' || f.severity === 'Critical').length,
-          activeAlertsCount: this.alerts.filter(a => !a.acknowledged && a.status !== 'Dismissed').length
-        },
-        riskDrivers: [...DEMO_RISK_DRIVERS],
-        recentEvents: [...DEMO_RECENT_EVENTS],
-        priorityInvestigation: { ...DEMO_PRIORITY_INVESTIGATION },
-        systemStatus: [...DEMO_SYSTEM_STATUS]
-      }
-    };
-  }
-
-  // 2. Scalable Contract Registry Query
-  async getContracts({
-    search = '',
-    chain = 'All',
-    status = 'All',
-    risk = 'All',
-    sortBy = 'riskScore',
-    sortDir = 'desc',
-    page = 1,
-    pageSize = 10
-  } = {}) {
-    await delay(120);
-    let items = [...this.contracts];
-
-    // Filter
-    if (chain && chain !== 'All') {
-      items = items.filter(c => c.chain.toLowerCase() === chain.toLowerCase());
-    }
-    if (status && status !== 'All') {
-      items = items.filter(c => c.status.toLowerCase() === status.toLowerCase());
-    }
-    if (risk && risk !== 'All') {
-      items = items.filter(c => c.severity.toLowerCase() === risk.toLowerCase());
-    }
-    if (search && search.trim()) {
-      const q = search.trim().toLowerCase();
-      items = items.filter(c =>
-        c.name.toLowerCase().includes(q) ||
-        c.address.toLowerCase().includes(q) ||
-        c.latestDetection.toLowerCase().includes(q)
-      );
-    }
-
-    // Sort
-    items.sort((a, b) => {
-      let valA = a[sortBy];
-      let valB = b[sortBy];
-      if (typeof valA === 'string') {
-        return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      }
-      return sortDir === 'asc' ? valA - valB : valB - valA;
+async function request(path, { method = 'GET', body, params } = {}) {
+  const token = localStorage.getItem(TOKEN_KEY);
+  try {
+    const res = await fetch(`${API_BASE}${path}${qs(params)}`, {
+      method,
+      headers: {
+        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 
-    // Pagination
-    const total = items.length;
-    const startIndex = (page - 1) * pageSize;
-    const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-
-    return {
-      success: true,
-      data: {
-        items: paginatedItems,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize) || 1
-      }
-    };
-  }
-
-  async registerContract({ name, address, chain = 'Ethereum Mainnet' }) {
-    await delay(180);
-    if (!address || !address.startsWith('0x') || address.length !== 42) {
-      return {
-        success: false,
-        error: 'Invalid EVM contract address format (must be 42 characters starting with 0x).'
-      };
-    }
-
-    const newEntry = {
-      id: `c-${Date.now()}`,
-      name: name.trim() || 'MonitoredContract',
-      address: address.trim(),
-      chain,
-      riskScore: 28,
-      severity: 'Low',
-      status: 'Active',
-      lastScan: new Date().toISOString().replace('T', ' ').slice(0, 19),
-      tx24h: 0,
-      latestDetection: 'Newly registered - baseline telemetry initialized',
-      verifiedSource: false
-    };
-
-    this.contracts.unshift(newEntry);
-    return { success: true, data: newEntry };
-  }
-
-  // 3. Scalable Static Findings Query
-  async getStaticFindings({
-    search = '',
-    severity = 'All',
-    category = 'All',
-    contract = 'All',
-    detector = 'All',
-    status = 'All',
-    page = 1,
-    pageSize = 10
-  } = {}) {
-    await delay(100);
-    let items = [...this.findings];
-
-    if (severity && severity !== 'All') {
-      items = items.filter(f => f.severity.toLowerCase() === severity.toLowerCase());
-    }
-    if (category && category !== 'All') {
-      items = items.filter(f => f.category.toLowerCase() === category.toLowerCase());
-    }
-    if (contract && contract !== 'All') {
-      items = items.filter(f => f.contract.toLowerCase() === contract.toLowerCase());
-    }
-    if (detector && detector !== 'All') {
-      items = items.filter(f => f.detector.toLowerCase() === detector.toLowerCase());
-    }
-    if (status && status !== 'All') {
-      items = items.filter(f => f.status.toLowerCase() === status.toLowerCase());
-    }
-    if (search && search.trim()) {
-      const q = search.trim().toLowerCase();
-      items = items.filter(f =>
-        f.title.toLowerCase().includes(q) ||
-        f.detector.toLowerCase().includes(q) ||
-        f.contract.toLowerCase().includes(q) ||
-        f.file.toLowerCase().includes(q)
-      );
-    }
-
-    const total = items.length;
-    const startIndex = (page - 1) * pageSize;
-    const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-
-    return {
-      success: true,
-      data: {
-        items: paginatedItems,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize) || 1
-      }
-    };
-  }
-
-  async getFindingById(id) {
-    await delay(80);
-    const finding = this.findings.find(f => f.id === id);
-    if (!finding) return { success: false, error: 'Finding record not found.' };
-    return { success: true, data: finding };
-  }
-
-  // 4. Static Scan Submission
-  async scanSoliditySource(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-
+    let data = null;
     try {
-      const response = await fetch('http://127.0.0.1:8000/analyze', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        return {
-          success: false,
-          error: result.detail || 'Static analysis failed.',
-        };
-      }
-
-      // Convert backend response into the shape the existing UI expects.
-      const findings = (result.findings || []).map((item, index) => {
-        const finding = item.finding || {};
-
-        return {
-          id: `${finding.detector_id || 'finding'}-${index}`,
-          detector: finding.detector_id || 'unknown',
-          title: finding.title || 'Security Finding',
-          severity: item.severity || finding.impact || 'Informational',
-          category: 'Vulnerability',
-          description:
-            item.analysis?.explanation ||
-            finding.description ||
-            'No description available.',
-
-          whyItMatters:
-            item.analysis?.impact ||
-            'No impact analysis available.',
-
-          remediation:
-            item.analysis?.recommendation ||
-            'No remediation recommendation available.',
-          attackScenario: item.analysis?.attack_scenario || '',
-          fixedCode: item.analysis?.fixed_code || '',
-
-          codeSnippet: finding.source_snippet || '',
-
-          lineStart: finding.line_start || 1,
-          lineEnd: finding.line_end || finding.line_start || 1,
-          contract: finding.contract || 'Unknown',
-          function: finding.function || 'Unknown',
-          file: finding.source_file || file.name,
-          sourceSnippet: finding.source_snippet || '',
-          analysis: item.analysis || null,
-          status: 'Open',
-          relatedFindings: [],
-          relatedRuntimeSignals: [],
-        };
-      });
-
-      const stats = findings.reduce(
-        (acc, finding) => {
-          const severity = finding.severity.toLowerCase();
-
-          if (severity === 'critical') acc.critical++;
-          else if (severity === 'high') acc.high++;
-          else if (severity === 'medium') acc.medium++;
-          else if (severity === 'low') acc.low++;
-
-          return acc;
-        },
-        {
-          critical: 0,
-          high: 0,
-          medium: 0,
-          low: 0,
-        }
-      );
-
-      stats.riskScore = result.risk_score || 0;
-
-      this.findings = [...findings, ...this.findings];
-
-      return {
-        success: true,
-        data: {
-          fileName: file.name,
-          contractAddress: 'Local Analysis File',
-          scanTimestamp: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
-          findings,
-          stats,
-          riskScore: result.risk_score || 0,
-        },
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: 'Unable to connect to the PRISM analysis backend.',
-      };
-    }
-  }
-
-  // 5. Runtime Telemetry & Events
-  async getRuntimeTelemetry(contractName = 'LendingPoolCore') {
-    await delay(100);
-    return {
-      success: true,
-      data: {
-        contract: contractName,
-        currentBlock: 18492815,
-        series: DEMO_TELEMETRY_SERIES,
-        latestDetection: 'Potential reentrancy sequence in withdraw()',
-        activeQuestions: [
-          { question: 'Has transaction activity changed significantly?', status: 'Elevated (140 tx/min vs 20 tx/min baseline)', alert: true },
-          { question: 'Is execution consuming abnormal computational steps?', status: 'Surging (145k gas avg vs 40k gas nominal)', alert: true },
-          { question: 'Has oracle price deviated from reference TWAP?', status: 'Critical (+2.14% divergence vs 30m TWAP)', alert: true },
-          { question: 'Has large capital moved unusually?', status: 'Critical (3.2M USDC outflow in block #18492809)', alert: true }
-        ]
-      }
-    };
-  }
-
-async proveExploit(finding) {
-  try {
-    const storedScan = sessionStorage.getItem('prism_last_scan');
-
-    if (!storedScan) {
-      return {
-        success: false,
-        error: 'No scanned contract is available for exploit verification.',
-      };
+      data = await res.json();
+    } catch {
+      /* empty body */
     }
 
-    const scan = JSON.parse(storedScan);
-
-    if (!scan.contractSource) {
-      return {
-        success: false,
-        error: 'Contract source is missing from the current scan.',
-      };
+    if (res.status === 401) {
+      // Expired/invalid token: let the auth context send the user back to /login.
+      window.dispatchEvent(new Event('prism:unauthorized'));
     }
-
-    if (!finding) {
-      return {
-        success: false,
-        error: 'No finding selected.',
-      };
+    if (!res.ok) {
+      return { success: false, status: res.status, error: data?.message || data?.error || `Request failed (${res.status}).` };
     }
-
-    const requestBody = {
-      contract_source: scan.contractSource,
-      finding: {
-        ...finding,
-        detector_id: finding.detector_id || finding.detector,
-        contract: finding.contract,
-        function: finding.function,
-        description: finding.description,
-        source_snippet:
-          finding.sourceSnippet ||
-          finding.source_snippet ||
-          finding.codeSnippet ||
-          '',
-      },
-    };
-
-    console.log(
-      'PROVE EXPLOIT REQUEST:',
-      JSON.stringify(requestBody, null, 2)
-    );
-
-    const response = await fetch(
-      'http://127.0.0.1:8000/prove-exploit',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      }
-    );
-
-    const data = await response.json();
-
-    console.log('PROVE EXPLOIT STATUS:', response.status);
-    console.log(
-      'PROVE EXPLOIT RESPONSE:',
-      JSON.stringify(data, null, 2)
-    );
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error:
-          data?.detail ||
-          data?.message ||
-          'Exploit verification failed.',
-      };
-    }
-
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    console.error('PROVE EXPLOIT ERROR:', error);
-
-    return {
-      success: false,
-      error:
-        error?.message ||
-        'Unable to connect to exploit engine.',
-    };
+    return { success: true, data };
+  } catch {
+    return { success: false, error: 'Unable to reach the PRISM backend. Is it running?' };
   }
 }
 
+class SecurityApiClient {
+  constructor() {
+    this._contractCache = null;
+  }
 
-  async getRuntimeEvents({
-    search = '',
-    contract = 'All',
-    severity = 'All',
-    eventType = 'All',
-    page = 1,
-    pageSize = 10
-  } = {}) {
-    await delay(100);
-    let items = [...this.runtimeEvents];
+  // The pages select contracts by name; the backend works with ids.
+  async _resolveContractId(nameOrId) {
+    if (nameOrId && UUID_RE.test(nameOrId)) return nameOrId;
+    const res = await this.getContracts({ pageSize: 200 });
+    if (!res.success || res.data.items.length === 0) return null;
+    const match = res.data.items.find((c) => c.name === nameOrId);
+    return (match || res.data.items[0]).id;
+  }
 
-    if (contract && contract !== 'All') {
-      items = items.filter(e => e.contract.toLowerCase() === contract.toLowerCase());
-    }
-    if (severity && severity !== 'All') {
-      items = items.filter(e => e.severity.toLowerCase() === severity.toLowerCase());
-    }
-    if (eventType && eventType !== 'All') {
-      items = items.filter(e => e.eventType.toLowerCase() === eventType.toLowerCase());
-    }
-    if (search && search.trim()) {
-      const q = search.trim().toLowerCase();
-      items = items.filter(e =>
-        e.contract.toLowerCase().includes(q) ||
-        e.txHash.toLowerCase().includes(q) ||
-        e.description.toLowerCase().includes(q) ||
-        e.eventType.toLowerCase().includes(q)
-      );
-    }
+  getOverviewData() {
+    return request('/api/overview');
+  }
 
-    const total = items.length;
-    const startIndex = (page - 1) * pageSize;
-    const paginatedItems = items.slice(startIndex, startIndex + pageSize);
+  getSystemStatus() {
+    return request('/api/system/status');
+  }
+
+  getContracts({ search = '', chain = 'All', status = 'All', risk = 'All', sortBy = 'riskScore', sortDir = 'desc', page = 1, pageSize = 10 } = {}) {
+    return request('/api/contracts', { params: { search: search.trim(), chain, status, risk, sortBy, sortDir, page, pageSize } });
+  }
+
+  deleteContract(id) {
+    return request(`/api/contracts/${id}`, { method: 'DELETE' });
+  }
+
+  registerContract({ name = '', address, chain = 'Ethereum Mainnet' }) {
+    return request('/api/contracts', { method: 'POST', body: { name: name.trim(), address: (address || '').trim(), chain } });
+  }
+
+  getStaticFindings({ search = '', severity = 'All', category = 'All', contract = 'All', detector = 'All', status = 'All', contractId, page = 1, pageSize = 10 } = {}) {
+    return request('/api/findings', { params: { search: search.trim(), severity, category, contract, detector, status, contractId, page, pageSize } });
+  }
+
+  async getFindingById(id) {
+    const res = await this.getStaticFindings({ pageSize: 1000 });
+    if (!res.success) return res;
+    const f = res.data.items.find((x) => x.id === id);
+    return f ? { success: true, data: f } : { success: false, error: 'Finding record not found.' };
+  }
+
+  async scanSoliditySource(file) {
+    const sourceCode = await file.text();
+    const res = await request('/api/scan', { method: 'POST', body: { sourceCode, fileName: file.name } });
+    if (!res.success) return { success: false, error: res.error || 'Static analysis failed.' };
+
+    const result = res.data;
+    const findings = result.findings || [];
+    const stats = { critical: 0, high: 0, medium: 0, low: 0 };
+    findings.forEach((f) => {
+      const sev = String(f.severity || '').toLowerCase();
+      if (sev in stats) stats[sev] += 1;
+    });
+    stats.riskScore = Math.round(result.riskScore ?? 0);
 
     return {
       success: true,
       data: {
-        items: paginatedItems,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize) || 1
-      }
+        fileName: result.fileName || file.name,
+        scanTimestamp: result.scanTimestamp || new Date().toISOString(),
+        findings,
+        stats,
+        riskScore: stats.riskScore,
+        contractId: findings[0]?.contractId || null,
+      },
     };
   }
 
-  // 6. Risk Assessment Decomposition
-  async getRiskAssessment(contractName = 'LendingPoolCore') {
-    await delay(120);
-    return {
-      success: true,
-      data: {
-        ...DEMO_RISK_DECOMPOSITION,
-        contract: contractName
-      }
-    };
+  async proveExploit(finding) {
+    if (!finding) return { success: false, error: 'No finding selected.' };
+    if (!finding.solidityContractName || !finding.functionName) {
+      return { success: false, error: 'This finding has no contract/function and cannot be exploit-tested.' };
+    }
+    const res = await request('/api/exploits/prove', {
+      method: 'POST',
+      body: {
+        // The backend loads the stored source from contractId.
+        contractId: finding.contractId,
+        findingId: finding.analyzerFindingId || undefined,
+        finding: {
+          detector_id: finding.detectorId || finding.detector,
+          title: finding.title,
+          contract: finding.solidityContractName,
+          function: finding.functionName,
+          description: finding.description,
+          source_snippet: finding.sourceSnippet || finding.codeSnippet || '',
+        },
+      },
+    });
+    return res;
   }
 
-  // 7. Alerts
-  async getAlerts({
-    status = 'All',
-    severity = 'All',
-    page = 1,
-    pageSize = 10
-  } = {}) {
-    await delay(90);
-    let items = [...this.alerts];
-
-    if (status === 'Active') {
-      items = items.filter(a => !a.acknowledged && a.status !== 'Dismissed');
-    } else if (status === 'Acknowledged') {
-      items = items.filter(a => a.status === 'Acknowledged');
-    } else if (status === 'Dismissed') {
-      items = items.filter(a => a.status === 'Dismissed');
-    }
-
-    if (severity && severity !== 'All') {
-      items = items.filter(a => a.severity.toLowerCase() === severity.toLowerCase());
-    }
-
-    const total = items.length;
-    const startIndex = (page - 1) * pageSize;
-    const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-
-    return {
-      success: true,
-      data: {
-        items: paginatedItems,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize) || 1
-      }
-    };
+  async getRuntimeTelemetry(nameOrId) {
+    const id = await this._resolveContractId(nameOrId);
+    if (!id) return { success: true, data: { contract: nameOrId || '', currentBlock: 0, series: [], latestDetection: 'No contracts registered', activeQuestions: [] } };
+    return request('/api/runtime/telemetry', { params: { contractId: id } });
   }
 
-  async acknowledgeAlert(alertId) {
-    await delay(80);
-    const item = this.alerts.find(a => a.id === alertId);
-    if (item) {
-      item.acknowledged = true;
-      item.status = 'Acknowledged';
-    }
-    return { success: true, data: item };
+  getRuntimeEvents({ search = '', contract = 'All', severity = 'All', eventType = 'All', page = 1, pageSize = 10 } = {}) {
+    return request('/api/runtime/events', { params: { search: search.trim(), contract, severity, eventType, page, pageSize } });
   }
 
-  async dismissAlert(alertId) {
-    await delay(80);
-    const item = this.alerts.find(a => a.id === alertId);
-    if (item) {
-      item.status = 'Dismissed';
-      item.acknowledged = true;
-    }
-    return { success: true, data: item };
+  async getRiskAssessment(nameOrId) {
+    const id = await this._resolveContractId(nameOrId);
+    if (!id) return { success: true, data: { contract: '', score: 0, assessed: false, status: 'NOT ASSESSED', staticSignals: [], runtimeSignals: [], modelMetadata: [], summaryConclusion: { primaryConcern: 'Register or scan a contract first.', whatToInvestigate: [] } } };
+    return request(`/api/contracts/${id}/risk`);
   }
 
+  getAlerts({ status = 'All', severity = 'All', page = 1, pageSize = 10 } = {}) {
+    return request('/api/alerts', { params: { status, severity, page, pageSize } });
+  }
 
+  acknowledgeAlert(id) {
+    return request(`/api/alerts/${id}/acknowledge`, { method: 'PUT' });
+  }
+
+  dismissAlert(id) {
+    return request(`/api/alerts/${id}/dismiss`, { method: 'PUT' });
+  }
+
+  getAlertConfig() {
+    return request('/api/alerts/config');
+  }
+
+  saveAlertConfig(config) {
+    return request('/api/alerts/config', { method: 'PUT', body: config });
+  }
 }
 
 export const securityApi = new SecurityApiClient();

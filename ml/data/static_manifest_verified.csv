@@ -1,0 +1,207 @@
+path,label,attack_class,group,source,origin,smartbugs_category,vuln_lines,license,detector_hits
+data/static/smartbugs/sb_access_control_FibonacciBalance.sol,1,access_control,g000,smartbugs-curated,https://github.com/sigp/solidity-security-blog,access_control,31 38,see origin / SmartBugs LICENSE,5
+data/static/smartbugs/sb_access_control_arbitrary_location_write_simple.sol,1,access_control,g001,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-124#arbitrary-location-write-simplesol,access_control,27,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_access_control_incorrect_constructor_name1.sol,1,access_control,g002,smartbugs-curated,https://github.com/trailofbits/not-so-smart-contracts/blob/master/wrong_constructor_name/incorrect_constructor.sol,access_control,20,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_access_control_incorrect_constructor_name2.sol,1,access_control,g002,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-118#incorrect-constructor-name1sol,access_control,18,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_access_control_incorrect_constructor_name3.sol,1,access_control,g002,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-118#incorrect-constructor-name2sol,access_control,17,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_access_control_mapping_write.sol,1,access_control,g003,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-124#mapping-writesol,access_control,20,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_access_control_multiowned_vulnerable.sol,1,access_control,g004,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/solidity/unprotected_critical_functions/multiowned_vulnerable/multiowned_vulnerable.sol,access_control,38,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_access_control_mycontract.sol,1,access_control,g005,smartbugs-curated,https://consensys.github.io/smart-contract-best-practices/recommendations/#avoid-using-txorigin,access_control,20,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_access_control_parity_wallet_bug_2.sol,1,access_control,g007,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-106#walletlibrarysol,access_control,226 233,see origin / SmartBugs LICENSE,9
+data/static/smartbugs/sb_access_control_phishable.sol,1,access_control,g008,smartbugs-curated,https://github.com/sigp/solidity-security-blog,access_control,20,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_access_control_proxy.sol,1,access_control,g009,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-112#proxysol,access_control,19,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_access_control_rubixi.sol,1,access_control,g010,smartbugs-curated,https://github.com/trailofbits/not-so-smart-contracts/blob/master/wrong_constructor_name/Rubixi_source_code/Rubixi.sol,access_control,23 24,see origin / SmartBugs LICENSE,16
+data/static/smartbugs/sb_access_control_simple_suicide.sol,1,access_control,g011,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/unprotected_critical_functions/simple_suicide.sol,access_control,12 13,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_access_control_unprotected0.sol,1,access_control,g012,smartbugs-curated,https://github.com/trailofbits/not-so-smart-contracts/blob/master/unprotected_function/Unprotected.sol,access_control,25,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_access_control_wallet_02_refund_nosub.sol,1,access_control,g013,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-105#wallet-02-refund-nosubsol,access_control,36,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_access_control_wallet_03_wrong_constructor.sol,1,access_control,g014,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-105#wallet-03-wrong-constructorsol,access_control,19 20,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_access_control_wallet_04_confused_sign.sol,1,access_control,g015,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-105#wallet-04-confused-signsol,access_control,30,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_arithmetic_BECToken.sol,1,integer_overflow,g016,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-101#bectokensol,arithmetic,264,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_insecure_transfer.sol,1,integer_overflow,g017,smartbugs-curated,https://consensys.github.io/smart-contract-best-practices/known_attacks/#front-running-aka-transaction-ordering-dependence,arithmetic,18,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_arithmetic_integer_overflow_1.sol,1,integer_overflow,g018,smartbugs-curated,https://github.com/trailofbits/not-so-smart-contracts/blob/master/integer_overflow/integer_overflow_1.sol,arithmetic,14,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_add.sol,1,integer_overflow,g019,smartbugs-curated,https://github.com/ConsenSys/evm-analyzer-benchmark-suite/blob/master/benchmarks/integer_overflow_add.sol,arithmetic,17,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_benign_1.sol,1,integer_overflow,g020,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/integer_overflow_and_underflow/integer_overflow_benign_1.sol,arithmetic,17,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_mapping_sym_1.sol,1,integer_overflow,g021,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/integer_overflow_and_underflow/integer_overflow_mapping_sym_1.sol,arithmetic,16,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_minimal.sol,1,integer_overflow,g022,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/integer_overflow_and_underflow/integer_overflow_minimal.sol,arithmetic,17,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_mul.sol,1,integer_overflow,g023,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/integer_overflow_and_underflow/integer_overflow_mul.sol,arithmetic,17,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_multitx_multifunc_feasible.sol,1,integer_overflow,g024,smartbugs-curated,https://github.com/ConsenSys/evm-analyzer-benchmark-suite,arithmetic,25,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_integer_overflow_multitx_onefunc_feasible.sol,1,integer_overflow,g025,smartbugs-curated,https://github.com/ConsenSys/evm-analyzer-benchmark-suite,arithmetic,22,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_overflow_simple_add.sol,1,integer_overflow,g026,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-101#overflow-simple-addsol,arithmetic,14,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_overflow_single_tx.sol,1,integer_overflow,g027,smartbugs-curated,https://github.com/ConsenSys/evm-analyzer-benchmark-suite,arithmetic,18 24 30 36 42 48,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_arithmetic_timelock.sol,1,integer_overflow,g028,smartbugs-curated,https://github.com/sigp/solidity-security-blog,arithmetic,22,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_arithmetic_token.sol,1,integer_overflow,g029,smartbugs-curated,https://github.com/sigp/solidity-security-blog,arithmetic,20 22,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_arithmetic_tokensalechallenge.sol,1,integer_overflow,g030,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-101 // https://capturetheether.com/challenges/math/token-sale/,arithmetic,23 25 33,see origin / SmartBugs LICENSE,0
+data/static/smartbugs/sb_reentrancy_0x01f8c4e3fa3edeb29e514cba738d87ce8c091d3f.sol,1,reentrancy,g031,smartbugs-curated,etherscan.io,reentrancy,54,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol,1,reentrancy,g032,smartbugs-curated,etherscan.io,reentrancy,38,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x4320e6f8c05b27ab4707cd1f6d5ce6f3e4b3a5a1.sol,1,reentrancy,g031,smartbugs-curated,etherscan.io,reentrancy,55,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x4e73b32ed6c35f570686b89848e5f39f20ecc106.sol,1,reentrancy,g033,smartbugs-curated,etherscan.io,reentrancy,54,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x561eac93c92360949ab1f1403323e6db345cbf31.sol,1,reentrancy,g034,smartbugs-curated,etherscan.io,reentrancy,54,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x627fa62ccbb1c1b04ffaecd72a53e37fc0e17839.sol,1,reentrancy,g035,smartbugs-curated,etherscan.io,reentrancy,94,see origin / SmartBugs LICENSE,7
+data/static/smartbugs/sb_reentrancy_0x7541b76cb60f4c60af330c208b0623b7f54bf615.sol,1,reentrancy,g036,smartbugs-curated,etherscan.io,reentrancy,29,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_0x7a8721a9d64c74da899424c1b52acbf58ddc9782.sol,1,reentrancy,g037,smartbugs-curated,etherscan.io,reentrancy,52,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x7b368c4e805c3870b6c49a3f1f49f69af8662cf3.sol,1,reentrancy,g036,smartbugs-curated,etherscan.io,reentrancy,29,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_0x8c7777c45481dba411450c228cb692ac3d550344.sol,1,reentrancy,g038,smartbugs-curated,etherscan.io,reentrancy,41,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0x93c32845fae42c83a70e5f06214c8433665c2ab5.sol,1,reentrancy,g036,smartbugs-curated,etherscan.io,reentrancy,29,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_0x941d225236464a25eb18076df7da6a91d0f95e9e.sol,1,reentrancy,g039,smartbugs-curated,etherscan.io,reentrancy,44,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_reentrancy_0x96edbe868531bd23a6c05e9d0c424ea64fb1b78b.sol,1,reentrancy,g040,smartbugs-curated,etherscan.io,reentrancy,63,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_0xaae1f51cf3339f18b6d3f3bdc75a5facd744b0b8.sol,1,reentrancy,g034,smartbugs-curated,etherscan.io,reentrancy,54,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0xb5e1b1ee15c6fa0e48fce100125569d430f1bd12.sol,1,reentrancy,g041,smartbugs-curated,etherscan.io,reentrancy,40,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0xb93430ce38ac4a6bb47fb1fc085ea669353fd89e.sol,1,reentrancy,g032,smartbugs-curated,etherscan.io,reentrancy,38,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0xbaf51e761510c1a11bf48dd87c0307ac8a8c8a4f.sol,1,reentrancy,g038,smartbugs-curated,etherscan.io,reentrancy,41,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_0xbe4041d55db380c5ae9d4a9b9703f1ed4e7e3888.sol,1,reentrancy,g042,smartbugs-curated,etherscan.io,reentrancy,63,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_0xcead721ef5b11f1a7b530171aab69b16c5e66b6e.sol,1,reentrancy,g036,smartbugs-curated,etherscan.io,reentrancy,29,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol,1,reentrancy,g036,smartbugs-curated,etherscan.io,reentrancy,29,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_reentrancy_etherbank.sol,1,reentrancy,g043,smartbugs-curated,https://github.com/seresistvanandras/EthBench/blob/master/Benchmark/Simple/reentrant.sol,reentrancy,21,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_etherstore.sol,1,reentrancy,g044,smartbugs-curated,https://github.com/sigp/solidity-security-blog,reentrancy,27,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_reentrancy_modifier_reentrancy.sol,1,reentrancy,g045,smartbugs-curated,https://github.com/SmartContractSecurity/SWC-registry/blob/master/test_cases/reentracy/modifier_reentrancy.sol,reentrancy,15,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_reentrancy_reentrance.sol,1,reentrancy,g046,smartbugs-curated,https://ethernaut.zeppelin.solutions/level/0xf70706db003e94cfe4b5e27ffd891d5c81b39488,reentrancy,24,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_reentrancy_reentrancy_dao.sol,1,reentrancy,g049,smartbugs-curated,https://github.com/ConsenSys/evm-analyzer-benchmark-suite,reentrancy,18,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_reentrancy_reentrancy_insecure.sol,1,reentrancy,g050,smartbugs-curated,https://consensys.github.io/smart-contract-best-practices/known_attacks/,reentrancy,17,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_reentrancy_reentrancy_simple.sol,1,reentrancy,g051,smartbugs-curated,https://github.com/trailofbits/not-so-smart-contracts/blob/master/reentrancy/Reentrancy.sol,reentrancy,24,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_reentrancy_simple_dao.sol,1,reentrancy,g052,smartbugs-curated,http://blockchain.unica.it/projects/ethereum-survey/attacks.html#simpledao,reentrancy,19,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_reentrancy_spank_chain_payment.sol,1,reentrancy,g053,smartbugs-curated,https://github.com/trailofbits/not-so-smart-contracts/blob/master/reentrancy/SpankChain_source_code/SpankChain_Payment.sol,reentrancy,426 430,see origin / SmartBugs LICENSE,40
+data/static/smartbugs/sb_unchecked_low_level_calls_0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e.sol,1,unchecked_call,g054,smartbugs-curated,etherscan.io,unchecked_low_level_calls,201 213,see origin / SmartBugs LICENSE,10
+data/static/smartbugs/sb_unchecked_low_level_calls_0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol,1,unchecked_call,g055,smartbugs-curated,etherscan.io,unchecked_low_level_calls,12,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0x19cf8481ea15427a98ba3cdd6d9e14690011ab10.sol,1,unchecked_call,g056,smartbugs-curated,etherscan.io,unchecked_low_level_calls,439 465,see origin / SmartBugs LICENSE,10
+data/static/smartbugs/sb_unchecked_low_level_calls_0x2972d548497286d18e92b5fa1f8f9139e5653fd2.sol,1,unchecked_call,g057,smartbugs-curated,etherscan.io,unchecked_low_level_calls,14,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_0x39cfd754c85023648bf003bea2dd498c5612abfa.sol,1,unchecked_call,g058,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44 97,see origin / SmartBugs LICENSE,7
+data/static/smartbugs/sb_unchecked_low_level_calls_0x3a0e9acd953ffc0dd18d63603488846a6b8b2b01.sol,1,unchecked_call,g058,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44 97,see origin / SmartBugs LICENSE,7
+data/static/smartbugs/sb_unchecked_low_level_calls_0x3e013fc32a54c4c5b6991ba539dcd0ec4355c859.sol,1,unchecked_call,g059,smartbugs-curated,etherscan.io,unchecked_low_level_calls,29,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x3f2ef511aa6e75231e4deafc7a3d2ecab3741de2.sol,1,unchecked_call,g060,smartbugs-curated,etherscan.io,unchecked_low_level_calls,45,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x4051334adc52057aca763453820cb0e045076ef3.sol,1,unchecked_call,g061,smartbugs-curated,etherscan.io,unchecked_low_level_calls,16,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_0x4a66ad0bca2d700f11e1f2fc2c106f7d3264504c.sol,1,unchecked_call,g062,smartbugs-curated,etherscan.io,unchecked_low_level_calls,19,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0x4b71ad9c1a84b9b643aa54fdd66e2dec96e8b152.sol,1,unchecked_call,g061,smartbugs-curated,etherscan.io,unchecked_low_level_calls,17,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_0x524960d55174d912768678d8c606b4d50b79d7b1.sol,1,unchecked_call,g063,smartbugs-curated,etherscan.io,unchecked_low_level_calls,21,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_unchecked_low_level_calls_0x52d2e0f9b01101a59b38a3d05c80b7618aeed984.sol,1,unchecked_call,g064,smartbugs-curated,etherscan.io,unchecked_low_level_calls,27,see origin / SmartBugs LICENSE,6
+data/static/smartbugs/sb_unchecked_low_level_calls_0x5aa88d2901c68fda244f1d0584400368d2c8e739.sol,1,unchecked_call,g059,smartbugs-curated,etherscan.io,unchecked_low_level_calls,29,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x610495793564aed0f9c7fc48dc4c7c9151d34fd6.sol,1,unchecked_call,g065,smartbugs-curated,etherscan.io,unchecked_low_level_calls,33,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0x627fa62ccbb1c1b04ffaecd72a53e37fc0e17839.sol,1,unchecked_call,g058,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44,see origin / SmartBugs LICENSE,7
+data/static/smartbugs/sb_unchecked_low_level_calls_0x663e4229142a27f00bafb5d087e1e730648314c3.sol,1,unchecked_call,g066,smartbugs-curated,etherscan.io,unchecked_low_level_calls,1152 1496 2467,see origin / SmartBugs LICENSE,76
+data/static/smartbugs/sb_unchecked_low_level_calls_0x70f9eddb3931491aab1aeafbc1e7f1ca2a012db4.sol,1,unchecked_call,g067,smartbugs-curated,etherscan.io,unchecked_low_level_calls,29,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x78c2a1e91b52bca4130b6ed9edd9fbcfd4671c37.sol,1,unchecked_call,g060,smartbugs-curated,etherscan.io,unchecked_low_level_calls,45,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x7a4349a749e59a5736efb7826ee3496a2dfd5489.sol,1,unchecked_call,g068,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x7d09edb07d23acb532a82be3da5c17d9d85806b4.sol,1,unchecked_call,g054,smartbugs-curated,etherscan.io,unchecked_low_level_calls,198 210,see origin / SmartBugs LICENSE,10
+data/static/smartbugs/sb_unchecked_low_level_calls_0x806a6bd219f162442d992bdc4ee6eba1f2c5a707.sol,1,unchecked_call,g069,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0x84d9ec85c9c568eb332b7226a8f826d897e0a4a8.sol,1,unchecked_call,g070,smartbugs-curated,etherscan.io,unchecked_low_level_calls,56,see origin / SmartBugs LICENSE,9
+data/static/smartbugs/sb_unchecked_low_level_calls_0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol,1,unchecked_call,g058,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44 97,see origin / SmartBugs LICENSE,7
+data/static/smartbugs/sb_unchecked_low_level_calls_0x958a8f594101d2c0485a52319f29b2647f2ebc06.sol,1,unchecked_call,g072,smartbugs-curated,etherscan.io,unchecked_low_level_calls,55,see origin / SmartBugs LICENSE,6
+data/static/smartbugs/sb_unchecked_low_level_calls_0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol,1,unchecked_call,g073,smartbugs-curated,etherscan.io,unchecked_low_level_calls,54 65,see origin / SmartBugs LICENSE,5
+data/static/smartbugs/sb_unchecked_low_level_calls_0xa1fceeff3acc57d257b917e30c4df661401d6431.sol,1,unchecked_call,g074,smartbugs-curated,etherscan.io,unchecked_low_level_calls,31,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0xa46edd6a9a93feec36576ee5048146870ea2c3ae.sol,1,unchecked_call,g057,smartbugs-curated,etherscan.io,unchecked_low_level_calls,16,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_0xb0510d68f210b7db66e8c7c814f22680f2b8d1d6.sol,1,unchecked_call,g075,smartbugs-curated,etherscan.io,unchecked_low_level_calls,69 71 73 75 102,see origin / SmartBugs LICENSE,7
+data/static/smartbugs/sb_unchecked_low_level_calls_0xb11b2fed6c9354f7aa2f658d3b4d7b31d8a13b77.sol,1,unchecked_call,g076,smartbugs-curated,etherscan.io,unchecked_low_level_calls,14,see origin / SmartBugs LICENSE,6
+data/static/smartbugs/sb_unchecked_low_level_calls_0xb37f18af15bafb869a065b61fc83cfc44ed9cc27.sol,1,unchecked_call,g065,smartbugs-curated,etherscan.io,unchecked_low_level_calls,33,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0xb620cee6b52f96f3c6b253e6eea556aa2d214a99.sol,1,unchecked_call,g077,smartbugs-curated,etherscan.io,unchecked_low_level_calls,100 106 133,see origin / SmartBugs LICENSE,9
+data/static/smartbugs/sb_unchecked_low_level_calls_0xb7c5c5aa4d42967efe906e1b66cb8df9cebf04f7.sol,1,unchecked_call,g078,smartbugs-curated,etherscan.io,unchecked_low_level_calls,25,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0xbaa3de6504690efb064420d89e871c27065cdd52.sol,1,unchecked_call,g076,smartbugs-curated,etherscan.io,unchecked_low_level_calls,14,see origin / SmartBugs LICENSE,6
+data/static/smartbugs/sb_unchecked_low_level_calls_0xbebbfe5b549f5db6e6c78ca97cac19d1fb03082c.sol,1,unchecked_call,g076,smartbugs-curated,etherscan.io,unchecked_low_level_calls,14,see origin / SmartBugs LICENSE,6
+data/static/smartbugs/sb_unchecked_low_level_calls_0xd2018bfaa266a9ec0a1a84b061640faa009def76.sol,1,unchecked_call,g069,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0xd5967fed03e85d1cce44cab284695b41bc675b5c.sol,1,unchecked_call,g061,smartbugs-curated,etherscan.io,unchecked_low_level_calls,16,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol,1,unchecked_call,g079,smartbugs-curated,etherscan.io,unchecked_low_level_calls,39,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0xe09b1ab8111c2729a76f16de96bc86a7af837928.sol,1,unchecked_call,g080,smartbugs-curated,etherscan.io,unchecked_low_level_calls,150,see origin / SmartBugs LICENSE,15
+data/static/smartbugs/sb_unchecked_low_level_calls_0xe4eabdca81e31d9acbc4af76b30f532b6ed7f3bf.sol,1,unchecked_call,g081,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0xe82f0742a71a02b9e9ffc142fdcb6eb1ed06fb87.sol,1,unchecked_call,g082,smartbugs-curated,etherscan.io,unchecked_low_level_calls,39,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_0xe894d54dca59cb53fe9cbc5155093605c7068220.sol,1,unchecked_call,g083,smartbugs-curated,etherscan.io,unchecked_low_level_calls,17,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_0xec329ffc97d75fe03428ae155fc7793431487f63.sol,1,unchecked_call,g084,smartbugs-curated,etherscan.io,unchecked_low_level_calls,30,see origin / SmartBugs LICENSE,10
+data/static/smartbugs/sb_unchecked_low_level_calls_0xf2570186500a46986f3139f65afedc2afe4f445d.sol,1,unchecked_call,g085,smartbugs-curated,etherscan.io,unchecked_low_level_calls,18,see origin / SmartBugs LICENSE,2
+data/static/smartbugs/sb_unchecked_low_level_calls_0xf29ebe930a539a60279ace72c707cba851a57707.sol,1,unchecked_call,g086,smartbugs-curated,etherscan.io,unchecked_low_level_calls,16,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_unchecked_low_level_calls_0xf70d589d76eebdd7c12cc5eec99f8f6fa4233b9e.sol,1,unchecked_call,g068,smartbugs-curated,etherscan.io,unchecked_low_level_calls,44,see origin / SmartBugs LICENSE,3
+data/static/smartbugs/sb_unchecked_low_level_calls_etherpot_lotto.sol,1,unchecked_call,g087,smartbugs-curated,https://github.com/etherpot/contract/blob/master/app/contracts/lotto.sol,unchecked_low_level_calls,109 141,see origin / SmartBugs LICENSE,4
+data/static/smartbugs/sb_unchecked_low_level_calls_king_of_the_ether_throne.sol,1,unchecked_call,g088,smartbugs-curated,https://github.com/kieranelby/KingOfTheEtherThrone/blob/v0.4.0/contracts/KingOfTheEtherThrone.sol,unchecked_low_level_calls,110 118 132 174,see origin / SmartBugs LICENSE,16
+data/static/smartbugs/sb_unchecked_low_level_calls_lotto.sol,1,unchecked_call,g089,smartbugs-curated,https://github.com/sigp/solidity-security-blog,unchecked_low_level_calls,20 27,see origin / SmartBugs LICENSE,5
+data/static/smartbugs/sb_unchecked_low_level_calls_mishandled.sol,1,unchecked_call,g090,smartbugs-curated,https://github.com/seresistvanandras/EthBench/blob/master/Benchmark/Simple/mishandled.sol,unchecked_low_level_calls,14,see origin / SmartBugs LICENSE,1
+data/static/smartbugs/sb_unchecked_low_level_calls_unchecked_return_value.sol,1,unchecked_call,g091,smartbugs-curated,https://smartcontractsecurity.github.io/SWC-registry/docs/SWC-104#unchecked-return-valuesol,unchecked_low_level_calls,17,see origin / SmartBugs LICENSE,2
+data/static/negatives/neg_oz1_AddressUtils.sol,0,benign,g092,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_AutoIncrementing.sol,0,benign,g093,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Bounty.sol,0,benign,g094,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_ECRecovery.sol,0,benign,g095,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_LimitBalance.sol,0,benign,g096,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_MerkleProof.sol,0,benign,g097,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ReentrancyGuard.sol,0,benign,g098,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_SignatureBouncer.sol,0,benign,g099,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_Whitelist.sol,0,benign,g100,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_RBAC.sol,0,benign,g101,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Roles.sol,0,benign,g102,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Crowdsale.sol,0,benign,g103,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_FinalizableCrowdsale.sol,0,benign,g104,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,4
+data/static/negatives/neg_oz1_PostDeliveryCrowdsale.sol,0,benign,g105,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,4
+data/static/negatives/neg_oz1_RefundableCrowdsale.sol,0,benign,g106,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,6
+data/static/negatives/neg_oz1_AllowanceCrowdsale.sol,0,benign,g107,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,3
+data/static/negatives/neg_oz1_MintedCrowdsale.sol,0,benign,g108,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_IncreasingPriceCrowdsale.sol,0,benign,g109,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,4
+data/static/negatives/neg_oz1_CappedCrowdsale.sol,0,benign,g110,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_IndividuallyCappedCrowdsale.sol,0,benign,g111,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_TimedCrowdsale.sol,0,benign,g112,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,4
+data/static/negatives/neg_oz1_WhitelistedCrowdsale.sol,0,benign,g113,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_ERC165.sol,0,benign,g114,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_SupportsInterfaceWithLookup.sol,0,benign,g115,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Destructible.sol,0,benign,g116,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Pausable.sol,0,benign,g117,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_TokenDestructible.sol,0,benign,g118,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,3
+data/static/negatives/neg_oz1_Math.sol,0,benign,g119,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_SafeMath.sol,0,benign,g120,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_CanReclaimToken.sol,0,benign,g121,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_Claimable.sol,0,benign,g122,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_Contactable.sol,0,benign,g123,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_DelayedClaimable.sol,0,benign,g124,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz1_HasNoContracts.sol,0,benign,g125,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_HasNoEther.sol,0,benign,g126,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_HasNoTokens.sol,0,benign,g127,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_Heritable.sol,0,benign,g128,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,3
+data/static/negatives/neg_oz1_NoOwner.sol,0,benign,g129,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_Ownable.sol,0,benign,g130,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Superuser.sol,0,benign,g131,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ConditionalEscrow.sol,0,benign,g132,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_Escrow.sol,0,benign,g133,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_PullPayment.sol,0,benign,g134,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_RefundEscrow.sol,0,benign,g135,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_SplitPayment.sol,0,benign,g136,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_TokenMetadata.sol,0,benign,g137,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_BasicToken.sol,0,benign,g138,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_BurnableToken.sol,0,benign,g139,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_CappedToken.sol,0,benign,g140,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_DetailedERC20.sol,0,benign,g141,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC20.sol,0,benign,g142,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC20Basic.sol,0,benign,g143,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_MintableToken.sol,0,benign,g144,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_PausableToken.sol,0,benign,g145,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_RBACMintableToken.sol,0,benign,g146,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_SafeERC20.sol,0,benign,g147,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_StandardBurnableToken.sol,0,benign,g148,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_StandardToken.sol,0,benign,g149,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_TokenTimelock.sol,0,benign,g150,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,4
+data/static/negatives/neg_oz1_TokenVesting.sol,0,benign,g151,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,7
+data/static/negatives/neg_oz1_DeprecatedERC721.sol,0,benign,g152,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC721.sol,0,benign,g153,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC721Basic.sol,0,benign,g154,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC721BasicToken.sol,0,benign,g155,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,1
+data/static/negatives/neg_oz1_ERC721Holder.sol,0,benign,g156,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC721Receiver.sol,0,benign,g157,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,0
+data/static/negatives/neg_oz1_ERC721Token.sol,0,benign,g158,npm:openzeppelin-solidity@1.12.0,https://www.npmjs.com/package/openzeppelin-solidity,,,MIT,2
+data/static/negatives/neg_oz4_ERC20.sol,0,benign,g159,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,0
+data/static/negatives/neg_oz4_ERC4626.sol,0,benign,g160,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,12
+data/static/negatives/neg_oz4_ERC20Permit.sol,0,benign,g161,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,11
+data/static/negatives/neg_oz4_ERC20Votes.sol,0,benign,g162,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,14
+data/static/negatives/neg_oz4_ERC20FlashMint.sol,0,benign,g163,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,2
+data/static/negatives/neg_oz4_ReentrancyGuard.sol,0,benign,g164,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,0
+data/static/negatives/neg_oz4_Pausable.sol,0,benign,g165,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,0
+data/static/negatives/neg_oz4_Ownable.sol,0,benign,g166,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,0
+data/static/negatives/neg_oz4_AccessControl.sol,0,benign,g167,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,9
+data/static/negatives/neg_oz4_TimelockController.sol,0,benign,g168,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,19
+data/static/negatives/neg_oz4_VestingWallet.sol,0,benign,g169,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,1
+data/static/negatives/neg_oz4_PaymentSplitter.sol,0,benign,g170,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,2
+data/static/negatives/neg_oz4_ERC721.sol,0,benign,g171,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,9
+data/static/negatives/neg_oz4_ERC1155.sol,0,benign,g172,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,0
+data/static/negatives/neg_oz4_MerkleProof.sol,0,benign,g173,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,0
+data/static/negatives/neg_oz4_Escrow.sol,0,benign,g174,npm:@openzeppelin/contracts@4.9.6,https://www.npmjs.com/package/@openzeppelin/contracts,,,MIT,1
+data/static/negatives/neg_solmate_ERC20.sol,0,benign,g175,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,1
+data/static/negatives/neg_solmate_WETH.sol,0,benign,g176,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,1
+data/static/negatives/neg_solmate_ERC721.sol,0,benign,g177,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,0
+data/static/negatives/neg_solmate_Owned.sol,0,benign,g178,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,1
+data/static/negatives/neg_solmate_ReentrancyGuard.sol,0,benign,g179,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,0
+data/static/negatives/neg_solmate_SafeTransferLib.sol,0,benign,g180,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,1
+data/static/negatives/neg_solmate_ERC1155.sol,0,benign,g181,npm:solmate@6.2.0,https://www.npmjs.com/package/solmate,,,AGPL-3.0/MIT,0
+data/static/negatives/neg_uniswap_UniswapV2ERC20.sol,0,benign,g182,npm:@uniswap/v2-core@1.0.1,https://www.npmjs.com/package/@uniswap/v2-core,,,GPL-3.0,1
+data/static/negatives/neg_uniswap_UniswapV2Pair.sol,0,benign,g183,npm:@uniswap/v2-core@1.0.1,https://www.npmjs.com/package/@uniswap/v2-core,,,GPL-3.0,18
+data/static/negatives/neg_uniswap_UniswapV2Factory.sol,0,benign,g184,npm:@uniswap/v2-core@1.0.1,https://www.npmjs.com/package/@uniswap/v2-core,,,GPL-3.0,24
+data/static/negatives/neg_weth_WETH9.sol,0,benign,g185,npm:canonical-weth@1.4.0,https://www.npmjs.com/package/canonical-weth,,,GPL-3.0,0

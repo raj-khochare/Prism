@@ -20,7 +20,9 @@ public class Alert {
     private Contract contract;
     @Enumerated(EnumType.STRING)
     private Severity severity;
-    @Lob
+    // @Lob maps a String to a Postgres *large object* (oid) under Hibernate 6+/7, which
+    // breaks plain reads/queries. Use a normal TEXT column.
+    @Column(columnDefinition = "TEXT")
     private String message;
     @Enumerated(EnumType.STRING)
     private AlertChannel channel;

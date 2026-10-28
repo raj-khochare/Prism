@@ -18,9 +18,9 @@ import {
 } from '../components/common/Icons.jsx';
 
 export default function RiskAssessment() {
-  const { navigate } = useRouter();
+  const { navigate, getQueryParam } = useRouter();
   const [contracts, setContracts] = useState([]);
-  const [selectedContract, setSelectedContract] = useState('LendingPoolCore');
+  const [selectedContract, setSelectedContract] = useState(getQueryParam('contract') || '');
   const [riskData, setRiskData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +34,13 @@ export default function RiskAssessment() {
         securityApi.getRiskAssessment(selectedContract)
       ]);
 
-      if (cRes.success) setContracts(cRes.data.items);
+      if (cRes.success) {
+        setContracts(cRes.data.items);
+        const items = cRes.data.items;
+        const byId = items.find((c) => c.id === selectedContract);
+        if (byId) setSelectedContract(byId.name);                       // ?contract=<uuid> deep link
+        else if (!selectedContract && items.length) setSelectedContract(items[0].name);
+      }
       if (rRes.success) setRiskData(rRes.data);
     } catch {
       setError('Unable to compute risk factor matrix.');
@@ -61,7 +67,7 @@ export default function RiskAssessment() {
     );
   }
 
-  const score = riskData?.score || 72;
+  const score = riskData?.score ?? 0;
   const riskInfo = getRiskLevel(score);
 
   return (
@@ -108,7 +114,7 @@ export default function RiskAssessment() {
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '26px', fontWeight: 900, color: 'var(--accent-red)', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-                  {riskData?.status || 'ELEVATED RISK'}
+                  {riskData?.status || 'NOT ASSESSED'}
                 </span>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', backgroundColor: 'var(--bg-elevated)', padding: '4px 10px', border: '1.5px solid var(--border-default)', boxShadow: '2px 2px 0px #000' }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '28px', fontWeight: 800, color: 'var(--accent-red)', lineHeight: 1 }}>

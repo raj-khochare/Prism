@@ -14,11 +14,10 @@ import {
   Server
 } from './Icons.jsx';
 import { formatNumber } from '../../utils/formatters.js';
-import { DEMO_SYSTEM_STATUS } from '../../data/mockSecurityData.js';
 
 export default function Sidebar() {
   const { currentPath, navigate } = useRouter();
-  const { mobileMenuOpen, setMobileMenuOpen, currentBlock } = useApp();
+  const { mobileMenuOpen, setMobileMenuOpen, currentBlock, systemStatus } = useApp();
 
   const navItems = [
     { label: 'Overview', path: '/overview', icon: LayoutDashboard },
@@ -102,11 +101,11 @@ export default function Sidebar() {
             <span>Infra Health</span>
           </div>
           <div className="infra-health-list">
-            {DEMO_SYSTEM_STATUS.map((sys, idx) => (
+            {systemStatus.map((sys, idx) => (
               <div key={idx} className="infra-health-item">
                 <span className="infra-label">{sys.component}</span>
                 <span className="infra-status">
-                  <span className="status-dot healthy"></span>
+                  <span className={`status-dot ${/disconnected|unavailable|offline/i.test(sys.status) ? 'danger' : 'healthy'}`}></span>
                   <span>{sys.status}</span>
                 </span>
               </div>

@@ -3,30 +3,72 @@ spring:
     name: prism-Backend
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://postgres:5432/prism}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/prism}
     username: ${DB_USERNAME:Prism}
     password: ${DB_PASSWORD}
   jpa:
+    open-in-view: false
     hibernate:
+      # Fine for a capstone demo. Use Flyway migrations before any real deployment.
       ddl-auto: update
     properties:
       hibernate:
         jdbc:
           time_zone: UTC
-    show-sql: true
+    show-sql: ${SHOW_SQL:false}
 
 server:
   port: 8080
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
 prism:
+  ml:
+    # false = rule-based baseline scorer; true = call the ml-service (XGBoost + SHAP)
+    enabled: ${ML_ENABLED:false}
+    # When set, every scored FeatureVector is appended to this JSONL file (ML data collection)
+    feature-dump-path: ${PRISM_FEATURE_DUMP_PATH:}
+  cors:
+    # Comma-separated list of browser origins allowed to call the API and /ws
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
   services:
     slither-base-url: ${SLITHER_SERVICE_URL:http://localhost:8001}
     ml-base-url: ${ML_SERVICE_URL:http://localhost:8002}
+    ml-timeout-seconds: ${ML_TIMEOUT_SECONDS:5}
+    # Static analysis runs Slither + Gemini; exploit proving runs Gemini + forge.
+    # A scan can run Gemini on up to GEMINI_MAX_FINDINGS findings; 180s was too tight once
+    # Gemini is slow/retrying (observed SocketTimeoutException on real scans). Each
+    # individual Gemini call is now capped at GEMINI_CALL_TIMEOUT_SECONDS (see the
+    # analyzer's .env), so this just needs to cover the worst case across all of them.
+    analyze-timeout-seconds: ${ANALYZE_TIMEOUT_SECONDS:300}
+    exploit-timeout-seconds: ${EXPLOIT_TIMEOUT_SECONDS:420}
   chain:
-    rpc-url: http://localhost:8545
+    rpc-url: ${RPC_URL:http://localhost:8545}
+    poll-ms: ${CHAIN_POLL_MS:2000}
+    # Used to turn ETH movements into the USD feature the ML model expects.
+    eth-usd-price: ${ETH_USD_PRICE:3000}
+    large-fund-movement-usd: ${LARGE_FUND_MOVEMENT_USD:100000}
+    # Oracle deviation (%) above which an ORACLE_DEVIATION event is raised
+    oracle-deviation-threshold-pct: ${ORACLE_DEVIATION_THRESHOLD_PCT:5}
+    # "monitoredContract=poolAddress,..." - V2-style getReserves() pool whose spot price is watched
+    oracle-pools: ${ORACLE_POOLS:}
+    # extra flash-loan event topic0 hashes (comma separated); Aave V3, Balancer V2 and the mock are built in
+    flash-loan-topics: ${FLASH_LOAN_TOPICS:}
+    # optional allow-list of lender addresses; empty = any emitter of a known flash-loan topic
+    flash-loan-lenders: ${FLASH_LOAN_LENDERS:}
   alerts:
-    default-threshold: 85
+    default-threshold: ${ALERT_THRESHOLD:85}
+    cooldown-seconds: ${ALERT_COOLDOWN_SECONDS:60}
     telegram:
+      enabled: ${TELEGRAM_ENABLED:true}
       bot-token: ${TELEGRAM_BOT_TOKEN:}
       chat-id: ${TELEGRAM_CHAT_ID:}
   auth:

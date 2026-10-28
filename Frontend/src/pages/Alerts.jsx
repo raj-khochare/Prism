@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from '../router.jsx';
 import { securityApi } from '../services/apiClient.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import { subscribeTopic } from '../services/liveFeed.js';
 import SeverityBadge from '../components/common/SeverityBadge.jsx';
 import Pagination from '../components/common/Pagination.jsx';
 import LoadingState from '../components/common/LoadingState.jsx';
@@ -19,15 +21,17 @@ import {
 
 export default function Alerts() {
   const { navigate } = useRouter();
+  const { isDeveloper } = useAuth();
   const [alertsData, setAlertsData] = useState({ items: [], total: 0, page: 1, pageSize: 10, totalPages: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Configuration state
-  const [riskThreshold, setRiskThreshold] = useState(75);
+  const [riskThreshold, setRiskThreshold] = useState(85);
   const [telegramEnabled, setTelegramEnabled] = useState(true);
   const [telegramChat, setTelegramChat] = useState('@prism_protocol_secops');
-  const [emailEnabled, setEmailEnabled] = useState(true);
+  const [emailEnabled, setEmailEnabled] = useState(false);
+  const [configError, setConfigError] = useState('');
   const [emailRecipient, setEmailRecipient] = useState('sec-alerts@protocol.io');
   const [configSaved, setConfigSaved] = useState(false);
 
@@ -84,10 +88,37 @@ export default function Alerts() {
     }
   };
 
-  const handleSaveConfig = (e) => {
+  // Load the real, server-side settings and keep the list live over STOMP.
+  useEffect(() => {
+    securityApi.getAlertConfig().then((res) => {
+      if (res.success) {
+        setRiskThreshold(res.data.threshold);
+        setTelegramEnabled(res.data.telegramEnabled);
+        setEmailEnabled(res.data.emailEnabled);
+        if (res.data.telegramChatId) setTelegramChat(res.data.telegramChatId);
+        if (res.data.emailRecipient) setEmailRecipient(res.data.emailRecipient);
+      }
+    });
+    return subscribeTopic('/topic/alerts', () => loadAlerts());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSaveConfig = async (e) => {
     e.preventDefault();
-    setConfigSaved(true);
-    setTimeout(() => setConfigSaved(false), 2500);
+    setConfigError('');
+    const res = await securityApi.saveAlertConfig({
+      threshold: riskThreshold,
+      telegramEnabled,
+      emailEnabled,
+      telegramChatId: telegramChat.trim(),
+      emailRecipient: emailRecipient.trim(),
+    });
+    if (res.success) {
+      setConfigSaved(true);
+      setTimeout(() => setConfigSaved(false), 2500);
+    } else {
+      setConfigError(res.error || 'Could not save alert configuration.');
+    }
   };
 
   return (
@@ -103,6 +134,12 @@ export default function Alerts() {
       </div>
 
       {error && <ErrorState title="Alert Subsystem Error" message={error} onRetry={loadAlerts} />}
+      {!isDeveloper && (
+        <div style={{ margin: '0 0 14px', padding: '8px 12px', border: '1px solid var(--border-default)', fontSize: '12px', color: 'var(--accent-sand)' }}>
+          Viewing as Reviewer: alert settings and dismissal are read-only.
+        </div>
+      )}
+      {configError && <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '10px' }}>{configError}</div>}
 
       {/* 1. CONFIGURATION PANEL (Risk Threshold, Telegram, Email) */}
       <div className="prism-panel" id="alert-configuration-panel">
@@ -139,6 +176,7 @@ export default function Alerts() {
                   max="95"
                   step="5"
                   value={riskThreshold}
+                  disabled={!isDeveloper}
                   onChange={(e) => setRiskThreshold(Number(e.target.value))}
                   style={{ width: '100%', accentColor: 'var(--accent-teal)' }}
                 />
@@ -197,7 +235,7 @@ export default function Alerts() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
-              <button type="submit" className="btn btn-secondary btn-sm" id="btn-save-alert-config">
+              <button type="submit" className="btn btn-secondary btn-sm" id="btn-save-alert-config" disabled={!isDeveloper} title={isDeveloper ? '' : 'Reviewers have read-only access'}>
                 Save Channel Configuration
               </button>
             </div>
@@ -353,7 +391,7 @@ export default function Alerts() {
                         )}
 
                         {/* Dismiss */}
-                        {alert.status !== 'Dismissed' && (
+                        {isDeveloper && alert.status !== 'Dismissed' && (
                           <button
                             type="button"
                             className="btn btn-ghost btn-sm btn-icon"
@@ -501,7 +539,7 @@ export default function Alerts() {
                       Acknowledge
                     </button>
                   )}
-                  {viewingAlert.status !== 'Dismissed' && (
+                  {isDeveloper && viewingAlert.status !== 'Dismissed' && (
                     <button
                       type="button"
                       className="btn btn-ghost btn-sm"

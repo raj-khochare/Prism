@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from '../router.jsx';
 import { securityApi } from '../services/apiClient.js';
-import { SAMPLE_SOL_VULNERABLE, SAMPLE_SOL_ORACLE } from '../data/mockSecurityData.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import { SAMPLE_SOL_VULNERABLE, SAMPLE_SOL_ORACLE } from '../data/sampleContracts.js';
 import CodeViewer from '../components/common/CodeViewer.jsx';
 import SeverityBadge from '../components/common/SeverityBadge.jsx';
 import ErrorState from '../components/common/ErrorState.jsx';
@@ -18,7 +19,9 @@ import {
 
 export default function ScanContract() {
   const { navigate } = useRouter();
+  const { isDeveloper } = useAuth();
 
+  
   const [sourceCode, setSourceCode] = useState(SAMPLE_SOL_VULNERABLE);
   const [fileName, setFileName] = useState('VulnerableVault.sol');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -92,9 +95,7 @@ export default function ScanContract() {
 
   const handleRunScan = async () => {
     if (!sourceCode.trim()) {
-      setScanError(
-        'Please enter or upload a Solidity contract before running the scan.'
-      );
+      setScanError('Please enter or upload a Solidity contract before running the scan.');
       return;
     }
 
@@ -353,15 +354,15 @@ export default function ScanContract() {
                 color: 'var(--text-muted)',
               }}
             >
-              Analysis runs through the PRISM FastAPI static analyzer
-              with Slither and Gemini.
+              {isDeveloper ? 'Analysis runs through the PRISM FastAPI static analyzer with Slither and Gemini.' : 'Reviewer accounts are read-only and cannot submit scans.'}
             </span>
 
             <button
               type="button"
               className="btn btn-primary"
               onClick={handleRunScan}
-              disabled={isScanning || !sourceCode.trim()}
+              disabled={!isDeveloper || isScanning || !sourceCode.trim()}
+              title={isDeveloper ? '' : 'Reviewers cannot submit new scans'}
               id="btn-run-static-analysis"
               style={{
                 padding: '8px 18px',
@@ -726,7 +727,10 @@ export default function ScanContract() {
             </div>
 
             {/* AI Security Analysis */}
-            {selectedFinding?.analysis?.available && (
+            {selectedFinding?.analysis &&
+              (selectedFinding.analysis.available ||
+                selectedFinding.analysis.explanation ||
+                  selectedFinding.analysis.recommendation) && (
               <div
                 className="prism-panel"
                 style={{ marginTop: '16px' }}

@@ -1,0 +1,20 @@
+{
+  "rows": 201,
+  "positives": 110,
+  "groups": 177,
+  "sources": {
+    "smartbugs-curated": 110,
+    "npm:openzeppelin-solidity@1.12.0": 67,
+    "npm:@openzeppelin/contracts@4.9.6": 16,
+    "npm:solmate@6.2.0": 7,
+    "npm:canonical-weth@1.4.0": 1
+  },
+  "attack_class_counts": {
+    "unchecked_call": 50,
+    "reentrancy": 29,
+    "access_control": 17,
+    "integer_overflow": 14
+  },
+  "sha256": "f591ab5cd8ba7c7eb73e5ebd52a563cbeca1da1dbbe11c8964eed3bad5643062",
+  "built_at": "2026-10-18T10:03:42.476077+00:00"
+}

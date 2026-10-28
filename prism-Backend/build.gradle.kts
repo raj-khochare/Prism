@@ -9,13 +9,18 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(22)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
 tasks {
-	bootJar{
+	bootJar {
 		archiveFileName.set("prism-backend.jar")
+	}
+	// Without this Gradle also emits prism-backend-0.0.1-SNAPSHOT-plain.jar and the
+	// Dockerfile's `COPY build/libs/*.jar` then fails (two sources -> one file).
+	jar {
+		enabled = false
 	}
 }
 
@@ -31,6 +36,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-jackson")
 	runtimeOnly("org.postgresql:postgresql")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")

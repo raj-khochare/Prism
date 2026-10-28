@@ -22,9 +22,9 @@ class StaticFinding(Base):
         index=True,
     )
 
-    contract_id: Mapped[uuid.UUID] = mapped_column(
+    contract_id: Mapped[uuid.UUID | None]  = mapped_column(
         UUID(as_uuid=True),
-        nullable=False,
+        nullable=True,
         index=True,
     )
 

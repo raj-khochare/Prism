@@ -6,13 +6,13 @@ from pydantic import BaseModel, ConfigDict
 
 class StaticFindingBase(BaseModel):
     analysis_id: uuid.UUID
-    contract_id: uuid.UUID
+    contract_id: uuid.UUID | None = None
 
     detector_id: str
     vulnerability_family: str
 
     severity: str
-    risk_score: int | None = None,
+    risk_score: int | None = None
     confidence: float
 
     source_file: str

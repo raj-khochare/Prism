@@ -1,63 +1,53 @@
 import React, { useState } from 'react';
 import { useRouter } from '../router.jsx';
-import { Shield, Eye, EyeOff, ArrowLeft } from '../components/common/Icons.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { Shield, Eye, EyeOff } from '../components/common/Icons.jsx';
 
 export default function Login() {
   const { navigate } = useRouter();
+  const { login } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const validate = () => {
     const newErrors = {};
-
-    const trimmedEmail = email.trim();
-    if (!trimmedEmail) {
-      newErrors.email = 'Email address is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      newErrors.email = 'Please provide a valid email format (e.g. analyst@prism.sec).';
+    if (!identifier.trim()) {
+      newErrors.identifier = 'Username or email is required.';
     }
-
     if (!password) {
       newErrors.password = 'Password is required.';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      // Frontend-only confirmation state.
-      // Do not store, transmit, or process credentials.
-      setSubmitted(true);
+    setServerError('');
+    if (!validate()) return;
+    setSubmitting(true);
+    try {
+      await login(identifier.trim(), password);
+      navigate('/overview');
+    } catch (err) {
+      setServerError(err.message);
+    } finally {
+      setSubmitting(false);
     }
-  };
-
-  const handleReset = () => {
-    setEmail('');
-    setPassword('');
-    setErrors({});
-    setSubmitted(false);
   };
 
   return (
     <div className="auth-page-container">
       {/* Brand Header */}
       <div className="auth-brand-header">
-        <button
-          type="button"
-          className="auth-brand-glyph"
-          onClick={() => navigate('/overview')}
-          title="Return to PRISM Dashboard"
-          aria-label="Return to PRISM Dashboard"
-        >
+        <div className="auth-brand-glyph" aria-hidden="true">
           <Shield size={22} />
-        </button>
+        </div>
         <div className="auth-brand-text">
           <h1 className="auth-brand-title">PRISM</h1>
           <span className="auth-brand-sub">SECURITY MONITOR</span>
@@ -92,107 +82,81 @@ export default function Login() {
             Access your PRISM security workspace.
           </p>
 
-          {submitted ? (
-            <div className="auth-demo-notice" role="status">
-              <div className="auth-demo-notice-header">
-                <span className="status-dot healthy"></span>
-                <span>AUTHENTICATION PREVIEW STATE</span>
-              </div>
-              <p className="auth-demo-notice-body">
-                Validation passed for <code>{email}</code>. PRISM is currently running in frontend-only mode — authentication backend is not yet connected. No credentials were stored or transmitted.
-              </p>
-              <div className="auth-demo-notice-actions">
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={() => navigate('/overview')}
-                >
-                  Continue to Demo Dashboard &rarr;
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={handleReset}
-                >
-                  Reset Form
-                </button>
-              </div>
+          <form onSubmit={handleSubmit} noValidate>
+            {/* Identifier Field (username or email) */}
+            <div className="form-group">
+              <label htmlFor="login-identifier" className="form-label">
+                Username or Email
+              </label>
+              <input
+                id="login-identifier"
+                type="text"
+                autoComplete="username"
+                className={`form-input ${errors.identifier ? 'form-input-error' : ''}`}
+                placeholder="analyst or analyst@prism.sec"
+                value={identifier}
+                onChange={(e) => {
+                  setIdentifier(e.target.value);
+                  if (errors.identifier) setErrors((prev) => ({ ...prev, identifier: '' }));
+                }}
+                aria-invalid={Boolean(errors.identifier)}
+                aria-describedby={errors.identifier ? 'login-identifier-error' : undefined}
+              />
+              {errors.identifier && (
+                <span id="login-identifier-error" className="form-field-error" role="alert">
+                  {errors.identifier}
+                </span>
+              )}
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
-              {/* Email Field */}
-              <div className="form-group">
-                <label htmlFor="login-email" className="form-label">
-                  Email
-                </label>
+
+            {/* Password Field */}
+            <div className="form-group">
+              <label htmlFor="login-password" className="form-label">
+                Password
+              </label>
+              <div className="password-input-wrapper">
                 <input
-                  id="login-email"
-                  type="email"
-                  autoComplete="email"
-                  className={`form-input ${errors.email ? 'form-input-error' : ''}`}
-                  placeholder="analyst@prism.sec"
-                  value={email}
+                  id="login-password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  className={`form-input ${errors.password ? 'form-input-error' : ''}`}
+                  placeholder="••••••••••••"
+                  value={password}
                   onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) {
-                      setErrors((prev) => ({ ...prev, email: '' }));
-                    }
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
                   }}
-                  aria-invalid={Boolean(errors.email)}
-                  aria-describedby={errors.email ? 'login-email-error' : undefined}
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={errors.password ? 'login-password-error' : undefined}
                 />
-                {errors.email && (
-                  <span id="login-email-error" className="form-field-error" role="alert">
-                    {errors.email}
-                  </span>
-                )}
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
               </div>
+              {errors.password && (
+                <span id="login-password-error" className="form-field-error" role="alert">
+                  {errors.password}
+                </span>
+              )}
+            </div>
 
-              {/* Password Field */}
-              <div className="form-group">
-                <label htmlFor="login-password" className="form-label">
-                  Password
-                </label>
-                <div className="password-input-wrapper">
-                  <input
-                    id="login-password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    className={`form-input ${errors.password ? 'form-input-error' : ''}`}
-                    placeholder="••••••••••••"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      if (errors.password) {
-                        setErrors((prev) => ({ ...prev, password: '' }));
-                      }
-                    }}
-                    aria-invalid={Boolean(errors.password)}
-                    aria-describedby={errors.password ? 'login-password-error' : undefined}
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    title={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <span id="login-password-error" className="form-field-error" role="alert">
-                    {errors.password}
-                  </span>
-                )}
+            {serverError && (
+              <div className="form-field-error" role="alert" style={{ marginBottom: '12px' }}>
+                {serverError}
               </div>
+            )}
 
-              {/* Submit Button */}
-              <button type="submit" className="btn btn-primary auth-submit-btn">
-                SIGN IN
-              </button>
-            </form>
-          )}
+            {/* Submit Button */}
+            <button type="submit" className="btn btn-primary auth-submit-btn" disabled={submitting}>
+              {submitting ? 'SIGNING IN…' : 'SIGN IN'}
+            </button>
+          </form>
 
           {/* Switch to Register */}
           <hr className="auth-divider" />
@@ -207,19 +171,6 @@ export default function Login() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Back to Demo Control */}
-      <div className="auth-back-container">
-        <button
-          type="button"
-          className="btn btn-ghost btn-sm"
-          onClick={() => navigate('/overview')}
-          aria-label="Back to PRISM Demo Mode"
-        >
-          <ArrowLeft size={13} />
-          <span>Back to Demo</span>
-        </button>
       </div>
     </div>
   );

@@ -20,7 +20,12 @@ public class JwtService {
     public JwtService(@Value("${prism.auth.jwt-secret}") String secret,
                       @Value("${prism.auth.jwt-expiry-minutes}") long expiryMinutes){
 
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        byte[] keyBytes = secret.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        if (keyBytes.length < 32) {
+            throw new IllegalStateException(
+                    "JWT_SECRET_KEY must be at least 32 characters (e.g. `openssl rand -base64 48`).");
+        }
+        this.key = Keys.hmacShaKeyFor(keyBytes);
         this.expiryMillis = expiryMinutes * 60 * 1000;
     }
 

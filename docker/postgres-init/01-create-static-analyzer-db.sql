@@ -1,0 +1,1 @@
+CREATE DATABASE prism_static_analyzer;

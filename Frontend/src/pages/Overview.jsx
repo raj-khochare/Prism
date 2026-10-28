@@ -89,12 +89,12 @@ export default function Overview() {
 
       {/* 2. CONCLUSION: Primary Security Status Banner (Visually Dominant) */}
       <SecurityConclusionBanner
-        statusLevel={securityStatus?.statusLevel || 'ELEVATED RISK'}
-        score={securityStatus?.unifiedScore || 72}
+        statusLevel={securityStatus?.statusLevel ?? 'NO DATA'}
+        score={securityStatus?.unifiedScore ?? 0}
         maxScore={securityStatus?.maxScore || 100}
-        highFindings={securityStatus?.highFindingsCount || 3}
-        runtimeAnomalies={securityStatus?.runtimeAnomaliesCount || 2}
-        activeAlerts={securityStatus?.activeAlertsCount || 1}
+        highFindings={securityStatus?.highFindingsCount ?? 0}
+        runtimeAnomalies={securityStatus?.runtimeAnomaliesCount ?? 0}
+        activeAlerts={securityStatus?.activeAlertsCount ?? 0}
         isDemoData={securityStatus?.isDemoData}
         actionText="Investigate Risk Drivers"
         actionRoute="/risk"

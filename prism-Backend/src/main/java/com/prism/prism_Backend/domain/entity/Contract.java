@@ -21,7 +21,7 @@ public class Contract {
     private String name;
     private String address;
     private String chain;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String sourceCode;
     @Enumerated(EnumType.STRING)
     private ContractStatus status = ContractStatus.PENDING_SCAN;
