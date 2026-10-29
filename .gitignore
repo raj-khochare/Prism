@@ -30,6 +30,7 @@ Frontend/dist/
 ml/data/raw/
 ml/data/*.parquet
 ml/runs/
+ml/data/runtime/*.jsonl
 
 # Hardhat
 blockchain-env/artifacts/
@@ -49,9 +50,11 @@ Desktop.ini
 *.log
 *.bundle
 *.bak
-
-# Load testing artifacts
-load-tests/results/*
-!load-tests/results/.gitkeep
-load-tests/reports/*
-!load-tests/reports/.gitkeep
+# Cloudflare / wrangler
+.wrangler/
+**/.wrangler/
+.dev.vars
+cloudflared*.json
+cert.pem
+tunnel.log
+body.json

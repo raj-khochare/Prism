@@ -1,0 +1,233 @@
+{
+  "reportId": "20261027_115512",
+  "timestamp": "2026-10-27 11:55:12",
+  "scenario": "smoke",
+  "outcome": "PASS",
+  "targetHost": "http://127.0.0.1:8080",
+  "sloEvaluation": {
+    "status": "PASS",
+    "notes": [
+      "All measured latency and error metrics are within defined SLO targets."
+    ],
+    "thresholds": {
+      "maxFailureRatePct": 1.0,
+      "maxP95LatencyMs": 500.0,
+      "maxP99LatencyMs": 1500.0
+    }
+  },
+  "summary": {
+    "totalRequests": 111,
+    "totalFailures": 0,
+    "failurePercentage": 0.0,
+    "throughputRps": 2.52,
+    "latencyMs": {
+      "min": 3.1420000013895333,
+      "avg": 8.71,
+      "median": 8.0,
+      "p90": 14.0,
+      "p95": 17.0,
+      "p99": 30.0,
+      "max": 34.60440004710108
+    }
+  },
+  "endpointBreakdown": [
+    {
+      "method": "POST",
+      "name": "POST /api/contracts [Register Test Contract]",
+      "requests": 2,
+      "failures": 0,
+      "rps": 0.04544844369406371,
+      "avgMs": 24.412250029854476,
+      "p50Ms": 35.0,
+      "p95Ms": 35.0,
+      "p99Ms": 35.0,
+      "maxMs": 34.60440004710108
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/contracts",
+      "requests": 8,
+      "failures": 0,
+      "rps": 0.18179377477625483,
+      "avgMs": 15.89617499121232,
+      "p50Ms": 14.0,
+      "p95Ms": 30.0,
+      "p99Ms": 30.0,
+      "maxMs": 29.648899973835796
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/contracts/[id]/features",
+      "requests": 3,
+      "failures": 0,
+      "rps": 0.06817266554109556,
+      "avgMs": 9.538300005563846,
+      "p50Ms": 6.0,
+      "p95Ms": 17.0,
+      "p99Ms": 17.0,
+      "maxMs": 17.003600019961596
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/overview",
+      "requests": 8,
+      "failures": 0,
+      "rps": 0.18179377477625483,
+      "avgMs": 14.038787499885075,
+      "p50Ms": 14.0,
+      "p95Ms": 17.0,
+      "p99Ms": 17.0,
+      "maxMs": 16.98519999627024
+    },
+    {
+      "method": "POST",
+      "name": "POST /api/auth/login [Expected 401]",
+      "requests": 3,
+      "failures": 0,
+      "rps": 0.06817266554109556,
+      "avgMs": 11.140600002060333,
+      "p50Ms": 8.0,
+      "p95Ms": 17.0,
+      "p99Ms": 17.0,
+      "maxMs": 17.268800002057105
+    },
+    {
+      "method": "DELETE",
+      "name": "DELETE /api/contracts/[id] [Cleanup]",
+      "requests": 2,
+      "failures": 0,
+      "rps": 0.04544844369406371,
+      "avgMs": 11.701600014930591,
+      "p50Ms": 16.0,
+      "p95Ms": 16.0,
+      "p99Ms": 16.0,
+      "maxMs": 15.928199980407953
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/contracts/[id]/risk",
+      "requests": 8,
+      "failures": 0,
+      "rps": 0.18179377477625483,
+      "avgMs": 9.091149986488745,
+      "p50Ms": 9.0,
+      "p95Ms": 16.0,
+      "p99Ms": 16.0,
+      "maxMs": 16.046500008087605
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/findings",
+      "requests": 11,
+      "failures": 0,
+      "rps": 0.24996644031735038,
+      "avgMs": 9.643836370245976,
+      "p50Ms": 10.0,
+      "p95Ms": 13.0,
+      "p99Ms": 13.0,
+      "maxMs": 12.790400010999292
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/alerts",
+      "requests": 6,
+      "failures": 0,
+      "rps": 0.13634533108219113,
+      "avgMs": 10.358316668619713,
+      "p50Ms": 10.0,
+      "p95Ms": 12.0,
+      "p99Ms": 12.0,
+      "maxMs": 12.273799977265298
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/contracts/[id]",
+      "requests": 8,
+      "failures": 0,
+      "rps": 0.18179377477625483,
+      "avgMs": 7.914225010608789,
+      "p50Ms": 8.0,
+      "p95Ms": 11.0,
+      "p99Ms": 11.0,
+      "maxMs": 10.545299970544875
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/runtime/telemetry",
+      "requests": 9,
+      "failures": 0,
+      "rps": 0.20451799662328668,
+      "avgMs": 6.626488893137624,
+      "p50Ms": 6.0,
+      "p95Ms": 10.0,
+      "p99Ms": 10.0,
+      "maxMs": 9.950700041372329
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/alerts/config",
+      "requests": 7,
+      "failures": 0,
+      "rps": 0.15906955292922298,
+      "avgMs": 5.571200013426798,
+      "p50Ms": 5.0,
+      "p95Ms": 9.0,
+      "p99Ms": 9.0,
+      "maxMs": 9.09280002815649
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/system/status",
+      "requests": 13,
+      "failures": 0,
+      "rps": 0.2954148840114141,
+      "avgMs": 6.275846152745474,
+      "p50Ms": 6.0,
+      "p95Ms": 9.0,
+      "p99Ms": 9.0,
+      "maxMs": 8.696299977600574
+    },
+    {
+      "method": "GET",
+      "name": "GET /actuator/health [Public]",
+      "requests": 7,
+      "failures": 0,
+      "rps": 0.15906955292922298,
+      "avgMs": 5.655042860390885,
+      "p50Ms": 5.0,
+      "p95Ms": 8.0,
+      "p99Ms": 8.0,
+      "maxMs": 8.355400001164526
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/overview [Expected 401]",
+      "requests": 11,
+      "failures": 0,
+      "rps": 0.24996644031735038,
+      "avgMs": 3.9955545428463,
+      "p50Ms": 3.0,
+      "p95Ms": 7.0,
+      "p99Ms": 7.0,
+      "maxMs": 6.868300028145313
+    },
+    {
+      "method": "GET",
+      "name": "GET /api/runtime/events",
+      "requests": 5,
+      "failures": 0,
+      "rps": 0.11362110923515926,
+      "avgMs": 5.035639996640384,
+      "p50Ms": 5.0,
+      "p95Ms": 5.0,
+      "p99Ms": 5.0,
+      "maxMs": 5.4978999542072415
+    }
+  ],
+  "failuresSummary": [],
+  "environment": {
+    "os": "win32",
+    "pythonVersion": "3.13.2",
+    "targetService": "PRISM Spring Boot Backend (Docker container: prism_project-backend-1)"
+  }
+}

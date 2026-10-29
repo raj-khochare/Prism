@@ -1,5 +1,5 @@
 import { network } from "hardhat";
-import { banner, loadDeployment, saveDeployment, sleep, stillDeployed } from "./lib/common.js";
+import { banner, loadDeployment, saveDeployment, sleep, stillDeployed, topUp } from "./lib/common.js";
 
 /**
  * FLASH-LOAN replay (local, no mainnet needed).
@@ -21,6 +21,7 @@ async function main() {
 
   if (fresh) {
     banner("Deploying flash-loan scenario");
+    await topUp(ethers, [deployer, alice, bob, attackerOwner]);
     const Lender = await ethers.getContractFactory("MockFlashLender");
     const lender = await Lender.deploy();
     await lender.waitForDeployment();
@@ -53,10 +54,13 @@ async function main() {
   const vault = await ethers.getContractAt("MockYieldVault", dep.vault);
   const attacker = await ethers.getContractAt("FlashLoanAttacker", dep.attacker, attackerOwner);
 
-  console.log("Normal activity first (gives the monitor a baseline)...");
-  for (let i = 0; i < 3; i++) {
-    await (await vault.connect(alice).deposit({ value: ethers.parseEther("0.5") })).wait();
-    await sleep(500);
+  // WARMUP=0 skips the built-in normal activity (the ML data collector runs benign-traffic.js separately).
+  if (process.env.WARMUP !== "0") {
+    console.log("Normal activity first (gives the monitor a baseline)...");
+    for (let i = 0; i < 3; i++) {
+      await (await vault.connect(alice).deposit({ value: ethers.parseEther("0.5") })).wait();
+      await sleep(500);
+    }
   }
 
   const before = await ethers.provider.getBalance(dep.vault);
@@ -66,6 +70,7 @@ async function main() {
   await sleep(500);
   const after = await ethers.provider.getBalance(dep.vault);
   console.log("Flash loan of 500 ETH executed in block", receipt.blockNumber, "tx", receipt.hash);
+  console.log("ATTACK_BLOCKS", receipt.blockNumber);
   console.log("Vault balance after :", ethers.formatEther(after), "ETH  (unchanged: round trip inside one tx)");
   console.log("\nExpected in the dashboard within a few seconds: a FLASH_LOAN (Critical) event on the vault.");
 }

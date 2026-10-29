@@ -50,6 +50,9 @@ Expect an `ORACLE_DEVIATION` (High) event (~97%) on the lender.
 - The monitor only sees blocks mined after the contract is registered, and the backend restart clears in-memory runtime data.
 - Real lenders on a mainnet fork: the Aave V3 and Balancer V2 topics are built in; verify them against the lender ABI you fork. Set `FLASH_LOAN_LENDERS` to the real lender addresses to avoid matching unknown emitters.
 
+## Oracle pool without restarting
+`PUT /api/runtime/oracle-pools` (Developer) `{contractAddress, poolAddress}` points the detector at a pool at runtime; `ORACLE_POOLS` + restart is no longer required (it still works). In-memory only.
+
 ## Still open
 - `governanceTokenConcentrationDelta` (needs a governance token + holder tracking). State it as a limitation, or build a small `MockGovToken` replay next.
 - Oracle detection needs a configured pool per contract; there is no auto-discovery.

@@ -1,0 +1,13 @@
+{
+  "name": "XGBoost + SHAP",
+  "version": "xgb-20261029-0753",
+  "description": "Gradient-boosted trees over the 20 FeatureVector fields; contributions are SHAP attributions rescaled to score points relative to the training base rate.",
+  "trained_on": "real dataset",
+  "rows": 1064,
+  "positives": 188,
+  "groups": 251,
+  "cv_folds": 5,
+  "data_sha256": "f9bfadca6ab4cd2e1c909c62541f06e19faad9d5287753ceadd0738ee6d0f4a0",
+  "threshold": 0.55,
+  "trained_at": "2026-10-29T07:53:26.447042+00:00"
+}

@@ -37,6 +37,8 @@ public class RestMlScoringClient implements MlScoringClient {
     private volatile String version = "unknown";
     private volatile String description = "Gradient-boosted trees over the 20 FeatureVector fields; SHAP attributions.";
     private volatile boolean infoLoaded = false;
+    /** True while the last score had to come from the baseline, so the UI never names a model that did not score. */
+    private volatile boolean degraded = false;
 
     public RestMlScoringClient(StubMlScoringClient fallback,
                                @Value("${prism.services.ml-base-url}") String baseUrl,
@@ -56,8 +58,10 @@ public class RestMlScoringClient implements MlScoringClient {
             if (result == null || result.band() == null) {
                 throw new IllegalStateException("empty response from ml-service");
             }
+            degraded = false;
             return result;
         } catch (RuntimeException e) {
+            degraded = true;
             log.warn("ML service unavailable ({}); using the rule-based baseline for this score.",
                     e.getClass().getSimpleName());
             return fallback.score(features);
@@ -82,18 +86,21 @@ public class RestMlScoringClient implements MlScoringClient {
 
     @Override
     public String modelName() {
+        if (degraded) return fallback.modelName() + " (ML service unavailable)";
         loadInfo();
         return name;
     }
 
     @Override
     public String modelVersion() {
+        if (degraded) return fallback.modelVersion();
         loadInfo();
         return version;
     }
 
     @Override
     public String modelDescription() {
+        if (degraded) return fallback.modelDescription();
         loadInfo();
         return description;
     }

@@ -1,5 +1,5 @@
 import { network } from "hardhat";
-import { banner, loadDeployment, sleep, stillDeployed } from "./lib/common.js";
+import { banner, loadDeployment, sleep, stillDeployed, topUp } from "./lib/common.js";
 
 /**
  * NORMAL traffic on the scenarios deployed by replay-flashloan.js / replay-oracle.js.
@@ -14,13 +14,16 @@ async function main() {
   const { ethers } = await network.create("localhost");
   const [, alice, bob, carol] = await ethers.getSigners();
   const users = [alice, bob, carol];
+  await topUp(ethers, users);
   const rounds = Number(process.env.ROUNDS || 25);
   const delay = Number(process.env.DELAY_MS || 800);
 
   const fl = loadDeployment("flashloan");
   const or = loadDeployment("oracle");
-  const useFl = await stillDeployed(ethers, fl);
-  const useOr = await stillDeployed(ethers, or);
+  // SCENARIO=flashloan|oracle restricts traffic to one scenario (the data collector needs clean windows)
+  const only = process.env.SCENARIO;
+  const useFl = (!only || only === "flashloan") && (await stillDeployed(ethers, fl));
+  const useOr = (!only || only === "oracle") && (await stillDeployed(ethers, or));
   if (!useFl && !useOr) {
     console.log("No deployed scenario found. Run replay-flashloan.js and/or replay-oracle.js once first (the deploy step).");
     return;

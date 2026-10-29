@@ -1,0 +1,5 @@
+Method,Name,Error,Occurrences,First Seen,Last Seen
+GET,GET /api/runtime/telemetry,CatchResponseError('HTTP 404'),37,2026-10-27T07:35:56Z,2026-10-27T07:49:23Z
+GET,GET /api/contracts/[id]/features,CatchResponseError('HTTP 404'),29,2026-10-27T07:34:43Z,2026-10-27T07:49:30Z
+GET,GET /api/contracts/[id]/risk,CatchResponseError('HTTP 404'),30,2026-10-27T07:34:26Z,2026-10-27T07:48:34Z
+GET,GET /api/contracts/[id],CatchResponseError('Contract ID not found'),32,2026-10-27T07:35:28Z,2026-10-27T07:49:27Z

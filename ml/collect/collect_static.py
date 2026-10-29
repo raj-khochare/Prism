@@ -11,6 +11,10 @@ Labelling rules (write these in the report):
     The other SmartBugs categories (bad_randomness, denial_of_service, front_running, time_manipulation,
     short_addresses, other) are NOT labelled benign - they are vulnerable - they are simply out of scope and
     excluded from the dataset entirely.
+  * SWC Registry samples (MIT): the "_fixed" versions of every weakness are negatives that match the
+    positives in SIZE and STYLE (this is what removes the "big file = clean" shortcut); the unfixed samples of
+    our four classes (SWC-101/104/105/106/107/115/124) are extra positives. Exact text duplicates of files
+    already collected are skipped.
   * Negatives: contracts from widely used, audited packages. NOT guaranteed bug-free; they are "no known
     vulnerability" examples. Old OpenZeppelin 1.x (Solidity 0.4) is included so negatives are the same
     language era as SmartBugs (otherwise the model could learn "0.4 syntax = vulnerable").
@@ -30,6 +34,11 @@ ROOT = Path(__file__).resolve().parent.parent          # ml/
 DATA = ROOT / "data"
 CACHE = DATA / "_cache"
 OUT = DATA / "static"
+
+SWC_CLASS = {"SWC-101": "integer_overflow", "SWC-104": "unchecked_call", "SWC-105": "access_control",
+             "SWC-106": "access_control", "SWC-107": "reentrancy", "SWC-115": "access_control",
+             "SWC-124": "access_control"}
+SWC_SAMPLE_RE = re.compile(r"###\s+([^\n]+\.sol)\s*\n+```solidity\n(.*?)```", re.S)
 
 CLASS_MAP = {"reentrancy": "reentrancy", "access_control": "access_control",
              "arithmetic": "integer_overflow", "unchecked_low_level_calls": "unchecked_call"}
@@ -69,6 +78,9 @@ def fetch():
     if not (CACHE / "smartbugs-curated").exists():
         run(["git", "clone", "--depth", "1", "https://github.com/smartbugs/smartbugs-curated.git",
              str(CACHE / "smartbugs-curated")])
+    if not (CACHE / "swc-registry").exists():
+        run(["git", "clone", "--depth", "1", "https://github.com/SmartContractSecurity/SWC-registry.git",
+             str(CACHE / "swc-registry")])
     nm = CACHE / "npm"
     nm.mkdir(exist_ok=True)
     if not (nm / "package.json").exists():
@@ -174,6 +186,37 @@ def main():
                      "origin": rec.get("source", ""), "smartbugs_category": cat,
                      "vuln_lines": " ".join(map(str, lines)), "license": "see origin / SmartBugs LICENSE"})
         sources[f"data/{rel}"] = src
+
+    # ---- SWC Registry: matched positives (unfixed, our classes) and matched negatives (all *_fixed)
+    def norm(t):
+        return re.sub(r"\s+", "", re.sub(r"//.*|/\*.*?\*/", "", t, flags=re.S))
+    seen = {norm(t) for t in sources.values()}
+    (OUT / "swc").mkdir(exist_ok=True)
+    swc_added = {"pos": 0, "neg": 0}
+    for md in sorted((CACHE / "swc-registry" / "entries" / "docs").glob("SWC-*.md")):
+        text = md.read_text(errors="ignore")
+        i = text.find("## Samples")
+        if i < 0:
+            continue
+        for fname, code in SWC_SAMPLE_RE.findall(text[i:]):
+            fixed = "fixed" in fname.lower()
+            cls = SWC_CLASS.get(md.stem)
+            if not fixed and cls is None:
+                continue  # unfixed sample of an out-of-scope weakness: neither label is honest
+            key = norm(code)
+            if key in seen or "contract " not in code:
+                continue
+            seen.add(key)
+            name = f"swc_{md.stem.lower()}_{re.sub(r'[^A-Za-z0-9_.-]', '_', fname)}"
+            (OUT / "swc" / name).write_text(code)
+            rel = f"data/static/swc/{name}"
+            rows.append({"path": rel, "label": 0 if fixed else 1, "attack_class": "benign" if fixed else cls,
+                         "source": "swc-registry-fixed" if fixed else "swc-registry",
+                         "origin": f"https://swcregistry.io/docs/{md.stem}", "smartbugs_category": "",
+                         "vuln_lines": "", "license": "MIT"})
+            sources[rel] = code
+            swc_added["neg" if fixed else "pos"] += 1
+    print(f"SWC registry: +{swc_added['pos']} positives, +{swc_added['neg']} matched negatives")
 
     # ---- negatives: flattened audited packages
     nm = CACHE / "npm" / "node_modules"

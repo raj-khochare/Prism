@@ -8,6 +8,7 @@ import com.prism.prism_Backend.dto.TelemetryPoint;
 import com.prism.prism_Backend.exception.ResourceNotFoundException;
 import com.prism.prism_Backend.repository.ContractRepository;
 import com.prism.prism_Backend.service.RuntimeEventBuffer;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -24,6 +25,28 @@ public class RuntimeController {
         this.buffer = buffer;
         this.contractRepo = contractRepo;
         this.monitor = monitor;
+    }
+
+    public record OraclePoolRequest(String contractAddress, String poolAddress) {}
+
+    /** Developer-only. Points the oracle-deviation detector at a V2-style pool for a monitored contract. */
+    @PutMapping("/oracle-pools")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @ResponseStatus(org.springframework.http.HttpStatus.NO_CONTENT)
+    public void setOraclePool(@RequestBody OraclePoolRequest req) {
+        String re = "0x[0-9a-fA-F]{40}";
+        if (req == null || req.contractAddress() == null || req.poolAddress() == null
+                || !req.contractAddress().matches(re) || !req.poolAddress().matches(re)) {
+            throw new IllegalArgumentException("contractAddress and poolAddress must be 0x-prefixed 20-byte addresses.");
+        }
+        monitor.setOraclePool(req.contractAddress(), req.poolAddress());
+    }
+
+    @DeleteMapping("/oracle-pools/{contractAddress}")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @ResponseStatus(org.springframework.http.HttpStatus.NO_CONTENT)
+    public void removeOraclePool(@PathVariable String contractAddress) {
+        monitor.removeOraclePool(contractAddress);
     }
 
     @GetMapping("/telemetry")

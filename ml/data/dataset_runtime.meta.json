@@ -1,0 +1,14 @@
+{
+  "rows": 823,
+  "positives": 60,
+  "groups": 40,
+  "sources": {
+    "replay-local": 823
+  },
+  "attack_class_counts": {
+    "oracle_manipulation": 40,
+    "flash_loan": 20
+  },
+  "sha256": "5f437c76e5608eebe64df8e708576ab23e3a26b1d0cb8f1c435c97df03984f8e",
+  "built_at": "2026-10-28T20:51:14.292710+00:00"
+}

@@ -1,0 +1,11 @@
+# Data-collection override: makes the backend append every scored FeatureVector to ml/data/runtime/features.jsonl
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dataset.yml up -d --build backend
+#
+# Switch back to normal with:  docker compose up -d --force-recreate backend
+services:
+  backend:
+    environment:
+      PRISM_FEATURE_DUMP_PATH: /dump/features.jsonl
+    volumes:
+      - ./ml/data/runtime:/dump

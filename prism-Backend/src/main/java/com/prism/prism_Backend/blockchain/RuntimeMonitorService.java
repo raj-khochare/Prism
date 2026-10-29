@@ -106,7 +106,20 @@ public class RuntimeMonitorService {
         this.oracleThresholdPct = oracleThresholdPct;
         this.flashTopics = RuntimeSignalDetectors.flashLoanTopics(extraFlashTopics);
         this.flashLenders = RuntimeSignalDetectors.parseAddressSet(flashLenders);
-        this.oraclePools = RuntimeSignalDetectors.parsePairs(oraclePools);
+        this.oraclePools = new ConcurrentHashMap<>(RuntimeSignalDetectors.parsePairs(oraclePools));
+    }
+
+    /** Watch a V2-style pool for a monitored contract without a restart (used by the ML data collector too). */
+    public void setOraclePool(String contractAddress, String poolAddress) {
+        String key = contractAddress.toLowerCase(Locale.ROOT);
+        oraclePools.put(key, poolAddress.toLowerCase(Locale.ROOT));
+        oracleHistory.remove(key); // fresh baseline for the new pool
+    }
+
+    public void removeOraclePool(String contractAddress) {
+        String key = contractAddress.toLowerCase(Locale.ROOT);
+        oraclePools.remove(key);
+        oracleHistory.remove(key);
     }
 
     public ChainStatus status() {
@@ -125,7 +138,14 @@ public class RuntimeMonitorService {
                 lastBlock = head; // start from "now"; no history replay
                 return;
             }
-            if (head.compareTo(lastBlock) <= 0) return;
+            if (head.compareTo(lastBlock) < 0) {
+                // The node was reset (new Hardhat chain): start following the new chain instead of waiting
+                // for it to pass the old block number.
+                log.warn("Chain head {} is below the last processed block {}; assuming a node reset.", head, lastBlock);
+                lastBlock = head;
+                return;
+            }
+            if (head.compareTo(lastBlock) == 0) return;
 
             // Load the monitored contracts ONCE per poll (it used to be one findAll() per block per
             // poll) and do not download full blocks at all while nothing is registered.
@@ -257,7 +277,10 @@ public class RuntimeMonitorService {
                         .format(DateTimeFormatter.ofPattern("HH:mm:ss")),
                 txCount, gasUsed / 1000.0, oracleDev, movementUsd / 1000.0));
 
-        if (txCount == 0 && movementUsd == 0 && !flashLoan && !oracleAnomaly) return; // nothing happened to this contract
+        // Nothing touched this contract. Contracts with an oracle pool are still scored (silently, below)
+        // so calm oracle blocks leave a baseline row; everything else is skipped as before.
+        boolean quietBlock = txCount == 0 && movementUsd == 0 && !flashLoan && !oracleAnomaly;
+        if (quietBlock && pool == null) return;
         boolean anomaly = flashLoan || oracleAnomaly || z > 3 || gasIdx > 2.5 || movementUsd >= largeMovementUsd
                 || Math.abs(liquidityDeltaPct) > 20;
         Instant now = Instant.now();
@@ -269,6 +292,14 @@ public class RuntimeMonitorService {
         RuntimeSignals signals = new RuntimeSignals(flashLoan, movementUsd, oracleDev, gasIdx, z, liquidityDeltaPct,
                 callers.size(), sinceAnomaly, 0.0);
 
+        if (quietBlock) { // oracle-monitored contract, calm block: score without an event or push
+            try {
+                riskFusion.evaluate(c.getId(), features.forContract(c.getId(), c.getSourceCode(), signals));
+            } catch (RuntimeException e) {
+                log.debug("Quiet-block risk evaluation failed for {}: {}", c.getName(), e.getMessage());
+            }
+            return;
+        }
         String type, severity, description;
         if (flashLoan) {
             type = "FLASH_LOAN"; severity = "Critical";

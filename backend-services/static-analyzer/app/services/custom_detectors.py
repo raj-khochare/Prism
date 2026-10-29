@@ -224,8 +224,8 @@ def detect_unchecked_arithmetic(source: str, file_name: str) -> list[Finding]:
     return findings
 
 
-def detect_legacy_overflow(source: str, file_name: str) -> list[Finding]:
-    """Solidity < 0.8 has no built-in overflow checks; flag it unless SafeMath is used."""
+def detect_legacy_overflow_v1(source: str, file_name: str) -> list[Finding]:
+    """Original, coarse version (kept for the before/after comparison): any arithmetic anywhere."""
     clean = _blank_comments(source)
     pragma = re.search(r"pragma\s+solidity\s+([^;]+);", clean)
     if not pragma:
@@ -258,6 +258,139 @@ def detect_legacy_overflow(source: str, file_name: str) -> list[Finding]:
             description=(
                 "The contract targets Solidity < 0.8, which does not revert on integer overflow/"
                 "underflow, and does not use SafeMath."
+            ),
+        )
+    ]
+
+
+_FOR_HEADER_RE = re.compile(r"\bfor\s*\([^)]*\)")
+_COMPOUND_ARITH_RE = re.compile(r"(?P<lhs>[A-Za-z_][\w\.\[\]\(\)]*)\s*(?P<op>[+\-*])=(?!=)\s*(?P<rhs>.+)", re.S)
+_ASSIGN_ARITH_RE = re.compile(
+    r"(?P<lhs>[A-Za-z_][\w\.\[\]]*)\s*=(?!=)\s*(?P<rhs>[^=].*?[A-Za-z_\]\)0-9]\s*(?P<op>[+\-*])\s*[A-Za-z_\(0-9].*)", re.S
+)
+_NUMERIC_OR_CONST_RE = re.compile(r"^(0x[0-9a-fA-F]+|\d[\d_]*(\.\d+)?(e\d+)?|[A-Z][A-Z0-9_]*|\d+\s*(wei|gwei|ether|seconds|minutes|hours|days|weeks))$")
+_IDENT_RE = re.compile(r"[A-Za-z_]\w*")
+_COMPARE_RE = re.compile(r"(<=|>=|<|>)")
+_NOT_IDENTS = {"msg", "sender", "value", "now", "block", "timestamp", "this", "address", "uint", "uint256", "int",
+               "uint8", "uint128", "uint64", "uint32", "uint16", "require", "assert", "if", "else", "return", "true",
+               "false", "wei", "ether", "gwei", "finney", "szabo", "seconds", "minutes", "hours", "days", "weeks"}
+
+
+def _operand_idents(expr: str) -> set[str]:
+    return {t for t in _IDENT_RE.findall(expr) if t not in _NOT_IDENTS and not _NUMERIC_OR_CONST_RE.match(t)}
+
+
+def _is_guarded(before: str, op: str, target: str | None, idents: set[str]) -> bool:
+    """Is the arithmetic statement protected by an earlier require/assert/if?
+    - subtraction: a comparison that mentions the very value being decreased and an operand
+      (`require(bal[msg.sender] >= v)` guards `bal[msg.sender] -= v`). `x - y >= 0` is NOT a guard:
+      it is always true on unsigned integers.
+    - addition / multiplication: only an overflow-style check counts (the condition itself contains
+      + or *, e.g. `a + b >= a`). A subtraction guard does not protect an addition."""
+    tnorm = re.sub(r"\s+", "", target) if target else None
+    for g in re.finditer(r"\b(?:require|assert|if)\s*\(", before):
+        open_idx = g.end() - 1
+        depth, i = 0, open_idx
+        while i < len(before):
+            depth += (before[i] == "(") - (before[i] == ")")
+            if depth == 0:
+                break
+            i += 1
+        cond = before[open_idx + 1: i]
+        if not _COMPARE_RE.search(cond):
+            continue
+        cn = re.sub(r"\s+", "", cond)
+        mentioned = bool(idents & _operand_idents(cond))
+        if op == "-":
+            if re.search(r"-[^<>=]*>=\s*0\b|-[^<>=]*>\s*-?1\b", cond):
+                continue  # always-true "no underflow" check
+            if tnorm and tnorm not in cn:
+                continue  # it constrains some other value
+            if mentioned:
+                return True
+        else:
+            if re.search(r"[+*]", cond) and mentioned:
+                return True
+    return False
+
+
+def detect_legacy_overflow(source: str, file_name: str) -> list[Finding]:
+    """Solidity < 0.8 does not revert on overflow. Flag state-changing arithmetic on non-constant operands in
+    externally reachable functions, unless SafeMath is used or an earlier require/assert/if compares one of
+    the operands. One finding per contract, at the first such statement."""
+    clean = _blank_comments(source)
+    pragma = re.search(r"pragma\s+solidity\s+([^;]+);", clean)
+    if not pragma:
+        return []
+    versions = re.findall(r"(\d+)\.(\d+)\.(\d+)", pragma.group(1))
+    if not versions or min((int(a), int(b)) for a, b, _ in versions) >= (0, 8):
+        return []
+    if re.search(r"\bSafeMath\b", clean):
+        return []
+
+    best = None  # (impact_rank, offset, fn_name)
+    for fm, fo, fc in _functions(clean):
+        header = fm.group("header")
+        if re.search(r"\b(view|pure|constant|internal|private)\b", header):
+            continue
+        contract = _contract_name_at(clean, fo)
+        if contract and fm.group("name") == contract:
+            continue  # legacy constructor
+        params = {p.strip().split()[-1] for p in fm.group("params").split(",") if p.strip()}
+        body = _FOR_HEADER_RE.sub("for()", clean[fo + 1: fc])
+        pos = 0
+        for stmt in body.split(";"):
+            seg_start = pos
+            pos += len(stmt) + 1
+            st = stmt.strip()
+            if not st or re.match(r"^(require|assert|if|else if|while|for\(\)|emit|revert|throw)\b", st):
+                continue
+            m = _COMPOUND_ARITH_RE.search(st)
+            target = None
+            if m:
+                operands = m.group("lhs") + " " + m.group("rhs")
+                target = m.group("lhs")
+            else:
+                m = _ASSIGN_ARITH_RE.search(st)
+                if not m:
+                    continue
+                operands = m.group("rhs")  # `x = 2 * 3600` is constants-only; the assigned variable is not an operand
+            op = m.group("op")
+            if re.fullmatch(r"\s*1\s*", m.group("rhs").strip().rstrip(")")) :
+                continue  # counter += 1 / -= 1
+            idents = _operand_idents(operands)
+            if not idents and "msg.value" not in operands:
+                continue  # constants only
+            if _is_guarded(body[:seg_start], op, target, idents):
+                continue
+            influenced = bool(params & idents) or "msg.value" in operands
+            cand = (1 if influenced else 0, fo + 1 + seg_start, fm.group("name"))
+            if best is None or cand[0] > best[0]:
+                best = cand
+    if best is None:
+        return []
+
+    rank, offset, fn_name = best
+    line = _line_of(clean, offset)
+    detector_id = "prism-integer-overflow-legacy"
+    return [
+        Finding(
+            finding_id=_finding_id(detector_id, fn_name, line, line),
+            detector_id=detector_id,
+            vulnerability_family="integer_overflow",
+            title=detector_id,
+            impact="High" if rank else "Medium",
+            confidence="Medium",
+            contract=_contract_name_at(clean, offset),
+            function=fn_name,
+            source_file=file_name,
+            line_start=line,
+            line_end=line,
+            source_snippet=source.splitlines()[line - 1] if len(source.splitlines()) >= line else None,
+            vulnerability_features={"unchecked_arithmetic": True},
+            description=(
+                "Solidity < 0.8 does not revert on integer overflow/underflow, and this function updates state with "
+                "arithmetic on non-constant values without SafeMath or a preceding bound check."
             ),
         )
     ]

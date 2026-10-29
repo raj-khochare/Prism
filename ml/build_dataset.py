@@ -32,6 +32,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from prism_ml.schema import ATTACK_CLASSES, BENIGN, FEATURES, META_COLUMNS, NEUTRAL_RUNTIME
@@ -87,6 +88,9 @@ def rows_from_static_manifest(manifest: Path, api: str, token: str, username: st
             row = {k: fv[k] for k in FEATURES}
             row.update(NEUTRAL_RUNTIME)  # static-only row: runtime side neutral, exactly like a fresh scan
             row.update(label=int(m["label"]), attack_class=m["attack_class"], group=m["group"], source=m["source"])
+            text = src.read_text(errors="ignore")  # size columns feed train.py's size-only baseline; not model features
+            row.update(meta_size_log=float(np.log1p(len(text))), meta_lines=text.count("\n") + 1,
+                       meta_functions=text.count("function "))
             out.append(row)
         except Exception as e:  # noqa: BLE001 - record and continue; one bad file must not stop 200
             failed.append({"path": m["path"], "error": str(e)[:200]})
@@ -101,7 +105,7 @@ def rows_from_static_manifest(manifest: Path, api: str, token: str, username: st
     if failed:
         pd.DataFrame(failed).to_csv(out_failed, index=False)
         print(f"failures written to {out_failed}")
-    return pd.DataFrame(out, columns=FEATURES + META_COLUMNS)
+    return pd.DataFrame(out, columns=FEATURES + META_COLUMNS + ["meta_size_log", "meta_lines", "meta_functions"])
 
 
 def validate(df: pd.DataFrame) -> None:
@@ -113,7 +117,8 @@ def validate(df: pd.DataFrame) -> None:
     assert not bad, f"unknown attack_class values: {bad}"
     assert not ((df["label"] == 1) & (df["attack_class"] == BENIGN)).any(), "positive rows need an attack_class"
     assert not ((df["label"] == 0) & (df["attack_class"] != BENIGN)).any(), "label 0 rows must use attack_class=benign"
-    assert df["group"].nunique() >= 10, "need >= 10 distinct groups (protocols/incidents) for grouped CV"
+    if df["group"].nunique() < 10:
+        print(f"WARNING: only {df['group'].nunique()} groups; grouped CV is unreliable below ~10 (fine for a partial/--append file).")
 
 
 def main() -> None:
